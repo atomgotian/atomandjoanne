@@ -1,0 +1,652 @@
+<title>Atom &amp; Joanne — February 20, 2027</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23F7E4E7'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='26' fill='%238B7BAE' text-anchor='middle'%3EA%26J%3C/text%3E%3C/svg%3E">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500;1,600&family=Mulish:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --primary:#D8CFEA;      /* soft lavender-violet */
+    --ink:#4A3F63;          /* deep plum-ink for body text, derived from primary */
+    --ink-soft:#8B7BAE;     /* deeper lavender-violet, secondary text/headings */
+    --blush:#F7E4E7;        /* pale blush pink background */
+    --cream:#FDF8F6;        /* elevated card surface */
+    --accent:#A8C0DB;       /* dusty periwinkle blue */
+    --accent-deep:#7FA0C4;  /* pressed/hover state derived from accent */
+  }
+
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html { scroll-behavior: smooth; }
+
+  body{
+    background: var(--blush);
+    color: var(--ink);
+    font-family: 'Mulish', sans-serif;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-display{
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: -0.02em;
+  }
+
+  .tracking-wide-label{
+    font-family: 'Mulish', sans-serif;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+  }
+
+  /* layered, color-tinted shadows */
+  .shadow-soft{
+    box-shadow:
+      0 1px 2px rgba(139,123,174,0.10),
+      0 8px 20px rgba(139,123,174,0.14),
+      0 24px 48px rgba(168,192,219,0.16);
+  }
+  .shadow-soft-sm{
+    box-shadow:
+      0 1px 2px rgba(139,123,174,0.10),
+      0 4px 10px rgba(139,123,174,0.12);
+  }
+
+  /* grain texture overlay */
+  .grain{
+    position:absolute; inset:0; pointer-events:none; opacity:0.05; mix-blend-mode:multiply;
+  }
+
+  /* ---------- Nav ---------- */
+  .site-nav{
+    transform: translateY(-120%);
+    opacity: 0;
+    animation: navSlideDown 0.9s cubic-bezier(0.16,1,0.3,1) 1.5s forwards;
+  }
+  @keyframes navSlideDown{
+    to{ transform: translateY(0); opacity:1; }
+  }
+  .nav-link{
+    position:relative;
+    color: var(--ink-soft);
+    transition: color 0.3s ease;
+  }
+  .nav-link::after{
+    content:'';
+    position:absolute; left:0; bottom:-4px;
+    width:0; height:1.5px; background: var(--accent-deep);
+    transition: width 0.35s cubic-bezier(0.16,1,0.3,1);
+  }
+  .nav-link:hover, .nav-link:focus-visible{ color: var(--ink); }
+  .nav-link:hover::after, .nav-link:focus-visible::after{ width:100%; }
+  .nav-link:focus-visible{ outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
+
+  /* ---------- Hero reveal ---------- */
+  .hero-date{
+    opacity:0; transform: translateY(-10px);
+    animation: heroFadeSlide 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
+  }
+  @keyframes heroFadeSlide{ to{ opacity:1; transform:translateY(0);} }
+
+  .hero-name{
+    display:inline-block;
+    opacity:0; transform: translateY(40px);
+    animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .hero-name.n1{ animation-delay: 0.75s; }
+  .hero-name.n2{ animation-delay: 1.05s; }
+  .hero-x{
+    display:inline-block; opacity:0; transform: translateY(40px);
+    animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
+  }
+  @keyframes heroNameUp{ to{ opacity:1; transform:translateY(0);} }
+
+  /* ---------- Decorative shapes ---------- */
+  .deco{
+    opacity:0; transform: scale(0.5) rotate(18deg);
+    transition: none;
+  }
+  .deco.deco-in{
+    animation: decoSettle 1s cubic-bezier(0.34,1.4,0.64,1) forwards;
+  }
+  @keyframes decoSettle{
+    to{ opacity:1; transform: scale(1) rotate(0deg); }
+  }
+
+  /* ---------- Scroll reveals ---------- */
+  .reveal{
+    opacity:0; transform: translateY(28px);
+    transition: opacity 0.9s cubic-bezier(0.16,1,0.3,1), transform 0.9s cubic-bezier(0.16,1,0.3,1);
+  }
+  .reveal.in-view{ opacity:1; transform: translateY(0); }
+  .reveal-delay-1.in-view{ transition-delay: 0.12s; }
+  .reveal-delay-2.in-view{ transition-delay: 0.24s; }
+
+  /* ---------- Buttons ---------- */
+  .btn-accent{
+    background: var(--accent);
+    color: var(--cream);
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .btn-accent:hover{ background: var(--accent-deep); transform: translateY(-2px); }
+  .btn-accent:active{ transform: translateY(0px) scale(0.98); }
+  .btn-accent:focus-visible{ outline: 2px solid var(--ink-soft); outline-offset: 3px; }
+  .btn-accent:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+
+  .btn-outline{
+    border: 1.5px solid var(--accent);
+    color: var(--ink-soft);
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease;
+  }
+  .btn-outline:hover{ background: var(--accent); color: var(--cream); transform: translateY(-2px); }
+  .btn-outline:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+
+  /* ---------- RSVP toggle ---------- */
+  .toggle-btn{
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+  }
+  .toggle-btn:hover{ transform: translateY(-1px); }
+  .toggle-btn:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+  .toggle-btn.active{
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--cream);
+  }
+
+  .field-reveal{
+    max-height:0; opacity:0; overflow:hidden;
+    transition: max-height 0.5s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease;
+  }
+  .field-reveal.open{
+    max-height: 600px; opacity:1;
+  }
+
+  input, textarea{
+    background: var(--cream);
+    border: 1.5px solid #E7D9DE;
+    transition: border-color 0.25s ease, box-shadow 0.25s ease;
+  }
+  input:focus, textarea:focus{
+    outline:none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(168,192,219,0.35);
+  }
+
+  /* ---------- Gallery ---------- */
+  .gallery-item{
+    overflow:hidden;
+    transition: transform 0.35s ease;
+  }
+  .gallery-item img{
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.4s ease;
+  }
+  .gallery-item:hover img{ transform: scale(1.06); }
+  .gallery-item:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+
+  #lightbox{
+    opacity:0; visibility:hidden; pointer-events:none;
+    transition: opacity 0.35s ease;
+  }
+  #lightbox.open{
+    opacity:1; visibility:visible; pointer-events:auto;
+  }
+  #lightbox-img{
+    opacity:0; transform: scale(0.97);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  #lightbox.open #lightbox-img.loaded{ opacity:1; transform: scale(1); }
+
+  .lightbox-arrow{
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease;
+  }
+  .lightbox-arrow:hover{ background: rgba(255,255,255,0.18); transform: scale(1.08); }
+  .lightbox-arrow:focus-visible{ outline: 2px solid var(--accent); }
+
+  /* ---------- FAQ accordion ---------- */
+  .faq-answer{
+    max-height:0; overflow:hidden;
+    transition: max-height 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+  .faq-item.open .faq-answer{ max-height: 400px; }
+  .faq-chevron{ transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
+  .faq-item.open .faq-chevron{ transform: rotate(45deg); }
+  .faq-question:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 4px; }
+
+  /* hero image treatment */
+  .hero-photo-wrap::after{
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(to top, rgba(38,28,54,0.65), rgba(38,28,54,0.15) 45%, rgba(168,192,219,0.18));
+    mix-blend-mode: multiply;
+  }
+  .hero-photo-wrap::before{
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(to top, rgba(20,15,30,0.72), transparent 55%);
+    z-index:1;
+  }
+
+  ::selection{ background: var(--accent); color:#fff; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: 0.01ms !important;
+      animation-delay: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+<body class="antialiased">
+
+  <!-- ================= NAV ================= -->
+  <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-between h-16">
+      <a href="#hero" class="font-display text-xl md:text-2xl" style="color:var(--ink-soft)">A &amp; J</a>
+      <ul class="hidden sm:flex items-center gap-6 md:gap-9 text-[13px] tracking-wide-label">
+        <li><a href="#our-story" class="nav-link">Our Story</a></li>
+        <li><a href="#details" class="nav-link">Details</a></li>
+        <li><a href="#gallery" class="nav-link">Gallery</a></li>
+        <li><a href="#faqs" class="nav-link">FAQs</a></li>
+        <li><a href="#rsvp" class="nav-link btn-outline px-4 py-2 rounded-full">RSVP</a></li>
+      </ul>
+      <a href="#rsvp" class="sm:hidden nav-link btn-outline px-4 py-1.5 rounded-full text-[12px] tracking-wide-label">RSVP</a>
+    </div>
+  </nav>
+
+  <!-- ================= HERO ================= -->
+  <section id="hero" class="relative min-h-screen flex items-end overflow-hidden">
+    <div class="hero-photo-wrap absolute inset-0">
+      <img src="photos/hero/thumbs/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" />
+    </div>
+
+    <!-- corner decorations -->
+    <svg class="deco absolute top-8 left-6 md:top-12 md:left-12 w-16 h-16 md:w-24 md:h-24 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="42" stroke="#F7E4E7" stroke-width="1.5" opacity="0.8"/>
+    </svg>
+    <svg class="deco absolute bottom-40 right-8 md:bottom-48 md:right-16 w-10 h-10 md:w-14 md:h-14 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="16" fill="#D8CFEA" opacity="0.85"/>
+    </svg>
+    <svg class="deco absolute top-1/3 right-10 md:right-20 w-20 h-20 md:w-28 md:h-28 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <path d="M10 70 A 40 40 0 0 1 70 10" stroke="#A8C0DB" stroke-width="2" opacity="0.7"/>
+    </svg>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 lg:px-10 pb-20 md:pb-28 w-full text-white">
+      <p class="hero-date tracking-wide-label text-[12px] md:text-sm mb-4 opacity-90">February 20, 2027</p>
+      <h1 class="font-display text-[15vw] leading-[0.95] sm:text-7xl md:text-8xl lg:text-9xl">
+        <span class="hero-name n1">Atom</span>
+        <span class="hero-x italic font-normal text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl mx-1 md:mx-3 align-middle" style="color:var(--primary)">x</span>
+        <span class="hero-name n2">Joanne</span>
+      </h1>
+    </div>
+  </section>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="6" fill="#A8C0DB" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- ================= OUR STORY ================= -->
+  <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+      <div class="reveal order-2 md:order-1">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Our Story</p>
+        <h2 class="font-display text-4xl md:text-5xl mb-6" style="color:var(--ink)">How it began</h2>
+        <p class="text-[17px] md:text-lg" style="color:var(--ink)">
+          We met as classmates in UP, and somewhere between [a funny detail] and [a meaningful moment], we knew this was it. A few years, countless memories, and one very enthusiastic &ldquo;yes&rdquo; later &mdash; we&rsquo;re so excited to celebrate this next chapter with the people who matter most to us.
+        </p>
+      </div>
+      <div class="reveal reveal-delay-1 order-1 md:order-2 relative">
+        <div class="rounded-[28px] overflow-hidden shadow-soft aspect-[4/5]">
+          <img src="photos/our-story/thumbs/illustration.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" loading="lazy" />
+        </div>
+        <svg class="deco absolute -bottom-6 -left-6 w-16 h-16 z-[-1]" data-deco viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="42" stroke="#D8CFEA" stroke-width="1.5" opacity="0.7"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
+      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#D8CFEA" stroke-width="2" opacity="0.75"/>
+    </svg>
+  </div>
+
+  <!-- ================= DETAILS ================= -->
+  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10" style="background: var(--cream)">
+    <div class="max-w-6xl mx-auto">
+      <div class="reveal text-center mb-16 md:mb-20">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">When &amp; Where</h2>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 md:gap-10 mb-14">
+        <!-- Ceremony -->
+        <div class="reveal rounded-[28px] overflow-hidden shadow-soft bg-white">
+          <div class="aspect-[16/10] overflow-hidden">
+            <img src="photos/details/thumbs/sacred-heart-of-jesus-parish.jpg" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <div class="p-8 md:p-10">
+            <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
+            <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
+            <p class="font-semibold mb-2">Sacred Heart of Jesus Parish</p>
+            <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
+            <p class="text-[15px]">The ceremony will be held at Sacred Heart of Jesus Parish, Joanne&rsquo;s home church.</p>
+          </div>
+        </div>
+
+        <!-- Reception -->
+        <div class="reveal reveal-delay-1 rounded-[28px] overflow-hidden shadow-soft bg-white">
+          <div class="aspect-[16/10] overflow-hidden">
+            <img src="photos/details/thumbs/elan-by-the-bay.jpeg" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <div class="p-8 md:p-10">
+            <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Reception</p>
+            <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
+            <p class="font-semibold mb-2">Elan by the Bay</p>
+            <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
+            <p class="text-[15px]">Manila traffic on Saturday afternoon (or any time) can be super busy, so plan accordingly. We&rsquo;ll start the evening with cocktail hour from 4:30 to 6pm before transitioning into dinner.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+        <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
+           target="_blank" rel="noopener"
+           class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
+          How to Get There
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </a>
+        <p class="text-[15px] tracking-wide-label text-[12px]" style="color:var(--ink-soft)">Dress Code &mdash; Barong for men</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="6" fill="#A8C0DB" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- ================= GALLERY ================= -->
+  <section id="gallery" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="reveal text-center mb-14 md:mb-16">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Gallery</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Our photos from Sydney</h2>
+      </div>
+
+      <div class="reveal grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="gallery-grid">
+        <!-- populated below -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="fixed inset-0 z-[100] flex items-center justify-center" style="background: rgba(20,15,30,0.92)">
+    <button id="lightbox-close" aria-label="Close" class="lightbox-arrow absolute top-6 right-6 md:top-8 md:right-8 w-11 h-11 rounded-full flex items-center justify-center text-white">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button id="lightbox-prev" aria-label="Previous photo" class="lightbox-arrow absolute left-3 md:left-8 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-h-[85vh] max-w-[88vw] rounded-lg object-contain" />
+    <button id="lightbox-next" aria-label="Next photo" class="lightbox-arrow absolute right-3 md:right-8 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white">
+      <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
+      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#D8CFEA" stroke-width="2" opacity="0.75"/>
+    </svg>
+  </div>
+
+  <!-- ================= FAQS ================= -->
+  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10" style="background: var(--cream)">
+    <div class="max-w-2xl mx-auto">
+      <div class="reveal text-center mb-14">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">FAQs</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Good to Know</h2>
+      </div>
+
+      <div class="reveal faq-item rounded-2xl bg-white shadow-soft-sm overflow-hidden">
+        <button class="faq-question w-full flex items-center justify-between gap-4 p-6 md:p-7 text-left">
+          <span class="font-display text-xl md:text-2xl" style="color:var(--ink)">Can I bring a guest or plus one?</span>
+          <span class="faq-chevron flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:var(--primary)">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          </span>
+        </button>
+        <div class="faq-answer px-6 md:px-7">
+          <p class="pb-6 md:pb-7 text-[15px] md:text-base" style="color:var(--ink)">We&rsquo;re keeping our celebration small and intimate, so we&rsquo;re only able to accommodate those who received a formal invitation. We hope you understand, and we can&rsquo;t wait to celebrate with you!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="16" fill="#D8CFEA" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- ================= RSVP ================= -->
+  <section id="rsvp" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-xl mx-auto">
+      <div class="reveal text-center mb-12">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
+        <h2 class="font-display text-4xl md:text-5xl mb-5" style="color:var(--ink)">Join Us</h2>
+        <p class="text-[17px] mb-2">We can&rsquo;t wait to celebrate with you &mdash; please let us know if you&rsquo;ll be joining us!</p>
+        <p class="tracking-wide-label text-[12px]" style="color:var(--accent-deep)">Please RSVP by January 20, 2027</p>
+      </div>
+
+      <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
+        <div>
+          <label for="rsvp-name" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Your Name</label>
+          <input id="rsvp-name" name="NAME" type="text" required placeholder="Full name"
+                 class="w-full rounded-xl px-4 py-3 text-[15px]" />
+        </div>
+
+        <div>
+          <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be attending?</p>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" data-attend="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+              Joyfully Accept
+            </button>
+            <button type="button" data-attend="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+              Regretfully Decline
+            </button>
+          </div>
+          <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
+        </div>
+
+        <div id="attending-fields" class="field-reveal space-y-6">
+          <div>
+            <label for="rsvp-dietary" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Dietary Restrictions</label>
+            <textarea id="rsvp-dietary" name="DIET" rows="3" placeholder="Allergies, preferences, etc. (optional)"
+                      class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+          Send RSVP
+        </button>
+
+        <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
+      </form>
+    </div>
+  </section>
+
+  <footer class="py-10 text-center">
+    <p class="font-display text-2xl italic" style="color:var(--ink-soft)">Atom &amp; Joanne &middot; 02.20.2027</p>
+  </footer>
+
+  <script>
+    // ---------- Scroll-triggered reveals (sections + decorations at section breaks) ----------
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in-view');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    const decoObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('deco-in');
+          decoObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('[data-deco]').forEach((el, i) => {
+      el.style.animationDelay = (i % 3) * 0.15 + 's';
+      decoObserver.observe(el);
+    });
+
+    // ---------- Gallery ----------
+    const galleryFiles = [
+      'DSC04131.jpeg','DSC04180.jpeg','DSC04225.jpeg','DSC04236.jpeg','DSC04239.jpeg',
+      'DSC04283.jpeg','DSC04315.jpeg','DSC04415.jpeg','DSC04520.jpeg','DSC04551.jpeg',
+      'DSC04630.jpeg','DSC04689.jpeg','DSC04785.jpeg','DSC04814.jpeg','DSC04855.jpeg',
+      'DSC04962.jpeg','DSC05006.jpeg','DSC05033.jpeg','DSC05084.jpeg','DSC05137.jpeg',
+      'DSC05327.jpeg','DSC05423.jpeg','DSC05735.jpeg','DSC05816.jpeg','DSC06128.jpeg',
+      'DSC06332.jpeg'
+    ];
+
+    const grid = document.getElementById('gallery-grid');
+    galleryFiles.forEach((file, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'gallery-item rounded-xl aspect-square';
+      btn.setAttribute('data-index', i);
+      btn.setAttribute('aria-label', 'Open photo ' + (i + 1));
+      btn.innerHTML = `<img src="photos/gallery/thumbs/${file}" alt="Gallery photo ${i + 1}" class="w-full h-full object-cover" loading="lazy" />`;
+      grid.appendChild(btn);
+    });
+
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    let currentIndex = 0;
+
+    function showPhoto(index) {
+      currentIndex = (index + galleryFiles.length) % galleryFiles.length;
+      lightboxImg.classList.remove('loaded');
+      const fullSrc = 'photos/gallery/' + galleryFiles[currentIndex];
+      const img = new Image();
+      img.onload = () => {
+        lightboxImg.src = fullSrc;
+        lightboxImg.alt = 'Gallery photo ' + (currentIndex + 1);
+        requestAnimationFrame(() => lightboxImg.classList.add('loaded'));
+      };
+      img.src = fullSrc;
+    }
+
+    function openLightbox(index) {
+      showPhoto(index);
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    grid.addEventListener('click', (e) => {
+      const item = e.target.closest('.gallery-item');
+      if (item) openLightbox(parseInt(item.getAttribute('data-index'), 10));
+    });
+
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-prev').addEventListener('click', () => showPhoto(currentIndex - 1));
+    document.getElementById('lightbox-next').addEventListener('click', () => showPhoto(currentIndex + 1));
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('open')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') showPhoto(currentIndex - 1);
+      if (e.key === 'ArrowRight') showPhoto(currentIndex + 1);
+    });
+
+    // swipe support
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    lightbox.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(dx) > 50) showPhoto(currentIndex + (dx < 0 ? 1 : -1));
+    }, { passive: true });
+
+    // ---------- FAQ accordion ----------
+    document.querySelectorAll('.faq-item').forEach((item) => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => item.classList.toggle('open'));
+    });
+
+    // ---------- RSVP toggle ----------
+    const attendingInput = document.getElementById('rsvp-attending');
+    const attendingFields = document.getElementById('attending-fields');
+    document.querySelectorAll('[data-attend]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-attend]').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        attendingInput.value = btn.getAttribute('data-attend');
+        if (btn.getAttribute('data-attend') === 'Yes') {
+          attendingFields.classList.add('open');
+        } else {
+          attendingFields.classList.remove('open');
+        }
+      });
+    });
+
+    // ---------- RSVP submit ----------
+    const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZFvK8gtZosBIGts8IiRme50oY0VWPqlJKSm2MlMsEn_9BQUuxWhZ-M2DLdGFA5coH/exec';
+    const rsvpForm = document.getElementById('rsvp-form');
+    const rsvpSubmit = document.getElementById('rsvp-submit');
+    const rsvpMessage = document.getElementById('rsvp-message');
+
+    rsvpForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!attendingInput.value) {
+        rsvpMessage.textContent = 'Please let us know if you can make it.';
+        rsvpMessage.classList.remove('hidden');
+        return;
+      }
+
+      const formData = new FormData(rsvpForm);
+      rsvpSubmit.disabled = true;
+      rsvpSubmit.textContent = 'Submitting...';
+      rsvpMessage.classList.add('hidden');
+
+      try {
+        await fetch(RSVP_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: formData,
+        });
+        rsvpForm.reset();
+        attendingFields.classList.remove('open');
+        document.querySelectorAll('[data-attend]').forEach((b) => b.classList.remove('active'));
+        rsvpForm.querySelectorAll('input, textarea, button[type=button]').forEach(el => el.style.display = 'none');
+        rsvpSubmit.style.display = 'none';
+        document.querySelectorAll('#rsvp-form label, #rsvp-form p.block').forEach(el => el.style.display = 'none');
+        rsvpMessage.textContent = 'Thank you! Your RSVP has been received. We can\'t wait to celebrate with you.';
+        rsvpMessage.style.color = 'var(--ink)';
+        rsvpMessage.classList.remove('hidden');
+      } catch (err) {
+        rsvpSubmit.disabled = false;
+        rsvpSubmit.textContent = 'Send RSVP';
+        rsvpMessage.textContent = 'Something went wrong sending your RSVP. Please try again.';
+        rsvpMessage.classList.remove('hidden');
+      }
+    });
+  </script>
+</body>
