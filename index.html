@@ -7,13 +7,13 @@
 
 <style>
   :root{
-    --primary:#D8CFEA;      /* soft lavender-violet */
-    --ink:#4A3F63;          /* deep plum-ink for body text, derived from primary */
+    --primary:#B8A6C0;      /* muted lavender-mauve */
+    --ink:#4A3648;          /* deep plum-ink for body text, derived from the palette */
     --ink-soft:#8B7BAE;     /* deeper lavender-violet, secondary text/headings */
-    --blush:#F7E4E7;        /* pale blush pink background */
-    --cream:#FDF8F6;        /* elevated card surface */
-    --accent:#A8C0DB;       /* dusty periwinkle blue */
-    --accent-deep:#7FA0C4;  /* pressed/hover state derived from accent */
+    --bg:#C9A8B0;           /* dusty rose-mauve — single continuous section background */
+    --cream:#FDF8F6;        /* elevated card surface (form, faq item) */
+    --accent:#A8C4D8;       /* powder blue */
+    --accent-deep:#7DA0BC;  /* pressed/hover state derived from accent */
   }
 
   * { -webkit-tap-highlight-color: transparent; }
@@ -21,7 +21,7 @@
   html { scroll-behavior: smooth; }
 
   body{
-    background: var(--blush);
+    background: var(--bg);
     color: var(--ink);
     font-family: 'Mulish', sans-serif;
     line-height: 1.7;
@@ -51,16 +51,56 @@
       0 1px 2px rgba(139,123,174,0.10),
       0 4px 10px rgba(139,123,174,0.12);
   }
+  /* lifted 3D shadow for venue + dress-code circular photos */
+  .shadow-lifted{
+    box-shadow:
+      0 2px 4px rgba(74,54,72,0.16),
+      0 14px 28px rgba(139,123,174,0.24),
+      0 32px 60px rgba(74,54,72,0.20);
+  }
 
   /* grain texture overlay */
   .grain{
     position:absolute; inset:0; pointer-events:none; opacity:0.05; mix-blend-mode:multiply;
   }
 
+  /* ---------- Panda intro ---------- */
+  /* Panda rolls in from the right edge, travels a diagonal path, and exits fully off the
+     left edge — it never stops/settles in the center. The overlay fade-out is triggered
+     by JS listening for this animation's completion, not an independent timer. */
+  #intro-overlay{
+    background: #FFFFFF;
+    overflow: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    cursor: pointer;
+  }
+  #intro-overlay.intro-exit{
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  #intro-panda{
+    opacity: 0;
+    animation: pandaRollThrough 2s cubic-bezier(0.5,0.05,0.5,0.95) forwards;
+  }
+  @keyframes pandaRollThrough{
+    0%{ opacity: 0; transform: translate(130vw, -22vh) rotate(0deg); }
+    8%{ opacity: 1; }
+    50%{ transform: translate(0vw, 14vh) rotate(-480deg); }
+    92%{ opacity: 1; }
+    100%{ opacity: 0; transform: translate(-130vw, 30vh) rotate(-960deg); }
+  }
+  .intro-hint{
+    opacity: 0;
+    animation: heroFadeSlide 0.6s ease 0.4s forwards;
+  }
+
   /* ---------- Nav ---------- */
   .site-nav{
     transform: translateY(-120%);
     opacity: 0;
+  }
+  body.intro-done .site-nav{
     animation: navSlideDown 0.9s cubic-bezier(0.16,1,0.3,1) 1.5s forwards;
   }
   @keyframes navSlideDown{
@@ -81,9 +121,11 @@
   .nav-link:hover::after, .nav-link:focus-visible::after{ width:100%; }
   .nav-link:focus-visible{ outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 
-  /* ---------- Hero reveal ---------- */
+  /* ---------- Hero reveal (gated until panda intro finishes) ---------- */
   .hero-date{
     opacity:0; transform: translateY(-10px);
+  }
+  body.intro-done .hero-date{
     animation: heroFadeSlide 0.9s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
   }
   @keyframes heroFadeSlide{ to{ opacity:1; transform:translateY(0);} }
@@ -91,12 +133,16 @@
   .hero-name{
     display:inline-block;
     opacity:0; transform: translateY(40px);
+  }
+  body.intro-done .hero-name{
     animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) forwards;
   }
   .hero-name.n1{ animation-delay: 0.75s; }
   .hero-name.n2{ animation-delay: 1.05s; }
   .hero-x{
     display:inline-block; opacity:0; transform: translateY(40px);
+  }
+  body.intro-done .hero-x{
     animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) 0.9s forwards;
   }
   @keyframes heroNameUp{ to{ opacity:1; transform:translateY(0);} }
@@ -107,6 +153,13 @@
     transition: none;
   }
   .deco.deco-in{
+    animation: decoSettle 1s cubic-bezier(0.34,1.4,0.64,1) forwards;
+  }
+  /* hero corner decorations wait for the panda intro to finish, same as nav/names */
+  .hero-deco{
+    opacity:0; transform: scale(0.5) rotate(18deg);
+  }
+  body.intro-done .hero-deco.deco-in{
     animation: decoSettle 1s cubic-bezier(0.34,1.4,0.64,1) forwards;
   }
   @keyframes decoSettle{
@@ -172,10 +225,17 @@
     box-shadow: 0 0 0 3px rgba(168,192,219,0.35);
   }
 
-  /* ---------- Gallery ---------- */
+  /* ---------- Gallery (masonry/collage — mixed photo sizes via CSS columns) ---------- */
   .gallery-item{
+    display:block;
+    width:100%;
     overflow:hidden;
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
     transition: transform 0.35s ease;
+  }
+  @media (min-width: 768px){
+    .gallery-item{ margin-bottom: 1rem; }
   }
   .gallery-item img{
     transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.4s ease;
@@ -212,20 +272,6 @@
   .faq-item.open .faq-chevron{ transform: rotate(45deg); }
   .faq-question:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 4px; }
 
-  /* hero image treatment */
-  .hero-photo-wrap::after{
-    content:'';
-    position:absolute; inset:0;
-    background: linear-gradient(to top, rgba(38,28,54,0.65), rgba(38,28,54,0.15) 45%, rgba(168,192,219,0.18));
-    mix-blend-mode: multiply;
-  }
-  .hero-photo-wrap::before{
-    content:'';
-    position:absolute; inset:0;
-    background: linear-gradient(to top, rgba(20,15,30,0.72), transparent 55%);
-    z-index:1;
-  }
-
   ::selection{ background: var(--accent); color:#fff; }
 
   @media (prefers-reduced-motion: reduce){
@@ -238,6 +284,12 @@
 </style>
 
 <body class="antialiased">
+
+  <!-- ================= PANDA INTRO ================= -->
+  <div id="intro-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" role="button" tabindex="0" aria-label="Skip intro animation">
+    <img id="intro-panda" src="photos/fun/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
+    <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[11px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
+  </div>
 
   <!-- ================= NAV ================= -->
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
@@ -255,36 +307,41 @@
   </nav>
 
   <!-- ================= HERO ================= -->
-  <section id="hero" class="relative min-h-screen flex items-end overflow-hidden">
-    <div class="hero-photo-wrap absolute inset-0">
-      <img src="photos/hero/thumbs/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" />
-    </div>
+  <!-- Photo is portrait-orientation and shown full-length, uncropped — the section's height follows
+       the photo's natural aspect ratio instead of being forced into a viewport-height banner.
+       The headline stays pinned to the bottom of the viewport (sticky) while the tall photo scrolls past. -->
+  <section id="hero" class="relative overflow-hidden">
+    <img src="photos/hero/thumbs/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-auto block" />
 
     <!-- corner decorations -->
-    <svg class="deco absolute top-8 left-6 md:top-12 md:left-12 w-16 h-16 md:w-24 md:h-24 z-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="42" stroke="#F7E4E7" stroke-width="1.5" opacity="0.8"/>
+    <svg class="hero-deco absolute top-8 left-6 md:top-12 md:left-12 w-16 h-16 md:w-24 md:h-24 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="42" stroke="#FBF1EE" stroke-width="1.5" opacity="0.8"/>
     </svg>
-    <svg class="deco absolute bottom-40 right-8 md:bottom-48 md:right-16 w-10 h-10 md:w-14 md:h-14 z-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="16" fill="#D8CFEA" opacity="0.85"/>
+    <svg class="hero-deco absolute bottom-40 right-8 md:bottom-48 md:right-16 w-10 h-10 md:w-14 md:h-14 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="16" fill="#B8A6C0" opacity="0.85"/>
     </svg>
-    <svg class="deco absolute top-1/3 right-10 md:right-20 w-20 h-20 md:w-28 md:h-28 z-10" data-deco viewBox="0 0 100 100" fill="none">
-      <path d="M10 70 A 40 40 0 0 1 70 10" stroke="#A8C0DB" stroke-width="2" opacity="0.7"/>
+    <svg class="hero-deco absolute top-1/3 right-10 md:right-20 w-20 h-20 md:w-28 md:h-28 z-10" data-deco viewBox="0 0 100 100" fill="none">
+      <path d="M10 70 A 40 40 0 0 1 70 10" stroke="#A8C4D8" stroke-width="2" opacity="0.7"/>
     </svg>
 
-    <div class="relative z-10 max-w-6xl mx-auto px-6 lg:px-10 pb-20 md:pb-28 w-full text-white">
-      <p class="hero-date tracking-wide-label text-[12px] md:text-sm mb-4 opacity-90">February 20, 2027</p>
-      <h1 class="font-display text-[15vw] leading-[0.95] sm:text-7xl md:text-8xl lg:text-9xl">
-        <span class="hero-name n1">Atom</span>
-        <span class="hero-x italic font-normal text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl mx-1 md:mx-3 align-middle" style="color:var(--primary)">x</span>
-        <span class="hero-name n2">Joanne</span>
-      </h1>
+    <div class="absolute top-0 inset-x-0 z-10">
+      <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
+      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
+      <div class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white">
+        <p class="hero-date tracking-wide-label text-[12px] md:text-sm mb-4 opacity-90">February 20, 2027</p>
+        <h1 class="font-display text-[15vw] leading-[0.95] sm:text-7xl md:text-8xl lg:text-9xl">
+          <span class="hero-name n1">Atom</span>
+          <span class="hero-x italic font-normal text-[9vw] sm:text-5xl md:text-6xl lg:text-7xl mx-1 md:mx-3 align-middle" style="color:var(--primary)">x</span>
+          <span class="hero-name n2">Joanne</span>
+        </h1>
+      </div>
     </div>
   </section>
 
   <!-- section-break decoration -->
   <div class="relative h-0">
     <svg class="deco absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="6" fill="#A8C0DB" opacity="0.8"/>
+      <circle cx="50" cy="50" r="6" fill="#A8C4D8" opacity="0.8"/>
     </svg>
   </div>
 
@@ -300,10 +357,10 @@
       </div>
       <div class="reveal reveal-delay-1 order-1 md:order-2 relative">
         <div class="rounded-[28px] overflow-hidden shadow-soft aspect-[4/5]">
-          <img src="photos/our-story/thumbs/illustration.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" loading="lazy" />
+          <img src="photos/our-story/thumbs/univ-ave.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" loading="lazy" />
         </div>
         <svg class="deco absolute -bottom-6 -left-6 w-16 h-16 z-[-1]" data-deco viewBox="0 0 100 100" fill="none">
-          <circle cx="50" cy="50" r="42" stroke="#D8CFEA" stroke-width="1.5" opacity="0.7"/>
+          <circle cx="50" cy="50" r="42" stroke="#B8A6C0" stroke-width="1.5" opacity="0.7"/>
         </svg>
       </div>
     </div>
@@ -312,56 +369,51 @@
   <!-- section-break decoration -->
   <div class="relative h-0">
     <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
-      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#D8CFEA" stroke-width="2" opacity="0.75"/>
+      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#B8A6C0" stroke-width="2" opacity="0.75"/>
     </svg>
   </div>
 
   <!-- ================= DETAILS ================= -->
-  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10" style="background: var(--cream)">
-    <div class="max-w-6xl mx-auto">
+  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-4xl mx-auto">
       <div class="reveal text-center mb-16 md:mb-20">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
         <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">When &amp; Where</h2>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8 md:gap-10 mb-14">
+      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 mb-16">
         <!-- Ceremony -->
-        <div class="reveal rounded-[28px] overflow-hidden shadow-soft bg-white">
-          <div class="aspect-[16/10] overflow-hidden">
+        <div class="reveal flex flex-col items-center text-center">
+          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="photos/details/thumbs/sacred-heart-of-jesus-parish.jpg" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <div class="p-8 md:p-10">
-            <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
-            <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
-            <p class="font-semibold mb-2">Sacred Heart of Jesus Parish</p>
-            <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
-            <p class="text-[15px]">The ceremony will be held at Sacred Heart of Jesus Parish, Joanne&rsquo;s home church.</p>
-          </div>
+          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
+          <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
+          <p class="font-semibold mb-2">Sacred Heart of Jesus Parish</p>
+          <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
+          <p class="text-[15px] max-w-xs">The ceremony will be held at Sacred Heart of Jesus Parish, Joanne&rsquo;s home church.</p>
         </div>
 
         <!-- Reception -->
-        <div class="reveal reveal-delay-1 rounded-[28px] overflow-hidden shadow-soft bg-white">
-          <div class="aspect-[16/10] overflow-hidden">
+        <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
+          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="photos/details/thumbs/elan-by-the-bay.jpeg" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <div class="p-8 md:p-10">
-            <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Reception</p>
-            <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
-            <p class="font-semibold mb-2">Elan by the Bay</p>
-            <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
-            <p class="text-[15px]">Manila traffic on Saturday afternoon (or any time) can be super busy, so plan accordingly. We&rsquo;ll start the evening with cocktail hour from 4:30 to 6pm before transitioning into dinner.</p>
-          </div>
+          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Reception</p>
+          <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
+          <p class="font-semibold mb-2">Elan by the Bay</p>
+          <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
+          <p class="text-[15px] max-w-xs">Manila traffic on Saturday afternoon (or any time) can be super busy, so plan accordingly. We&rsquo;ll start the evening with cocktail hour from 4:30 to 6pm before transitioning into dinner.</p>
         </div>
       </div>
 
-      <div class="reveal flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+      <div class="reveal flex justify-center">
         <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
            target="_blank" rel="noopener"
            class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
           How to Get There
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
         </a>
-        <p class="text-[15px] tracking-wide-label text-[12px]" style="color:var(--ink-soft)">Dress Code &mdash; Barong for men</p>
       </div>
     </div>
   </section>
@@ -369,7 +421,42 @@
   <!-- section-break decoration -->
   <div class="relative h-0">
     <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="6" fill="#A8C0DB" opacity="0.8"/>
+      <circle cx="50" cy="50" r="6" fill="#A8C4D8" opacity="0.8"/>
+    </svg>
+  </div>
+
+  <!-- ================= DRESS CODE ================= -->
+  <section id="dress-code" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-2xl mx-auto">
+      <div class="reveal text-center mb-16">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What to Wear</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Dress Code</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10">
+        <div class="reveal flex flex-col items-center text-center">
+          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
+            <img src="https://placehold.co/400x600?text=Mens+Attire" alt="Men's dress code" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">For Him</p>
+          <p class="font-display text-2xl md:text-3xl" style="color:var(--ink)">Barong</p>
+        </div>
+
+        <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
+          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
+            <img src="https://placehold.co/400x600?text=Womens+Attire" alt="Women's dress code" class="w-full h-full object-cover" loading="lazy" />
+          </div>
+          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">For Her</p>
+          <p class="text-[15px] max-w-[15rem]">Cool, pale, muted pastels &mdash; think dusty rose, powder blue, sage, and soft lavender. Avoid bright, warm, or neon tones.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- section-break decoration -->
+  <div class="relative h-0">
+    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="6" fill="#A8C4D8" opacity="0.8"/>
     </svg>
   </div>
 
@@ -378,10 +465,10 @@
     <div class="max-w-6xl mx-auto">
       <div class="reveal text-center mb-14 md:mb-16">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Gallery</p>
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Our photos from Sydney</h2>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Snapshots from Sydney</h2>
       </div>
 
-      <div class="reveal grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-4" id="gallery-grid">
+      <div class="columns-2 sm:columns-3 md:columns-4 gap-3 md:gap-4" id="gallery-grid">
         <!-- populated below -->
       </div>
     </div>
@@ -404,12 +491,12 @@
   <!-- section-break decoration -->
   <div class="relative h-0">
     <svg class="deco absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
-      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#D8CFEA" stroke-width="2" opacity="0.75"/>
+      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#B8A6C0" stroke-width="2" opacity="0.75"/>
     </svg>
   </div>
 
   <!-- ================= FAQS ================= -->
-  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10" style="background: var(--cream)">
+  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-14">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">FAQs</p>
@@ -433,7 +520,7 @@
   <!-- section-break decoration -->
   <div class="relative h-0">
     <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="16" fill="#D8CFEA" opacity="0.8"/>
+      <circle cx="50" cy="50" r="16" fill="#B8A6C0" opacity="0.8"/>
     </svg>
   </div>
 
@@ -489,6 +576,30 @@
   </footer>
 
   <script>
+    // ---------- Panda intro ----------
+    const introOverlay = document.getElementById('intro-overlay');
+    const introPanda = document.getElementById('intro-panda');
+    let introFinished = false;
+
+    document.body.style.overflow = 'hidden';
+
+    function finishIntro() {
+      if (introFinished) return;
+      introFinished = true;
+      introOverlay.classList.add('intro-exit');
+      document.body.classList.add('intro-done');
+      document.body.style.overflow = '';
+      setTimeout(() => { introOverlay.style.display = 'none'; }, 550);
+    }
+
+    introOverlay.addEventListener('click', finishIntro);
+    introOverlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); finishIntro(); }
+    });
+    // reveal the hero only once the panda has actually finished rolling off the left edge
+    introPanda.addEventListener('animationend', finishIntro);
+    setTimeout(finishIntro, 4000); // safety fallback in case animationend never fires
+
     // ---------- Scroll-triggered reveals (sections + decorations at section breaks) ----------
     const revealObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -514,23 +625,32 @@
     });
 
     // ---------- Gallery ----------
+    // width/height reflect each thumbnail's actual pixel dimensions — required so the
+    // browser can reserve the correct aspect-ratio box before a lazy-loaded image arrives.
+    // Without this, the masonry grid collapses to ~0 height and scroll-reveal/lazy-load
+    // never resolve correctly (each depends on the other's layout being correct).
     const galleryFiles = [
-      'DSC04131.jpeg','DSC04180.jpeg','DSC04225.jpeg','DSC04236.jpeg','DSC04239.jpeg',
-      'DSC04283.jpeg','DSC04315.jpeg','DSC04415.jpeg','DSC04520.jpeg','DSC04551.jpeg',
-      'DSC04630.jpeg','DSC04689.jpeg','DSC04785.jpeg','DSC04814.jpeg','DSC04855.jpeg',
-      'DSC04962.jpeg','DSC05006.jpeg','DSC05033.jpeg','DSC05084.jpeg','DSC05137.jpeg',
-      'DSC05327.jpeg','DSC05423.jpeg','DSC05735.jpeg','DSC05816.jpeg','DSC06128.jpeg',
-      'DSC06332.jpeg'
+      ['DSC04131.jpeg', 600, 900], ['DSC04180.jpeg', 900, 600], ['DSC04225.jpeg', 900, 600],
+      ['DSC04236.jpeg', 900, 600], ['DSC04239.jpeg', 900, 600], ['DSC04283.jpeg', 900, 600],
+      ['DSC04315.jpeg', 900, 600], ['DSC04415.jpeg', 600, 900], ['DSC04520.jpeg', 900, 600],
+      ['DSC04551.jpeg', 900, 600], ['DSC04630.jpeg', 900, 600], ['DSC04689.jpeg', 900, 600],
+      ['DSC04785.jpeg', 900, 600], ['DSC04814.jpeg', 900, 600], ['DSC04855.jpeg', 900, 600],
+      ['DSC04962.jpeg', 900, 600], ['DSC05006.jpeg', 900, 600], ['DSC05033.jpeg', 900, 600],
+      ['DSC05084.jpeg', 900, 600], ['DSC05137.jpeg', 600, 900], ['DSC05327.jpeg', 600, 900],
+      ['DSC05423.jpeg', 600, 900], ['DSC05735.jpeg', 900, 600], ['DSC05816.jpeg', 900, 600],
+      ['DSC06128.jpeg', 900, 600], ['DSC06332.jpeg', 600, 900],
     ];
 
     const grid = document.getElementById('gallery-grid');
-    galleryFiles.forEach((file, i) => {
+    galleryFiles.forEach(([file, w, h], i) => {
       const btn = document.createElement('button');
-      btn.className = 'gallery-item rounded-xl aspect-square';
+      btn.className = 'gallery-item reveal rounded-xl';
+      btn.style.transitionDelay = ((i % 4) * 0.08) + 's';
       btn.setAttribute('data-index', i);
       btn.setAttribute('aria-label', 'Open photo ' + (i + 1));
-      btn.innerHTML = `<img src="photos/gallery/thumbs/${file}" alt="Gallery photo ${i + 1}" class="w-full h-full object-cover" loading="lazy" />`;
+      btn.innerHTML = `<img src="photos/gallery/thumbs/${file}" width="${w}" height="${h}" alt="Gallery photo ${i + 1}" class="w-full h-auto block" loading="lazy" />`;
       grid.appendChild(btn);
+      revealObserver.observe(btn);
     });
 
     const lightbox = document.getElementById('lightbox');
@@ -540,7 +660,7 @@
     function showPhoto(index) {
       currentIndex = (index + galleryFiles.length) % galleryFiles.length;
       lightboxImg.classList.remove('loaded');
-      const fullSrc = 'photos/gallery/' + galleryFiles[currentIndex];
+      const fullSrc = 'photos/gallery/' + galleryFiles[currentIndex][0];
       const img = new Image();
       img.onload = () => {
         lightboxImg.src = fullSrc;

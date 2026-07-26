@@ -39,7 +39,8 @@ async function main() {
   });
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
-  await new Promise((r) => setTimeout(r, 1800));
+  // wait past the panda intro overlay's auto-dismiss (~2s) + exit transition (~0.55s) before proceeding
+  await new Promise((r) => setTimeout(r, 3200));
 
   // scroll through the full page so scroll-triggered reveal animations fire
   // (force instant scrolling — CSS scroll-behavior:smooth would lag behind our step loop)
