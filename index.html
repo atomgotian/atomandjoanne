@@ -525,36 +525,53 @@
       </div>
 
       <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
-        <div>
-          <label for="rsvp-name" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Your Name</label>
-          <input id="rsvp-name" name="NAME" type="text" required placeholder="Full name"
-                 class="w-full rounded-xl px-4 py-3 text-[15px]" />
-        </div>
-
-        <div>
-          <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be attending?</p>
-          <div class="grid grid-cols-2 gap-3">
-            <button type="button" data-attend="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-              Joyfully Accept
-            </button>
-            <button type="button" data-attend="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-              Regretfully Decline
-            </button>
+        <div id="name-step" class="space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="rsvp-first-name" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">First Name</label>
+              <input id="rsvp-first-name" name="FIRSTNAME" type="text" required placeholder="First name"
+                     class="w-full rounded-xl px-4 py-3 text-[15px]" />
+            </div>
+            <div>
+              <label for="rsvp-last-name" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Last Name</label>
+              <input id="rsvp-last-name" name="LASTNAME" type="text" required placeholder="Last name"
+                     class="w-full rounded-xl px-4 py-3 text-[15px]" />
+            </div>
           </div>
-          <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
+
+          <button type="button" id="rsvp-continue" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Continue
+          </button>
+
+          <p id="rsvp-name-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
-        <div id="attending-fields" class="field-reveal space-y-6">
+        <div id="details-step" class="hidden space-y-6">
           <div>
-            <label for="rsvp-dietary" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Dietary Restrictions</label>
-            <textarea id="rsvp-dietary" name="DIET" rows="3" placeholder="Allergies, preferences, etc. (optional)"
-                      class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
+            <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be attending?</p>
+            <div class="grid grid-cols-2 gap-3">
+              <button type="button" data-attend="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Joyfully Accept
+              </button>
+              <button type="button" data-attend="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Regretfully Decline
+              </button>
+            </div>
+            <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
           </div>
-        </div>
 
-        <button type="submit" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
-          Send RSVP
-        </button>
+          <div id="attending-fields" class="field-reveal space-y-6">
+            <div>
+              <label for="rsvp-dietary" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Dietary Restrictions</label>
+              <textarea id="rsvp-dietary" name="DIET" rows="3" placeholder="Allergies, preferences, etc. (optional)"
+                        class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
+            </div>
+          </div>
+
+          <button type="submit" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Send RSVP
+          </button>
+        </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
       </form>
@@ -741,6 +758,55 @@
       question.addEventListener('click', () => item.classList.toggle('open'));
     });
 
+    // ---------- RSVP endpoint ----------
+    const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZFvK8gtZosBIGts8IiRme50oY0VWPqlJKSm2MlMsEn_9BQUuxWhZ-M2DLdGFA5coH/exec';
+    const rsvpForm = document.getElementById('rsvp-form');
+    const rsvpMessage = document.getElementById('rsvp-message');
+
+    // ---------- RSVP name gate ----------
+    // Guests must match a name on the guest list (checked via GET) before the
+    // attendance/dietary fields are revealed.
+    const firstNameInput = document.getElementById('rsvp-first-name');
+    const lastNameInput = document.getElementById('rsvp-last-name');
+    const continueBtn = document.getElementById('rsvp-continue');
+    const nameMessage = document.getElementById('rsvp-name-message');
+    const detailsStep = document.getElementById('details-step');
+
+    continueBtn.addEventListener('click', async () => {
+      if (!firstNameInput.reportValidity() || !lastNameInput.reportValidity()) return;
+
+      nameMessage.classList.add('hidden');
+      continueBtn.disabled = true;
+      continueBtn.textContent = 'Checking...';
+
+      try {
+        const params = new URLSearchParams({
+          firstName: firstNameInput.value.trim(),
+          lastName: lastNameInput.value.trim(),
+        });
+        const res = await fetch(RSVP_ENDPOINT + '?' + params.toString());
+        const data = await res.json();
+
+        if (data.match) {
+          // readOnly (not disabled) so the values still submit with the form later
+          firstNameInput.readOnly = true;
+          lastNameInput.readOnly = true;
+          continueBtn.classList.add('hidden');
+          detailsStep.classList.remove('hidden');
+        } else {
+          continueBtn.disabled = false;
+          continueBtn.textContent = 'Continue';
+          nameMessage.textContent = "We couldn't find your name on the list — please check the spelling and try again.";
+          nameMessage.classList.remove('hidden');
+        }
+      } catch (err) {
+        continueBtn.disabled = false;
+        continueBtn.textContent = 'Continue';
+        nameMessage.textContent = 'Something went wrong checking the guest list. Please try again.';
+        nameMessage.classList.remove('hidden');
+      }
+    });
+
     // ---------- RSVP toggle ----------
     const attendingInput = document.getElementById('rsvp-attending');
     const attendingFields = document.getElementById('attending-fields');
@@ -758,10 +824,7 @@
     });
 
     // ---------- RSVP submit ----------
-    const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZFvK8gtZosBIGts8IiRme50oY0VWPqlJKSm2MlMsEn_9BQUuxWhZ-M2DLdGFA5coH/exec';
-    const rsvpForm = document.getElementById('rsvp-form');
     const rsvpSubmit = document.getElementById('rsvp-submit');
-    const rsvpMessage = document.getElementById('rsvp-message');
 
     rsvpForm.addEventListener('submit', async (e) => {
       e.preventDefault();
