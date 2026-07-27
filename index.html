@@ -133,7 +133,6 @@
   /* ---------- Hero sticker ---------- */
   .hero-sticker{
     position:absolute;
-    width:320px;
     opacity:0;
     transform:scale(0.4) rotate(-36deg);
     filter:drop-shadow(0 8px 18px rgba(0,0,0,0.35));
@@ -147,8 +146,18 @@
     70%{ opacity:1; transform:scale(2.08) rotate(4deg); }
     100%{ opacity:1; transform:scale(2) rotate(-6deg); }
   }
-  @media (min-width:768px){
-    .hero-sticker{ top:28px; left:28px; width:160px; }
+
+  @media (max-width: 767px) {
+    #hero{
+      height: 100vh;
+      overflow: hidden;
+    }
+    #hero-photo{
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
   }
 
   .hero-name, .hero-date {
@@ -332,7 +341,7 @@
        the photo's natural aspect ratio instead of being forced into a viewport-height banner.
        The headline stays pinned to the bottom of the viewport (sticky) while the tall photo scrolls past. -->
   <section id="hero" class="relative overflow-hidden">
-    <img src="photos/hero/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-auto block" />
+    <img id="hero-photo" src="photos/hero/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-auto block" />
     <img id="hero-sticker" src="photos/fun/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
     <div class="absolute top-0 inset-x-0 z-10">
       <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
@@ -631,7 +640,8 @@
 
       const atomRect = atomEl.getBoundingClientRect();
       const heroRect = document.getElementById('hero').getBoundingClientRect();
-
+      
+      sticker.style.width = `${atomRect.height * 1.4}px`;
       const topPos = atomRect.top - heroRect.top + (atomRect.height / 2) - (sticker.offsetHeight / 2);
       const leftPos = (atomRect.left * 2.5) - (sticker.offsetWidth / 2);
 
