@@ -109,6 +109,18 @@
     }
   }
 
+  @media (max-width: 767px){
+    #hero-overlay{
+      bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+    #hero-content{
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
   @keyframes pandaRollThroughMobile{
     0%{ opacity: 0; transform: translate(130vw, -30vh) rotate(0deg); }
     8%{ opacity: 1; }
@@ -356,18 +368,18 @@
   <section id="hero" class="relative overflow-hidden full-screen">
   <img id="hero-photo" src="photos/hero/hero-trees.jpeg" alt="Trees over the water"
        style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center top; display:block;" />
-  <div class="absolute top-0 inset-x-0 z-10">
+  <div id="hero-overlay" class="absolute top-0 inset-x-0 z-10">
     <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
-    <div class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
+    <div id="hero-content" class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
       <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,3.5cqw,18px)] mb-2 opacity-90">02.20.2027</p>
       <h1 class="font-display leading-[0.9]">
-        <span id="hero-atom" class="hero-name text-[clamp(3.5rem,13cqw,10rem)]" style="color:var(--cream)">
+        <span id="hero-atom" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream)">
             Atom
             <img id="hero-sticker" src="photos/fun/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
         </span>
-        <span id="hero-and" class="hero-name font-normal text-[clamp(2rem,7cqw,4.5rem)]" style="color:var(--cream)">and</span>
-        <span id="hero-joanne" class="hero-name text-[clamp(3.5rem,13cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
+        <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">and</span>
+        <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
       </h1>
     </div>
   </div>
