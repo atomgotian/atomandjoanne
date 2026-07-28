@@ -1,4 +1,5 @@
 <title>Atom &amp; Joanne — February 20, 2027</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23F7E4E7'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='26' fill='%238B7BAE' text-anchor='middle'%3EA%26J%3C/text%3E%3C/svg%3E">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,6 +32,15 @@
   h1, h2, h3, .font-display{
     font-family: 'Cormorant Garamond', serif;
     letter-spacing: -0.02em;
+  }
+
+  .full-screen{
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .tracking-wide-label{
@@ -90,6 +100,22 @@
     92%{ opacity: 1; }
     100%{ opacity: 0; transform: translate(-130vw, 45vh) rotate(-960deg); }
   }
+  /* Same horizontal travel/rotation as desktop, but the vertical path is shifted up
+     30vh throughout — the desktop vh values land too low on narrow/tall viewports. */
+  @media (max-width: 1000px) {
+    #intro-panda{
+      animation-name: pandaRollThroughMobile;
+      width: clamp(10rem, 35vw, 16rem);
+    }
+  }
+
+  @keyframes pandaRollThroughMobile{
+    0%{ opacity: 0; transform: translate(130vw, -30vh) rotate(0deg); }
+    8%{ opacity: 1; }
+    50%{ transform: translate(0vw, 0vh) rotate(-480deg); }
+    92%{ opacity: 1; }
+    100%{ opacity: 0; transform: translate(-130vw, 30vh) rotate(-960deg); }
+  }
   .intro-hint{
     opacity: 0;
     animation: heroFadeSlide 0.6s ease 0.4s forwards;
@@ -131,10 +157,21 @@
   @keyframes heroFadeSlide{ to{ opacity:1; transform:translateY(0);} }
   
   /* ---------- Hero sticker ---------- */
+  #hero-atom{
+    position:relative;
+    width:fit-content;
+    margin-left:auto;
+    margin-right:auto;
+  }
   .hero-sticker{
     position:absolute;
+    top:50%;
+    left:-0.7em;
+    width:0.7em;
+    height:auto;
     opacity:0;
-    transform:scale(0.4) rotate(-36deg);
+    transform: translateY(-50%) scale(0.4) rotate(-36deg);
+    transform-origin:center center;
     filter:drop-shadow(0 8px 18px rgba(0,0,0,0.35));
     pointer-events:none;
   }
@@ -142,22 +179,14 @@
     animation: stickerPopIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 2.4s forwards;
   }
   @keyframes stickerPopIn{
-    0%{ opacity:0; transform:scale(0.4) rotate(-18deg); }
-    70%{ opacity:1; transform:scale(2.08) rotate(4deg); }
-    100%{ opacity:1; transform:scale(2) rotate(-6deg); }
+    0%{ opacity:0; transform:translateY(-50%) scale(0.4) rotate(-18deg); }
+    70%{ opacity:1; transform:translateY(-50%) scale(3.08) rotate(4deg); }
+    100%{ opacity:1; transform:translateY(-50%) scale(3) rotate(-6deg); }
   }
 
-  @media (max-width: 767px) {
-    #hero{
-      height: 100vh;
-      overflow: hidden;
-    }
-    #hero-photo{
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      object-position: center 30%;
-    }
+  #hero{
+    container-type: inline-size;
+    justify-content: flex-start;
   }
 
   .hero-name, .hero-date {
@@ -181,19 +210,6 @@
 
   .site-nav.play{
     animation: heroFadeSlide 1s cubic-bezier(0.16,1,0.3,1) 2s forwards;
-  }
-
-  @media (max-width: 767px) {
-    #hero{
-      height: 100vh;
-      overflow: hidden;
-    }
-    #hero img{
-      height: 100%;
-      width: 100%;
-      object-fit: cover;
-      object-position: center 30%; /* nudge this to frame the couple better */
-    }
   }
 
   /* ---------- Scroll reveals ---------- */
@@ -323,42 +339,47 @@
 
   <!-- ================= NAV ================= -->
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
-    <nav class="site-nav fixed top-0 inset-x-0 z-50 shadow-soft-sm" style="background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid color-mix(in srgb, var(--ink) 15%, transparent);"></nav>
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
-      <ul class="hidden sm:flex items-center gap-6 md:gap-9 text-[12px] tracking-wide-label">
-        <li><a href="#our-story" class="nav-link">Our Story</a></li>
-        <li><a href="#details" class="nav-link">Details</a></li>
-        <li><a href="#gallery" class="nav-link">Gallery</a></li>
-        <li><a href="#faqs" class="nav-link">FAQs</a></li>
-        <li><a href="#rsvp" class="nav-link btn-outline px-4 py-2 rounded-full">RSVP</a></li>
+      <ul class="flex items-center gap-[clamp(0.4rem,2.5vw,2.25rem)] text-[clamp(8px,2.6vw,12px)] tracking-wide-label">
+        <li><a href="#our-story" class="nav-link whitespace-nowrap">Our Story</a></li>
+        <li><a href="#details" class="nav-link whitespace-nowrap">Details</a></li>
+        <li><a href="#gallery" class="nav-link whitespace-nowrap">Gallery</a></li>
+        <li><a href="#faqs" class="nav-link whitespace-nowrap">FAQs</a></li>
+        <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
-      <a href="#rsvp" class="sm:hidden nav-link btn-outline px-4 py-1.5 rounded-full text-[12px] tracking-wide-label">RSVP</a>
     </div>
   </nav>
 
   <!-- ================= HERO ================= -->
-  <!-- Photo is portrait-orientation and shown full-length, uncropped — the section's height follows
-       the photo's natural aspect ratio instead of being forced into a viewport-height banner.
-       The headline stays pinned to the bottom of the viewport (sticky) while the tall photo scrolls past. -->
-  <section id="hero" class="relative overflow-hidden">
-    <img id="hero-photo" src="photos/hero/DSC06317.jpeg" alt="Atom and Joanne" class="w-full h-auto block" />
-    <img id="hero-sticker" src="photos/fun/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
-    <div class="absolute top-0 inset-x-0 z-10">
-      <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
-      <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
-      <div class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
-        <p id="hero-date" class="hero-date tracking-wide-label text-[16px] md:text-lg mb-4 opacity-90">02.20.2027</p>
-        <h1 class="font-display leading-[0.5]">
-          <span id="hero-atom" class="hero-name text-[13vw] sm:text-8xl md:text-9xl lg:text-[10rem]" style="color:var(--cream)">Atom</span>
-          <span id="hero-and" class="hero-name font-normal text-[7vw] sm:text-5xl md:text-6xl lg:text-7xl" style="color:var(--cream)">and</span>
-          <span id="hero-joanne" class="hero-name text-[13vw] sm:text-8xl md:text-9xl lg:text-[10rem]" style="color:var(--cream)">Joanne</span>
-        </h1>
-      </div>
+  <!-- Photo shown at natural width/height, uncropped — how much shows before scrolling
+    will vary slightly by screen size, which is an accepted trade-off for simplicity. -->
+  <section id="hero" class="relative overflow-hidden full-screen">
+  <img id="hero-photo" src="photos/hero/hero-trees.jpeg" alt="Trees over the water"
+       style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center top; display:block;" />
+  <div class="absolute top-0 inset-x-0 z-10">
+    <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
+    <div class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
+      <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,3.5cqw,18px)] mb-2 opacity-90">02.20.2027</p>
+      <h1 class="font-display leading-[0.9]">
+        <span id="hero-atom" class="hero-name text-[clamp(3.5rem,13cqw,10rem)]" style="color:var(--cream)">
+            Atom
+            <img id="hero-sticker" src="photos/fun/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
+        </span>
+        <span id="hero-and" class="hero-name font-normal text-[clamp(2rem,7cqw,4.5rem)]" style="color:var(--cream)">and</span>
+        <span id="hero-joanne" class="hero-name text-[clamp(3.5rem,13cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
+      </h1>
     </div>
-  </section>
+  </div>
+</section>
+
+<section id="hero-bottom" class="relative overflow-hidden full-screen">
+  <img src="photos/hero/hero-couple.jpeg" alt="Atom and Joanne looking out at the water"
+       style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
+</section>
 
   <!-- ================= OUR STORY ================= -->
-  <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10">
+  <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-center">
       <div class="reveal order-2 md:order-1">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Our Story</p>
@@ -386,7 +407,7 @@
   </div>
 
   <!-- ================= DETAILS ================= -->
-  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10">
+  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-4xl mx-auto">
       <div class="reveal text-center mb-16 md:mb-20">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
@@ -438,7 +459,7 @@
   </div>
 
   <!-- ================= DRESS CODE ================= -->
-  <section id="dress-code" class="relative py-24 md:py-32 px-6 lg:px-10">
+  <section id="dress-code" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-16">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What to Wear</p>
@@ -508,7 +529,7 @@
   </div>
 
   <!-- ================= FAQS ================= -->
-  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10">
+  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-14">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">FAQs</p>
@@ -537,7 +558,7 @@
   </div>
 
   <!-- ================= RSVP ================= -->
-  <section id="rsvp" class="relative py-24 md:py-32 px-6 lg:px-10">
+  <section id="rsvp" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-12">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
@@ -633,34 +654,15 @@
       document.querySelector('.site-nav'),
     ];
 
-    function positionHeroSticker() {
-      const sticker = document.getElementById('hero-sticker');
-      const atomEl = document.getElementById('hero-atom');
-      if (!sticker || !atomEl) return;
-
-      const atomRect = atomEl.getBoundingClientRect();
-      const heroRect = document.getElementById('hero').getBoundingClientRect();
-      
-      sticker.style.width = `${atomRect.height * 1.4}px`;
-      const topPos = atomRect.top - heroRect.top + (atomRect.height / 2) - (sticker.offsetHeight / 2);
-      const leftPos = (atomRect.left * 2.5) - (sticker.offsetWidth / 2);
-
-      sticker.style.top = `${topPos}px`;
-      sticker.style.left = `${Math.max(leftPos, 8)}px`;
-    }
-
     function finishIntro() {
       if (introFinished) return;
       introFinished = true;
       introOverlay.classList.add('intro-exit');
       document.body.classList.add('intro-done');
       document.body.style.overflow = '';
-      positionHeroSticker();
       playSequence(heroSequence);
       setTimeout(() => { introOverlay.style.display = 'none'; }, 550);
     }
-
-    window.addEventListener('resize', positionHeroSticker);
 
     introOverlay.addEventListener('click', finishIntro);
     introOverlay.addEventListener('keydown', (e) => {
