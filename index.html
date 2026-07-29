@@ -12,7 +12,7 @@
     --ink:#4A3648;          /* deep plum-ink for body text, derived from the palette */
     --ink-soft:#8B7BAE;     /* deeper lavender-violet, secondary text/headings */
     --bg:#C9A8B0;           /* dusty rose-mauve — single continuous section background */
-    --cream:#FDF8F6;        /* elevated card surface (form, faq item) */
+    --cream:#FDF8F6;        /* elevated card surface (form) */
     --accent:#A8C4D8;       /* powder blue */
     --accent-deep:#7DA0BC;  /* pressed/hover state derived from accent */
   }
@@ -320,18 +320,6 @@
   .lightbox-arrow:hover{ background: rgba(255,255,255,0.18); transform: scale(1.08); }
   .lightbox-arrow:focus-visible{ outline: 2px solid var(--accent); }
 
-  /* ---------- FAQ accordion ---------- */
-  .faq-answer{
-    max-height:0; overflow:hidden;
-    transition: max-height 0.5s cubic-bezier(0.16,1,0.3,1);
-  }
-  .faq-item.open .faq-answer{ max-height: 400px; }
-  .faq-chevron{ transition: transform 0.35s cubic-bezier(0.16,1,0.3,1); }
-  .faq-item.open .faq-chevron{ transform: rotate(45deg); }
-  .faq-question:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 4px; }
-
-  ::selection{ background: var(--accent); color:#fff; }
-
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration: 0.01ms !important;
@@ -345,18 +333,16 @@
 
   <!-- ================= PANDA INTRO ================= -->
   <div id="intro-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" role="button" tabindex="0" aria-label="Skip intro animation">
-    <img id="intro-panda" src="photos/fun/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
+    <img id="intro-panda" src="photos/hero/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
     <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[11px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
   </div>
 
   <!-- ================= NAV ================= -->
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
-      <ul class="flex items-center gap-[clamp(0.4rem,2.5vw,2.25rem)] text-[clamp(8px,2.6vw,12px)] tracking-wide-label">
+      <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
         <li><a href="#our-story" class="nav-link whitespace-nowrap">Our Story</a></li>
-        <li><a href="#details" class="nav-link whitespace-nowrap">Details</a></li>
-        <li><a href="#gallery" class="nav-link whitespace-nowrap">Gallery</a></li>
-        <li><a href="#faqs" class="nav-link whitespace-nowrap">FAQs</a></li>
+        <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
     </div>
@@ -376,7 +362,7 @@
       <h1 class="font-display leading-[0.9]">
         <span id="hero-atom" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream)">
             Atom
-            <img id="hero-sticker" src="photos/fun/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
+            <img id="hero-sticker" src="photos/hero/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
         </span>
         <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">and</span>
         <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
@@ -419,7 +405,7 @@
   </div>
 
   <!-- ================= DETAILS ================= -->
-  <section id="details" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
+  <section id="venue" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-4xl mx-auto">
       <div class="reveal text-center mb-16 md:mb-20">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
@@ -430,7 +416,7 @@
         <!-- Ceremony -->
         <div class="reveal flex flex-col items-center text-center">
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-            <img src="photos/details/thumbs/sacred-heart-of-jesus-parish.jpg" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
+            <img src="photos/event-details/thumbs/sacred-heart-of-jesus-parish.jpg" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
           </div>
           <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
           <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
@@ -442,7 +428,7 @@
         <!-- Reception -->
         <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-            <img src="photos/details/thumbs/elan-by-the-bay.jpeg" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
+            <img src="photos/event-details/thumbs/elan-by-the-bay.jpeg" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
           </div>
           <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Reception</p>
           <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
@@ -450,15 +436,6 @@
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
           <p class="text-[15px] max-w-xs">Manila traffic on Saturday afternoon (or any time) can be super busy, so plan accordingly. We&rsquo;ll start the evening with cocktail hour from 4:30 to 6pm before transitioning into dinner.</p>
         </div>
-      </div>
-
-      <div class="reveal flex justify-center">
-        <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
-           target="_blank" rel="noopener"
-           class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
-          How to Get There
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
-        </a>
       </div>
     </div>
   </section>
@@ -471,7 +448,7 @@
   </div>
 
   <!-- ================= DRESS CODE ================= -->
-  <section id="dress-code" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
+  <section id="attire" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-16">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What to Wear</p>
@@ -505,6 +482,30 @@
     </svg>
   </div>
 
+  <!-- ================= HOW TO GET THERE ================= -->
+  <section id="directions" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen flex flex-col items-center justify-center">
+    <div class="max-w-2xl mx-auto text-center">
+      <div class="reveal mb-12">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Getting There</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">How do I get there?</h2>
+      </div>
+
+      <!-- map photo pending — placeholder until you have one -->
+      <div class="reveal w-full max-w-md mx-auto rounded-[28px] overflow-hidden shadow-soft mb-10 aspect-[4/3] flex items-center justify-center" style="background:var(--cream)">
+        <p class="text-[13px] tracking-wide-label" style="color:var(--ink-soft)">Map image pending</p>
+      </div>
+
+      <div class="reveal flex justify-center">
+        <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
+           target="_blank" rel="noopener"
+           class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
+          Google Maps
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= GALLERY ================= -->
   <section id="gallery" class="relative py-24 md:py-32 px-6 lg:px-10">
     <div class="max-w-6xl mx-auto">
@@ -535,35 +536,6 @@
 
   <!-- section-break decoration -->
   <div class="relative h-0">
-    <svg class="deco absolute -top-6 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
-      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#B8A6C0" stroke-width="2" opacity="0.75"/>
-    </svg>
-  </div>
-
-  <!-- ================= FAQS ================= -->
-  <section id="faqs" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
-    <div class="max-w-2xl mx-auto">
-      <div class="reveal text-center mb-14">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">FAQs</p>
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Good to Know</h2>
-      </div>
-
-      <div class="reveal faq-item rounded-2xl bg-white shadow-soft-sm overflow-hidden">
-        <button class="faq-question w-full flex items-center justify-between gap-4 p-6 md:p-7 text-left">
-          <span class="font-display text-xl md:text-2xl" style="color:var(--ink)">Can I bring a guest or plus one?</span>
-          <span class="faq-chevron flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center" style="background:var(--primary)">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-          </span>
-        </button>
-        <div class="faq-answer px-6 md:px-7">
-          <p class="pb-6 md:pb-7 text-[15px] md:text-base" style="color:var(--ink)">We&rsquo;re keeping our celebration small and intimate, so we&rsquo;re only able to accommodate those who received a formal invitation. We hope you understand, and we can&rsquo;t wait to celebrate with you!</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- section-break decoration -->
-  <div class="relative h-0">
     <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
       <circle cx="50" cy="50" r="16" fill="#B8A6C0" opacity="0.8"/>
     </svg>
@@ -574,9 +546,8 @@
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-12">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
-        <h2 class="font-display text-4xl md:text-5xl mb-5" style="color:var(--ink)">Join Us</h2>
-        <p class="text-[17px] mb-2">We can&rsquo;t wait to celebrate with you &mdash; please let us know if you&rsquo;ll be joining us!</p>
-        <p class="tracking-wide-label text-[12px]" style="color:var(--accent-deep)">Please RSVP by January 20, 2027</p>
+        <h2 class="font-display text-4xl md:text-5xl mb-5" style="color:var(--ink)">See you there!</h2>
+        <p class="text-[17px] mb-2">We can&rsquo;t wait to celebrate with you. Please let us know if you&rsquo;ll be joining us!</p>
       </div>
 
       <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
@@ -788,12 +759,6 @@
       const dx = e.changedTouches[0].screenX - touchStartX;
       if (Math.abs(dx) > 50) showPhoto(currentIndex + (dx < 0 ? 1 : -1));
     }, { passive: true });
-
-    // ---------- FAQ accordion ----------
-    document.querySelectorAll('.faq-item').forEach((item) => {
-      const question = item.querySelector('.faq-question');
-      question.addEventListener('click', () => item.classList.toggle('open'));
-    });
 
     // ---------- RSVP endpoint ----------
     const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZFvK8gtZosBIGts8IiRme50oY0VWPqlJKSm2MlMsEn_9BQUuxWhZ-M2DLdGFA5coH/exec';
