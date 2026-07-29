@@ -8,13 +8,12 @@
 
 <style>
   :root{
-    --primary:#B8A6C0;      /* muted lavender-mauve */
-    --ink:#4A3648;          /* deep plum-ink for body text, derived from the palette */
-    --ink-soft:#8B7BAE;     /* deeper lavender-violet, secondary text/headings */
-    --bg:#C9A8B0;           /* dusty rose-mauve — single continuous section background */
-    --cream:#FDF8F6;        /* elevated card surface (form) */
-    --accent:#A8C4D8;       /* powder blue */
-    --accent-deep:#7DA0BC;  /* pressed/hover state derived from accent */
+    --bg:        #F5F0F2;   /* color-50 — sitewide background */
+    --cream:     #F5F0F2;   /* near-white — elevated card/form surface */
+    --ink-soft:  #9A6580;   /* color-500 — secondary text, nav links */
+    --ink:       #472E3B;   /* color-800 — body text, headings */
+    --accent:    #A5CCE6;   /* color-300 — borders, dividers, subtle accents */
+    --accent-deep: #2D74A4; /* color-600 — hover/pressed states */
   }
 
   * { -webkit-tap-highlight-color: transparent; }
@@ -334,7 +333,7 @@
   <!-- ================= PANDA INTRO ================= -->
   <div id="intro-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" role="button" tabindex="0" aria-label="Skip intro animation">
     <img id="intro-panda" src="photos/hero/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
-    <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[11px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
+    <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[12px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
   </div>
 
   <!-- ================= NAV ================= -->
@@ -364,7 +363,7 @@
             Atom
             <img id="hero-sticker" src="photos/hero/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
         </span>
-        <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">and</span>
+        <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">&</span>
         <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
       </h1>
     </div>
@@ -418,7 +417,7 @@
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="photos/event-details/thumbs/sacred-heart-of-jesus-parish.jpg" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
+          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
           <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
           <p class="font-semibold mb-2">Sacred Heart of Jesus Parish</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
@@ -430,7 +429,7 @@
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="photos/event-details/thumbs/elan-by-the-bay.jpeg" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">Reception</p>
+          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Reception</p>
           <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
           <p class="font-semibold mb-2">Elan by the Bay</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
@@ -460,7 +459,7 @@
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="https://placehold.co/400x600?text=Mens+Attire" alt="Men's dress code" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">For Him</p>
+          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">For Him</p>
           <p class="font-display text-2xl md:text-3xl" style="color:var(--ink)">Barong</p>
         </div>
 
@@ -468,7 +467,7 @@
           <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
             <img src="https://placehold.co/400x600?text=Womens+Attire" alt="Women's dress code" class="w-full h-full object-cover" loading="lazy" />
           </div>
-          <p class="tracking-wide-label text-[11px] mb-3" style="color:var(--accent-deep)">For Her</p>
+          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">For Her</p>
           <p class="text-[15px] max-w-[15rem]">Cool, pale, muted pastels &mdash; think dusty rose, powder blue, sage, and soft lavender. Avoid bright, warm, or neon tones.</p>
         </div>
       </div>
@@ -547,7 +546,7 @@
       <div class="reveal text-center mb-12">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
         <h2 class="font-display text-4xl md:text-5xl mb-5" style="color:var(--ink)">See you there!</h2>
-        <p class="text-[17px] mb-2">We can&rsquo;t wait to celebrate with you. Please let us know if you&rsquo;ll be joining us!</p>
+        <p class="text-[15px] mb-2">We can&rsquo;t wait to celebrate with you. Please let us know if you&rsquo;ll be joining us!</p>
       </div>
 
       <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
