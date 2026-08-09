@@ -174,14 +174,19 @@
     margin-left:auto;
     margin-right:auto;
   }
+  #joanne-e{
+    position:relative;
+    display:inline-block;
+  }
   .hero-sticker{
     position:absolute;
-    top:50%;
-    left:-0.7em;
-    width:0.7em;
+    bottom: 100%;
+    margin-bottom: 0.1em;
+    left: 85%;
+    width:0.9em;
     height:auto;
     opacity:0;
-    transform: translateY(-50%) scale(0.4) rotate(-36deg);
+    transform: translateX(-50%) scale(0.4) rotate(36deg);
     transform-origin:center center;
     filter:drop-shadow(0 8px 18px rgba(0,0,0,0.35));
     pointer-events:none;
@@ -190,9 +195,9 @@
     animation: stickerPopIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 2.4s forwards;
   }
   @keyframes stickerPopIn{
-    0%{ opacity:0; transform:translateY(-50%) scale(0.4) rotate(-18deg); }
-    70%{ opacity:1; transform:translateY(-50%) scale(3.08) rotate(4deg); }
-    100%{ opacity:1; transform:translateY(-50%) scale(3) rotate(-6deg); }
+    0%{ opacity:0; transform:translateX(-50%) scale(0.4) rotate(-28deg); }
+    70%{ opacity:1; transform:translateX(-50%) scale(9.08) rotate(18deg); }
+    100%{ opacity:1; transform:translateX(-50%) scale(4.5) rotate(14deg); }
   }
 
   #hero{
@@ -231,6 +236,91 @@
   .reveal.in-view{ opacity:1; transform: translateY(0); }
   .reveal-delay-1.in-view{ transition-delay: 0.12s; }
   .reveal-delay-2.in-view{ transition-delay: 0.24s; }
+
+  /* ---------- Our Story: photo pile over a big backdrop headline ----------
+    "Our Story" is now a big, pale backdrop that simply fades in when the
+    section scrolls into view — it's atmosphere, not a payoff you wait for.
+    The nine photos (the eight curtain shots + our-story-hero as the final,
+    biggest one) land on top of it one at a time and stay put — no fade-out. */
+  @media (max-width: 767px){
+    .story-intro-scene{ min-height: 130vh; }
+  }
+
+  /* Headline bands: "OUR" spans the very top edge, "STORY" spans the very
+    bottom edge, each full-width and centered — the photo pile has the open
+    middle of the screen to itself. Both start shifted up by their own height
+    and pan down into their resting spot as they fade in. */
+  .story-headline{
+    position:absolute;
+    z-index:0;
+    color: var(--ink-soft);
+    line-height: 0.85;
+    white-space:nowrap;
+    pointer-events:none;
+    opacity:0;
+    transform: translateX(-50%) translateY(-100%);
+    transition: opacity 1.1s cubic-bezier(0.16,1,0.3,1), transform 1.1s cubic-bezier(0.16,1,0.3,1);
+  }
+  .story-headline-top{
+    top: 0;
+    left: 50%;
+    width: 100vw;
+    text-align: left;
+    padding-left: 1.5rem;
+    font-size: clamp(3rem, min(26vw, 30vh), 40rem);
+  }
+  .story-headline-bottom{
+    bottom: 0;
+    left: 50%;
+    width: 100vw;
+    text-align: right;
+    padding-right: 1.5rem;
+    font-size: clamp(3rem, min(26vw, 30vh), 30rem);
+  }
+  .story-intro-scene.headline-in .story-headline{
+    opacity:1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Photo pile: nine photos land on top of each other in the center, one at
+    a time, like a hand-dealt stack — and then just stay there. Small
+    per-item offsets/tilts (--ox/--oy/--tilt) keep it looking like a loose
+    pile rather than a perfectly aligned deck. */
+  .story-curtain{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+  }
+
+  .story-curtain-item{
+    position:absolute;
+    top:50%;
+    left:50%;
+    background:#fff;
+    padding: 0.3rem 0.3rem 0.3rem;
+    box-shadow:
+      0 2px 5px rgba(74,54,72,0.14),
+      0 10px 20px rgba(74,54,72,0.18);
+    width: 8rem;
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--tilt)) scale(0.85);
+    transition: opacity 0.5s cubic-bezier(0.16,1,0.3,1), transform 0.5s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .story-intro-scene.curtain-in .story-curtain-item{
+    opacity: 1;
+    transform: translate(calc(-50% + var(--ox, 0px)), calc(-50% + var(--oy, 0px))) rotate(var(--tilt)) scale(1);
+  }
+  .story-curtain-item img{
+    width:100%;
+    height:auto;
+    display:block;
+  }
+
+  @media (min-width: 768px){
+    .story-curtain-item{ width: 15rem; }
+  }
 
   /* ---------- Buttons ---------- */
   .btn-accent{
@@ -340,7 +430,7 @@
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
       <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
-        <li><a href="#our-story" class="nav-link whitespace-nowrap">Our Story</a></li>
+        <li><a href="#our-story-1" class="nav-link whitespace-nowrap">Our Story</a></li>
         <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
@@ -357,51 +447,88 @@
     <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
     <div id="hero-content" class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
-      <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,3.5cqw,18px)] mb-2 opacity-90">02.20.2027</p>
+      <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,4cqw,22px)] mb-2 opacity-90">02.20.2027</p>
       <h1 class="font-display leading-[0.9]">
-        <span id="hero-atom" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream)">
+        <span id="hero-atom" class="hero-name text-[clamp(4.5rem,24cqw,12rem)]" style="color:var(--cream)">
             Atom
-            <img id="hero-sticker" src="photos/hero/sticker-taiwan.png" alt="" class="hero-sticker z-20" />
         </span>
         <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">&</span>
-        <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,18cqw,10rem)]" style="color:var(--cream); margin-top:-0.15em;">Joanne</span>
+        <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,24cqw,12rem)]" style="color:var(--cream); margin-top:-0.15em;">
+            Joann<span id="joanne-e">e<img id="hero-sticker" src="photos/hero/sticker-taiwan.png" alt="" class="hero-sticker z-20" /></span>
+        </span>
       </h1>
     </div>
   </div>
-</section>
-
-<section id="hero-bottom" class="relative overflow-hidden full-screen">
-  <img src="photos/hero/hero-couple.jpeg" alt="Atom and Joanne looking out at the water"
-       style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
-</section>
-
-  <!-- ================= OUR STORY ================= -->
-  <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
-    <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-      <div class="reveal order-2 md:order-1">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Our Story</p>
-        <h2 class="font-display text-4xl md:text-5xl mb-6" style="color:var(--ink)">How it began</h2>
-        <p class="text-[17px] md:text-lg" style="color:var(--ink)">
-          We met as classmates in UP, and somewhere between [a funny detail] and [a meaningful moment], we knew this was it. A few years, countless memories, and one very enthusiastic &ldquo;yes&rdquo; later &mdash; we&rsquo;re so excited to celebrate this next chapter with the people who matter most to us.
-        </p>
-      </div>
-      <div class="reveal reveal-delay-1 order-1 md:order-2 relative">
-        <div class="rounded-[28px] overflow-hidden shadow-soft aspect-[4/5]">
-          <img src="photos/our-story/univ-ave.jpeg" alt="Atom and Joanne" class="w-full h-full object-cover" loading="lazy" />
-        </div>
-        <svg class="deco absolute -bottom-6 -left-6 w-16 h-16 z-[-1]" data-deco viewBox="0 0 100 100" fill="none">
-          <circle cx="50" cy="50" r="42" stroke="#B8A6C0" stroke-width="1.5" opacity="0.7"/>
-        </svg>
-      </div>
-    </div>
   </section>
 
-  <!-- section-break decoration -->
-  <div class="relative h-0">
-    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-14 h-14" data-deco viewBox="0 0 100 100" fill="none">
-      <path d="M15 50 A 35 35 0 0 1 85 50" stroke="#B8A6C0" stroke-width="2" opacity="0.75"/>
-    </svg>
-  </div>
+  <section id="hero-bottom" class="relative overflow-hidden full-screen">
+    <img src="photos/hero/hero-couple.jpeg" alt="Atom and Joanne looking out at the water"
+        style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
+  </section>
+
+  <!-- ================= OUR STORY ================= -->
+  <section id="our-story-1" class="story-intro-scene full-screen relative max-w-5xl mx-auto px-6 lg:px-10 flex flex-col items-center justify-center text-center">
+
+    <h2 class="story-headline story-headline-top font-display" id="story-headline-top">OUR</h2>
+
+    <h2 class="story-headline story-headline-bottom font-display" id="story-headline-bottom">STORY</h2>
+
+    <div class="story-curtain">
+      <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
+        <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:6deg; --ox:14px; --oy:-8px">
+        <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
+        <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
+        <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
+        <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
+        <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-6deg; --ox:-14px; --oy:4px">
+        <img src="photos/our-story/sydney.jpg" alt="Atom and Joanne near Bronte Beach, Sydney" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:7deg; --ox:6px; --oy:-4px">
+        <img src="photos/our-story/proposal.JPG" alt="Atom proposing to Joanne in Siquijor" loading="lazy" />
+      </div>
+      <div class="story-curtain-item story-curtain-hero" style="--tilt:-2deg; --ox:0px; --oy:0px">
+        <img src="photos/our-story/our-story-hero.jpeg" alt="Atom and Joanne" loading="lazy" />
+      </div>
+    </div>
+
+  </section>
+
+  <section id="our-story-2" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
+    <img src="photos/our-story/map_illustration.jpg" alt="Map" loading="lazy" />
+    <!-- blank 2 of 4 -->
+  </section>
+
+  <section id="our-story-3" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
+    <!-- blank 3 of 4 -->
+  </section>
+
+  <section id="our-story-4" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
+    <!-- blank 4 of 4 -->
+  </section>
+
+  <!-- 2.3 Join Us — full-bleed closer; replaces the old section-break transition -->
+  <section id="our-story-join" class="reveal relative full-screen">
+    <img src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
+         style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
+    <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/55"></div>
+    <div class="absolute inset-0 flex items-center justify-center px-6">
+      <h2 class="font-display text-3xl md:text-5xl max-w-3xl text-center leading-snug" style="color:var(--cream); text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.3);">
+        And we&rsquo;re just beginning! We&rsquo;re excited to invite you to be part of our story.
+      </h2>
+    </div>
+  </section>
 
   <!-- ================= DETAILS ================= -->
   <section id="venue" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
@@ -653,6 +780,32 @@
     // reveal the hero only once the panda has actually finished rolling off the left edge
     introPanda.addEventListener('animationend', finishIntro);
     setTimeout(finishIntro, 4000); // safety fallback in case animationend never fires
+
+    // ---------- Our Story: photo pile lands over the backdrop headline ----------
+    // The headline fades in as soon as the section scrolls into view (it's a
+    // backdrop, not a payoff). The nine photos stagger in on top of it and
+    // stay — the hero photo is last in the list, so it gets the longest delay
+    // and lands on top of the pile, with a little extra pause before it arrives.
+    const reduceStoryMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const storyCurtainItems = document.querySelectorAll('.story-curtain-item');
+    storyCurtainItems.forEach((el, i) => {
+      el.style.transitionDelay = reduceStoryMotion ? '0ms' : (i * 150) + 'ms';
+    });
+
+    const storyScene = document.getElementById('our-story-1');
+    if (storyScene) {
+      const storyObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            storyObserver.unobserve(entry.target);
+            storyScene.classList.add('headline-in', 'curtain-in');
+          }
+        });
+      }, { threshold: 0.3 });
+      storyObserver.observe(storyScene);
+    }
+
 
     // ---------- Scroll-triggered reveals (sections + decorations at section breaks) ----------
     const revealObserver = new IntersectionObserver((entries) => {
