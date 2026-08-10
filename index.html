@@ -41,6 +41,14 @@
     flex-direction: column;
     justify-content: center;
   }
+  .fade-edge-bottom{
+    -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent);
+    mask-image: linear-gradient(to bottom, black 95%, transparent);
+  }
+  .fade-edge-both{
+    -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  }
 
   .tracking-wide-label{
     font-family: 'DM Sans', sans-serif;
@@ -110,7 +118,7 @@
 
   @media (max-width: 767px){
     #hero-overlay{
-      bottom: 0;
+      height: 100vh;
       display: flex;
       align-items: center;
     }
@@ -411,6 +419,73 @@
   .lightbox-arrow:hover{ background: rgba(255,255,255,0.18); transform: scale(1.08); }
   .lightbox-arrow:focus-visible{ outline: 2px solid var(--accent); }
 
+  /* ---------- Our Story gallery: tiles flip to reveal text ----------
+    Hover-capable devices (real mouse) flip the tile in place, right in the
+    grid, no click needed. Touch devices have no hover state at all, so
+    there a tap toggles the same flip directly in the grid instead — no
+    full-screen step on either path. Layout reuses the exact same
+    CSS-column masonry as the reception Gallery below (columns-2/3/4
+    utility classes on the wrapper, .story-tile taking the .gallery-item
+    role of break-inside:avoid + margin-bottom) — photos of any shape flow
+    naturally instead of being boxed into uniform slots.
+    NOTE: true masonry balances column heights, so tiles won't always read
+    strictly left-to-right in story order the way the previous grid did —
+    each tile's date on the back is what carries the chronology now.
+    Each photo gets a thin white border (like a small print) plus a soft
+    lifted shadow, matching the curtain photos in our-story-1 above. */
+  .story-tile{
+    perspective: 1200px;
+    display:block;
+    width:100%;
+    break-inside: avoid;
+    margin-bottom: 0.75rem;
+  }
+  @media (min-width: 768px){ .story-tile{ margin-bottom: 1rem; } }
+
+  .story-tile .flip-inner{
+    position:relative; width:100%; height:100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4,0.15,0.2,1);
+    cursor:pointer;
+    box-shadow:
+      0 2px 5px rgba(74,54,72,0.14),
+      0 14px 26px rgba(74,54,72,0.18);
+  }
+  @media (hover: hover) and (pointer: fine){
+    .story-tile:hover .flip-inner{ transform: rotateY(180deg); }
+  }
+  /* touch devices have no hover — JS toggles this class on tap instead */
+  .story-tile .flip-inner.flipped{ transform: rotateY(180deg); }
+  .story-tile .tile-face{ position:absolute; inset:0; backface-visibility:hidden; overflow:hidden; }
+  .story-tile .tile-front{ background:#fff; padding:0.3rem; }
+  .story-tile .tile-front img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.5s ease; }
+  .story-tile:hover .tile-front img{ transform:scale(1.03); }
+  .story-tile .tile-back{
+    background: var(--cream);
+    transform: rotateY(180deg);
+    padding: 1rem 1.1rem;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+  }
+  .story-tile .tile-date{
+    font-family:'DM Sans', sans-serif;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-size:clamp(0.65rem, 1.4vw, 0.75rem);
+    color:var(--accent-deep);
+    margin:0 0 0.45rem;
+  }
+  .story-tile .tile-text{
+    font-family:'DM Sans', sans-serif;
+    font-weight:400;
+    font-size:clamp(0.8rem, 1.7vw, 0.9rem);
+    line-height:1.55;
+    color:var(--ink);
+    margin:0;
+  }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration: 0.01ms !important;
@@ -432,7 +507,7 @@
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
       <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
-        <li><a href="#our-story-1" class="nav-link whitespace-nowrap">Our Story</a></li>
+        <li><a href="#our-story" class="nav-link whitespace-nowrap">Our Story</a></li>
         <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
@@ -465,71 +540,40 @@
 
   <section id="hero-bottom" class="relative overflow-hidden full-screen">
     <img src="photos/hero/hero-couple.jpeg" alt="Atom and Joanne looking out at the water"
+        class="fade-edge-bottom"
         style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
   </section>
 
   <!-- ================= OUR STORY ================= -->
-  <section id="our-story-1" class="story-intro-scene full-screen relative max-w-5xl mx-auto px-6 lg:px-10 flex flex-col items-center justify-center text-center">
+  <!-- 2.1 Our Story gallery — each tile flips in place to reveal the story
+    on its back: hover triggers it on a real mouse, a tap triggers it on
+    touch. No full-screen step either way. Masonry layout, same technique
+    as the reception Gallery below. Section background is the site's usual
+    --bg (unchanged) — only each individual photo gets a white border. -->
+  <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="reveal text-center mb-14 md:mb-16">
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink-soft)">Our story started 7 years ago</h2>
+      </div>
 
-    <h2 class="story-headline story-headline-top font-display" id="story-headline-top">OUR</h2>
-
-    <h2 class="story-headline story-headline-bottom font-display" id="story-headline-bottom">STORY</h2>
-
-    <div class="story-curtain">
-      <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
-        <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:6deg; --ox:14px; --oy:-8px">
-        <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
-        <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
-        <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
-        <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
-        <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-6deg; --ox:-14px; --oy:4px">
-        <img src="photos/our-story/sydney.jpg" alt="Atom and Joanne near Bronte Beach, Sydney" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:7deg; --ox:6px; --oy:-4px">
-        <img src="photos/our-story/proposal.JPG" alt="Atom proposing to Joanne in Siquijor" loading="lazy" />
-      </div>
-      <div class="story-curtain-item story-curtain-hero" style="--tilt:-2deg; --ox:0px; --oy:0px">
-        <img src="photos/our-story/our-story-hero.jpeg" alt="Atom and Joanne" loading="lazy" />
+      <div class="columns-2 sm:columns-3 md:columns-4 gap-3 md:gap-4" id="our-story-grid">
+        <!-- populated below -->
       </div>
     </div>
-
-  </section>
-
-  <section id="our-story-2" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
-    <img src="photos/our-story/map_illustration.jpg" alt="Map" loading="lazy" />
-    <!-- blank 2 of 4 -->
-  </section>
-
-  <section id="our-story-3" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
-    <!-- blank 3 of 4 -->
-  </section>
-
-  <section id="our-story-4" class="relative full-screen px-6 lg:px-10 flex flex-col items-center justify-center">
-    <!-- blank 4 of 4 -->
   </section>
 
   <!-- 2.3 Join Us — full-bleed closer; replaces the old section-break transition -->
-  <section id="our-story-join" class="reveal relative full-screen">
-    <img src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
-         style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
-    <div class="absolute inset-0 bg-gradient-to-b from-black/55 via-black/35 to-black/55"></div>
+  <section id="our-story-join" class="relative h-20">
     <div class="absolute inset-0 flex items-center justify-center px-6">
-      <h2 class="font-display text-3xl md:text-5xl max-w-3xl text-center leading-snug" style="color:var(--cream); text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.3);">
-        And we&rsquo;re just beginning! We&rsquo;re excited to invite you to be part of our story.
+      <h2 class="font-display text-3xl md:text-5xl max-w-3xl text-center leading-snug" style="color:var(--ink-soft);">
+        ... And now we&rsquo;re getting married!
       </h2>
     </div>
+  </section>
+
+  <section id="our-story-2" class="reveal relative full-screen">
+    <img src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
+         style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
   </section>
 
   <!-- ================= DETAILS ================= -->
@@ -732,6 +776,41 @@
     </div>
   </section>
 
+  <!-- ================= DUMP ================= -->
+  <section id="our-story-dump" class="story-intro-scene full-screen relative max-w-5xl mx-auto px-6 lg:px-10 flex flex-col items-center justify-center text-center">
+
+    <div class="story-curtain">
+      <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
+        <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:6deg; --ox:14px; --oy:-8px">
+        <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
+        <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
+        <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
+        <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
+        <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:-6deg; --ox:-14px; --oy:4px">
+        <img src="photos/our-story/sydney.jpg" alt="Atom and Joanne near Bronte Beach, Sydney" loading="lazy" />
+      </div>
+      <div class="story-curtain-item" style="--tilt:7deg; --ox:6px; --oy:-4px">
+        <img src="photos/our-story/proposal.JPG" alt="Atom proposing to Joanne in Siquijor" loading="lazy" />
+      </div>
+      <div class="story-curtain-item story-curtain-hero" style="--tilt:-2deg; --ox:0px; --oy:0px">
+        <img src="photos/our-story/our-story-hero.jpeg" alt="Atom and Joanne" loading="lazy" />
+      </div>
+    </div>
+
+  </section>
+
   <footer class="py-10 text-center">
     <p class="font-display text-2xl italic" style="color:var(--ink-soft)">Atom &amp; Joanne &middot; 02.20.2027</p>
   </footer>
@@ -795,7 +874,7 @@
       el.style.transitionDelay = reduceStoryMotion ? '0ms' : (i * 150) + 'ms';
     });
 
-    const storyScene = document.getElementById('our-story-1');
+    const storyScene = document.getElementById('our-story-dump');
     if (storyScene) {
       const storyObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
@@ -913,6 +992,61 @@
       const dx = e.changedTouches[0].screenX - touchStartX;
       if (Math.abs(dx) > 50) showPhoto(currentIndex + (dx < 0 ? 1 : -1));
     }, { passive: true });
+
+    // ---------- Our Story gallery: hover-flip tiles (mouse), tap-flip tiles (touch) ----------
+    const ourStoryFiles = [
+      { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017',
+        text: "We were both shiftees. Joanne shifted from architecture then moved to Industrial Engineering in the first semester of A.Y. 2016-2017. Atom shifted from Sociology in the second semester. Fun fact is Atom applied in the first semester but they only accepted one applicant and that was Joanne which is why Atom had to wait another semester to apply again. This is our frist photo together. Joanne as a member of IE Club, Atom as an applicant trying complete tasks." },
+      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023',
+        text: "Picture with the sunflowers! We both graduate Magna Cum Laude 🤩 our GWAs were 0.01 apart." },
+      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023',
+        text: "Joanne got Panda just as the pandemic started. This was one of the first times we brought him out on a trip." },
+      { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022',
+        text: "Our first out of town trip together! We visited Dumaguete and Siquijor in the summer of 2022." },
+      { file: 'video-call.jpg', w: 2000, h: 924, date: 'Nov 2023',
+        text: "Atom moved to Sydney in November 2023 so it's been a long distance relationship ever since. On top of our daily video calls and chats, we like to celebrate special moments with \"online dates.\" We'll schedule a date in advanced and decide on what we're going to eat, making sure we eat the same or similar food to make it feel like we are together. In this photo, we are both eating pasta salad! Joanne went out to eat, while Atom prepared food at home." },
+      { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024',
+        text: "Joanne visits Australia for the first time! It's a two week trip where we visit Melbourne first then Sydney for Atom to introduce Joanne to his life. This is a photo with a kangaroo in Melbourne." },
+      { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025',
+        text: "Coogee to Bondi walk. This is the walk that made Atom decide to stay in Sydney so it was something Joanne had to do. This was taken in the middle of our walk by Bronte Beach." },
+      { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025',
+        text: "Back where we began! Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spoits on the island eventually proposing in the same resort where the earlier photo was taken." },
+      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2022',
+        text: "Joanne in Sydney!" },
+    ];
+
+    const storyGrid = document.getElementById('our-story-grid');
+    ourStoryFiles.forEach((story, i) => {
+      const tile = document.createElement('div');
+      tile.className = 'story-tile';
+      tile.style.aspectRatio = `${story.w} / ${story.h}`;
+      tile.setAttribute('data-index', i);
+      tile.innerHTML = `
+        <div class="flip-inner">
+          <div class="tile-face tile-front">
+            <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
+          </div>
+          <div class="tile-face tile-back">
+            <p class="tile-date">${story.date}</p>
+            <p class="tile-text">${story.text}</p>
+          </div>
+        </div>
+      `;
+      storyGrid.appendChild(tile);
+    });
+
+    // Devices with a real pointer keep relying purely on the CSS :hover rule
+    // above. Touch devices have no hover state at all, so there a tap toggles
+    // the same "flipped" class directly instead — checked once via matchMedia
+    // rather than guessing from screen width, and only attached when needed
+    // so hover and tap never fight over the same tile on desktop.
+    const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    if (!supportsHover) {
+      storyGrid.addEventListener('click', (e) => {
+        const tile = e.target.closest('.story-tile');
+        if (tile) tile.querySelector('.flip-inner').classList.toggle('flipped');
+      });
+    }
 
     // ---------- RSVP endpoint ----------
     const RSVP_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxZFvK8gtZosBIGts8IiRme50oY0VWPqlJKSm2MlMsEn_9BQUuxWhZ-M2DLdGFA5coH/exec';
