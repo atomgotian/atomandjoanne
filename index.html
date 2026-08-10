@@ -42,8 +42,8 @@
     justify-content: center;
   }
   .fade-edge-bottom{
-    -webkit-mask-image: linear-gradient(to bottom, black 95%, transparent);
-    mask-image: linear-gradient(to bottom, black 95%, transparent);
+    -webkit-mask-image: linear-gradient(to bottom, black 99%, transparent);
+    mask-image: linear-gradient(to bottom, black 99%, transparent);
   }
   .fade-edge-both{
     -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
@@ -146,6 +146,7 @@
   .site-nav{
     transform: translateY(-120%);
     opacity: 0;
+    transition: transform 0.35s ease;
   }
 
   .nav-link{
@@ -238,6 +239,10 @@
     animation: heroFadeSlide 1s cubic-bezier(0.16,1,0.3,1) 2s forwards;
   }
 
+  .site-nav.nav-hidden{
+    transform: translateY(-120%) !important;
+  }
+
   /* ---------- Scroll reveals ---------- */
   .reveal{
     opacity:0; transform: translateY(28px);
@@ -246,15 +251,6 @@
   .reveal.in-view{ opacity:1; transform: translateY(0); }
   .reveal-delay-1.in-view{ transition-delay: 0.12s; }
   .reveal-delay-2.in-view{ transition-delay: 0.24s; }
-
-  /* ---------- Our Story: photo pile over a big backdrop headline ----------
-    "Our Story" is now a big, pale backdrop that simply fades in when the
-    section scrolls into view — it's atmosphere, not a payoff you wait for.
-    The nine photos (the eight curtain shots + our-story-hero as the final,
-    biggest one) land on top of it one at a time and stay put — no fade-out. */
-  @media (max-width: 767px){
-    .story-intro-scene{ min-height: 130vh; }
-  }
 
   /* Headline bands: "OUR" spans the very top edge, "STORY" spans the very
     bottom edge, each full-width and centered — the photo pile has the open
@@ -553,24 +549,19 @@
   <section id="our-story" class="relative py-24 md:py-32 px-6 lg:px-10">
     <div class="max-w-6xl mx-auto">
       <div class="reveal text-center mb-14 md:mb-16">
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink-soft)">Our story started 7 years ago</h2>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink-soft)">Classmates...</h2>
       </div>
 
       <div class="columns-2 sm:columns-3 md:columns-4 gap-3 md:gap-4" id="our-story-grid">
         <!-- populated below -->
       </div>
+      <div class="reveal text-center mb-14 md:mb-16">
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink-soft)">... for life!</h2>
+      </div>
     </div>
   </section>
 
   <!-- 2.3 Join Us — full-bleed closer; replaces the old section-break transition -->
-  <section id="our-story-join" class="relative h-20">
-    <div class="absolute inset-0 flex items-center justify-center px-6">
-      <h2 class="font-display text-3xl md:text-5xl max-w-3xl text-center leading-snug" style="color:var(--ink-soft);">
-        ... And now we&rsquo;re getting married!
-      </h2>
-    </div>
-  </section>
-
   <section id="our-story-2" class="reveal relative full-screen">
     <img src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
          style="width:100%; height:auto; min-height:100vh; object-fit:cover; object-position:center; display:block;" />
@@ -612,13 +603,6 @@
     </div>
   </section>
 
-  <!-- section-break decoration -->
-  <div class="relative h-0">
-    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="6" fill="#A8C4D8" opacity="0.8"/>
-    </svg>
-  </div>
-
   <!-- ================= DRESS CODE ================= -->
   <section id="attire" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
@@ -646,13 +630,6 @@
       </div>
     </div>
   </section>
-
-  <!-- section-break decoration -->
-  <div class="relative h-0">
-    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="6" fill="#A8C4D8" opacity="0.8"/>
-    </svg>
-  </div>
 
   <!-- ================= HOW TO GET THERE ================= -->
   <section id="directions" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen flex flex-col items-center justify-center">
@@ -704,13 +681,6 @@
     <button id="lightbox-next" aria-label="Next photo" class="lightbox-arrow absolute right-3 md:right-8 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full flex items-center justify-center text-white">
       <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
     </button>
-  </div>
-
-  <!-- section-break decoration -->
-  <div class="relative h-0">
-    <svg class="deco absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10" data-deco viewBox="0 0 100 100" fill="none">
-      <circle cx="50" cy="50" r="16" fill="#B8A6C0" opacity="0.8"/>
-    </svg>
   </div>
 
   <!-- ================= RSVP ================= -->
@@ -773,42 +743,40 @@
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
       </form>
+
+      <div id="our-story-dump" class="story-intro-scene relative flex flex-col items-center justify-center text-center" style="min-height: clamp(260px, 38vw, 420px); margin-top: 2.5rem;">
+        <div class="story-curtain">
+          <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
+            <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:6deg; --ox:14px; --oy:-8px">
+            <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
+            <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
+            <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
+            <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
+            <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:-6deg; --ox:-14px; --oy:4px">
+            <img src="photos/our-story/sydney.jpg" alt="Atom and Joanne near Bronte Beach, Sydney" loading="lazy" />
+          </div>
+          <div class="story-curtain-item" style="--tilt:7deg; --ox:6px; --oy:-4px">
+            <img src="photos/our-story/proposal.JPG" alt="Atom proposing to Joanne in Siquijor" loading="lazy" />
+          </div>
+          <div class="story-curtain-item story-curtain-hero" style="--tilt:-2deg; --ox:0px; --oy:0px">
+            <img src="photos/our-story/our-story-hero.jpeg" alt="Atom and Joanne" loading="lazy" />
+          </div>
+        </div>
+      </div>
+
     </div>
-  </section>
-
-  <!-- ================= DUMP ================= -->
-  <section id="our-story-dump" class="story-intro-scene full-screen relative max-w-5xl mx-auto px-6 lg:px-10 flex flex-col items-center justify-center text-center">
-
-    <div class="story-curtain">
-      <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
-        <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:6deg; --ox:14px; --oy:-8px">
-        <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
-        <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
-        <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
-        <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
-        <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:-6deg; --ox:-14px; --oy:4px">
-        <img src="photos/our-story/sydney.jpg" alt="Atom and Joanne near Bronte Beach, Sydney" loading="lazy" />
-      </div>
-      <div class="story-curtain-item" style="--tilt:7deg; --ox:6px; --oy:-4px">
-        <img src="photos/our-story/proposal.JPG" alt="Atom proposing to Joanne in Siquijor" loading="lazy" />
-      </div>
-      <div class="story-curtain-item story-curtain-hero" style="--tilt:-2deg; --ox:0px; --oy:0px">
-        <img src="photos/our-story/our-story-hero.jpeg" alt="Atom and Joanne" loading="lazy" />
-      </div>
-    </div>
-
   </section>
 
   <footer class="py-10 text-center">
@@ -862,6 +830,26 @@
     introPanda.addEventListener('animationend', finishIntro);
     setTimeout(finishIntro, 4000); // safety fallback in case animationend never fires
 
+    // ---------- Nav: hide on scroll down, show on scroll up ----------
+    const siteNav = document.querySelector('.site-nav');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+      if (!introFinished) return; // don't fight the intro reveal animation
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 80) {
+        siteNav.classList.remove('nav-hidden');       // always show near the top
+      } else if (currentScrollY > lastScrollY) {
+        siteNav.classList.add('nav-hidden');          // scrolling down
+      } else {
+        siteNav.classList.remove('nav-hidden');       // scrolling up
+      }
+
+      lastScrollY = currentScrollY;
+    }, { passive: true });
+
+
     // ---------- Our Story: photo pile lands over the backdrop headline ----------
     // The headline fades in as soon as the section scrolls into view (it's a
     // backdrop, not a payoff). The nine photos stagger in on top of it and
@@ -907,10 +895,6 @@
         }
       });
     }, { threshold: 0.2 });
-    document.querySelectorAll('[data-deco]').forEach((el, i) => {
-      el.style.animationDelay = (i % 3) * 0.15 + 's';
-      decoObserver.observe(el);
-    });
 
     // ---------- Gallery ----------
     // width/height reflect each thumbnail's actual pixel dimensions — required so the
