@@ -20,6 +20,18 @@
     --accent-deep: #2D74A4; /* color-600 — hover/pressed states */
   }
 
+  @font-face {
+    font-family: 'Joanne Hand';
+    src: url('fonts/Myfont3-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  .font-hand {
+    font-family: 'Joanne Hand', cursive;
+  }
+  
   * { -webkit-tap-highlight-color: transparent; }
 
   html { scroll-behavior: smooth; }
@@ -189,7 +201,7 @@
   .hero-sticker{
     position:absolute;
     bottom: 100%;
-    margin-bottom: -0.4em;
+    margin-bottom: 0em;
     left: 85%;
     width:1.8em;
     max-width: none;
@@ -206,8 +218,8 @@
   }
   @keyframes stickerPopIn{
     0%{ opacity:0; transform:translateX(-50%) scale(0.3) rotate(-28deg); }
-    70%{ opacity:1; transform:translateX(-50%) scale(2.15) rotate(18deg); }
-    100%{ opacity:1; transform:translateX(-50%) scale(1) rotate(14deg); }
+    70%{ opacity:1; transform:translateX(-50%) scale(3.15) rotate(18deg); }
+    100%{ opacity:1; transform:translateX(-50%) scale(1.3) rotate(14deg); }
   }
 
   #hero{
@@ -218,6 +230,10 @@
   .hero-name, .hero-date {
     text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.3);
   }
+  
+  #hero-date, #hero-atom, #hero-and, #hero-joanne {
+    font-family: 'Joanne Hand', cursive;
+  }
 
   .hero-name{
     display:block;
@@ -226,6 +242,7 @@
   #hero-atom.play{
     animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) 0.7s forwards;
   }
+
   #hero-and.play{
     animation: heroNameUp 1s cubic-bezier(0.16,1,0.3,1) 1.2s forwards;
   }
@@ -391,7 +408,7 @@
     flex-direction:column;
   }
   .story-tile .tile-date{
-    font-family:'DM Sans', sans-serif;
+    font-family:'Joanne Hand', cursive;
     font-weight:600;
     letter-spacing:0.14em;
     text-transform:uppercase;
@@ -447,13 +464,13 @@
     <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
     <div id="hero-content" class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
-      <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,4cqw,22px)] mb-2 opacity-90">02.20.2027</p>
-      <h1 class="font-display leading-[0.9]">
-        <span id="hero-atom" class="hero-name text-[clamp(4.5rem,24cqw,12rem)]" style="color:var(--cream)">
+      <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,4cqw,22px)] mb-8 opacity-90">02.20.2027</p>
+      <h1 class="font-display leading-[1]">
+        <span id="hero-atom" class="hero-name text-[clamp(4.5rem,20cqw,12rem)]" style="color:var(--cream)">
             Atom
         </span>
-        <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,10cqw,4.5rem)]" style="color:var(--cream)">&</span>
-        <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,24cqw,12rem)]" style="color:var(--cream); margin-top:-0.15em;">
+        <span id="hero-and" class="hero-name font-normal text-[clamp(2.5rem,6cqw,4.5rem)]" style="color:var(--cream)">&</span>
+        <span id="hero-joanne" class="hero-name text-[clamp(4.5rem,20cqw,12rem)]" style="color:var(--cream); margin-top:-0.15em;">
             Joann<span id="joanne-e">e<img id="hero-sticker" src="photos/hero/sticker-taiwan.png" alt="" class="hero-sticker z-20" /></span>
         </span>
       </h1>
@@ -477,14 +494,14 @@
       <div class="max-w-6xl mx-auto">
         <div class="reveal text-center mb-14 md:mb-16">
           <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Our Story</p>
-          <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Classmates...</h2>
+          <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)"> From classmates...</h2>
         </div>
 
         <div class="columns-2 sm:columns-3 md:columns-4 gap-3 md:gap-4" id="our-story-grid">
           <!-- populated below -->
         </div>
         <div class="reveal text-center mb-14 md:mb-16">
-          <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">... for life!</h2>
+          <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">... to life!</h2>
         </div>
       </div>
       
