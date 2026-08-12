@@ -22,7 +22,7 @@
 
   @font-face {
     font-family: 'Joanne Hand';
-    src: url('fonts/Myfont3-Regular.otf') format('opentype');
+    src: url('fonts/Myfont2-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -470,7 +470,7 @@
     height: 130vw;
     max-width: none;
     object-fit: cover;
-    opacity: 0.14;
+    opacity: 0.1;
     z-index: -1;
     pointer-events: none;
     -webkit-mask-image: radial-gradient(circle, black 35%, transparent 72%);
@@ -587,8 +587,9 @@
 
     <div class="max-w-4xl mx-auto relative z-10">
       <div class="reveal text-center mb-16 md:mb-20">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">When &amp; Where</h2>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">When and where is the wedding?</p>
+        <h2 class="font-hand text-4xl md:text-5xl mb-1" style="color:var(--ink)">Manila</h2>
+        <h2 class="font-hand text-4xl md:text-5xl" style="color:var(--ink)">Saturday - Feb 20, 2027</h2>
       </div>
 
       <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 mb-16">
@@ -601,10 +602,9 @@
             </div>
           </div>
           <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
-          <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">2:00 PM</h3>
-          <p class="font-semibold mb-2">Sacred Heart of Jesus Parish</p>
+          <h3 class="font-display text-2xl md:text-3xl mb-3" style="color:var(--ink)">Starts 2:00 PM</h3>
+          <p class="font-semibold mb-0">Sacred Heart of Jesus Parish</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
-          <p class="text-[15px] max-w-xs">The ceremony will be held at Sacred Heart of Jesus Parish, Joanne&rsquo;s home church.</p>
         </div>
 
         <!-- Reception -->
@@ -616,10 +616,9 @@
             </div>
           </div>
           <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Reception</p>
-          <h3 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">4:30 PM &mdash; Midnight</h3>
-          <p class="font-semibold mb-2">Elan by the Bay</p>
+          <h3 class="font-display text-2xl md:text-3xl mb-3" style="color:var(--ink)">Starts 4:30 PM</h3>
+          <p class="font-semibold mb-0">Elan by the Bay</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
-          <p class="text-[15px] max-w-xs">Manila traffic on Saturday afternoon (or any time) can be super busy, so plan accordingly. We&rsquo;ll start the evening with cocktail hour from 4:30 to 6pm before transitioning into dinner.</p>
         </div>
       </div>
     </div>
@@ -628,10 +627,24 @@
   <!-- ================= HOW TO GET THERE ================= -->
   <section id="directions" class="relative py-6 md:py-9 px-6 lg:px-10 flex flex-col items-center justify-center full-screen">
     <div class="max-w-2xl mx-auto text-center">
-      <div class="reveal mb-12">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Getting There</p>
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">How do I get there?</h2>
+      <div class="reveal mb-1">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get there?</p>
       </div>
+    </div>
+    
+    <div class="reveal mb-10 justify-center gap-6 flex flex-wrap">
+      <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
+        target="_blank" rel="noopener"
+        class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm bg-[#4285F4] text-white hover:bg-[#3367D6] transition-colors duration-200 min-w-[160px]">
+        Google Maps
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
+      <a href="https://www.waze.com/live-map/directions/elan-by-the-bay-clinton-ave-88-paranaque?to=place.w.79298705.792855979.40238338&from=place.w.79298704.793249187.7331799"
+        target="_blank" rel="noopener"
+        class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm bg-[#05C8F7] text-white hover:bg-[#0099FF] transition-colors duration-200 min-w-[160px]">
+        Waze
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+      </a>
     </div>
 
     <div class="reveal mb-10" style="width:96%; max-width:1000px;">
@@ -639,21 +652,14 @@
           class="w-full h-auto" loading="lazy" />
     </div>
 
-    <div class="reveal flex justify-center">
-      <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
-        target="_blank" rel="noopener"
-        class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
-        Google Maps
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
-      </a>
-    </div>
+    
   </section>
 
   <!-- ================= DRESS CODE ================= -->
   <section id="attire" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-16">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What to Wear</p>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
         <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">Dress Code</h2>
       </div>
 
