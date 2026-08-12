@@ -50,7 +50,7 @@
   }
 
   .full-screen{
-    min-height: 100vh;
+    min-height: 90vh;
     width: 100%;
     position: relative;
     display: flex;
@@ -515,7 +515,7 @@
     </section>
 
   <!-- ================= DETAILS ================= -->
-  <section id="venue" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
+  <section id="venue" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-4xl mx-auto">
       <div class="reveal text-center mb-16 md:mb-20">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">The Details</p>
@@ -550,8 +550,31 @@
     </div>
   </section>
 
+  <!-- ================= HOW TO GET THERE ================= -->
+  <section id="directions" class="relative py-6 md:py-9 px-6 lg:px-10 flex flex-col items-center justify-center full-screen">
+    <div class="max-w-2xl mx-auto text-center">
+      <div class="reveal mb-12">
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Getting There</p>
+        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">How do I get there?</h2>
+      </div>
+
+      <div class="reveal w-full max-w-md mx-auto rounded-[28px] overflow-hidden shadow-soft mb-10 aspect-[4/3] flex items-center justify-center" style="background:var(--cream)">
+        <img src="photos/event-details/illustration-map-venue.png" alt="Map" class="w-full h-full object-cover" loading="lazy" />
+      </div>
+
+      <div class="reveal flex justify-center">
+        <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
+           target="_blank" rel="noopener"
+           class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
+          Google Maps
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <!-- ================= DRESS CODE ================= -->
-  <section id="attire" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
+  <section id="attire" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-16">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What to Wear</p>
@@ -578,31 +601,8 @@
     </div>
   </section>
 
-  <!-- ================= HOW TO GET THERE ================= -->
-  <section id="directions" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen flex flex-col items-center justify-center">
-    <div class="max-w-2xl mx-auto text-center">
-      <div class="reveal mb-12">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Getting There</p>
-        <h2 class="font-display text-4xl md:text-5xl" style="color:var(--ink)">How do I get there?</h2>
-      </div>
-
-      <div class="reveal w-full max-w-md mx-auto rounded-[28px] overflow-hidden shadow-soft mb-10 aspect-[4/3] flex items-center justify-center" style="background:var(--cream)">
-        <img src="photos/event-details/illustration-map-venue.png" alt="Map" class="w-full h-full object-cover" loading="lazy" />
-      </div>
-
-      <div class="reveal flex justify-center">
-        <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
-           target="_blank" rel="noopener"
-           class="btn-accent inline-flex items-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm">
-          Google Maps
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
   <!-- ================= RSVP ================= -->
-  <section id="rsvp" class="relative py-24 md:py-32 px-6 lg:px-10 full-screen">
+  <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-12">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
