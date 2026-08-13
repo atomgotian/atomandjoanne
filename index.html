@@ -490,6 +490,62 @@
     transform: translate(-50%, calc(-50% - 80px));
   }
 
+  /* ---------- Scroll spinning panda sticker ---------- */
+  /* Fixed to the bottom-left corner for the whole page; JS below rotates it
+     in proportion to scroll position, so it spins as you scroll down (and
+     unwinds as you scroll back up). Sits above section content (z-60) but
+     below the intro overlay (z-[200]). Stays hidden (opacity 0) until the
+     hero sections have fully scrolled past — see the IntersectionObserver
+     that toggles .panda-visible below. */
+  #scroll-panda{
+    position: fixed;
+    right: clamp(0.75rem, 3vw, 1.75rem);
+    bottom: clamp(0.75rem, 3vw, 1.75rem);
+    width: clamp(3.25rem, 8vw, 5.5rem);
+    height: auto;
+    z-index: 60;
+    filter: drop-shadow(0 6px 14px rgba(74,54,72,0.28));
+    pointer-events: none;
+    will-change: transform;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  #scroll-panda.panda-visible{
+    opacity: 1;
+  }
+
+  /* ---------- Corner signature: "Atom & Joanne", bottom-left ---------- */
+  /* Same handwritten wordmark as the hero title, scaled way down to roughly
+     the same footprint as the panda sticker opposite it. Same fade behavior
+     too — hidden until the hero sections scroll past, then faded in (see the
+     shared scroll listener in the script). */
+  #corner-signature{
+    position: fixed;
+    left: clamp(0.75rem, 3vw, 1.75rem);
+    bottom: clamp(0.75rem, 3vw, 1.75rem);
+    z-index: 60;
+    font-family: 'Joanne Hand', cursive;
+    color: var(--ink);
+    line-height: 1;
+    text-align: center;
+    filter: drop-shadow(0 4px 10px rgba(74,54,72,0.22));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  #corner-signature.signature-visible{
+    opacity: 1;
+  }
+  #corner-signature .corner-signature-name{
+    display: block;
+    font-size: clamp(1rem, 3vw, 2rem);
+  }
+  #corner-signature .corner-signature-and{
+    display: block;
+    font-size: clamp(0.65rem, 2vw, 1rem);
+    margin: -0.1em 0;
+  }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration: 0.01ms !important;
@@ -506,6 +562,16 @@
   <div id="intro-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" role="button" tabindex="0" aria-label="Skip intro animation">
     <img id="intro-panda" src="photos/hero/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
     <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[12px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
+  </div>
+
+  <!-- ================= SCROLL PANDA STICKER ================= -->
+  <img id="scroll-panda" src="photos/hero/panda.png" alt="" aria-hidden="true" />
+
+  <!-- ================= CORNER SIGNATURE ================= -->
+  <div id="corner-signature" aria-hidden="true">
+    <span class="corner-signature-name">Atom</span>
+    <span class="corner-signature-and">&amp;</span>
+    <span class="corner-signature-name">Joanne</span>
   </div>
 
   <!-- ================= NAV ================= -->
@@ -598,7 +664,7 @@
           <div class="relative">
             <img class="detail-arch-mobile arch-church" src="photos/event-details/illustration-sacred-heart.png" alt="" aria-hidden="true" />
             <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-              <img src="photos/event-details/illustration-sacred-heart.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
+              <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
           <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
@@ -612,7 +678,7 @@
           <div class="relative">
             <img class="detail-arch-mobile arch-elan" src="photos/event-details/illustration-elan.png" alt="" aria-hidden="true" />
             <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-              <img src="photos/event-details/illustration-elan.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
+              <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
           <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Reception</p>
@@ -848,6 +914,32 @@
       }
 
       lastScrollY = currentScrollY;
+    }, { passive: true });
+
+    // ---------- Scroll spinning panda sticker ----------
+    // Rotation tracks total scroll distance directly (not scroll delta/speed),
+    // so the panda's angle always matches how far down the page you are —
+    // spinning forward as you scroll down, unwinding as you scroll back up.
+    const scrollPanda = document.getElementById('scroll-panda');
+    const reducePandaMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (scrollPanda && !reducePandaMotion) {
+      const DEGREES_PER_PIXEL = 0.5;
+      const updatePandaSpin = () => {
+        scrollPanda.style.transform = `rotate(${window.scrollY * DEGREES_PER_PIXEL}deg)`;
+      };
+      window.addEventListener('scroll', updatePandaSpin, { passive: true });
+      updatePandaSpin();
+    }
+
+    // Only reveal the sticker once both hero sections have scrolled fully
+    // past — hidden while any part of #hero-bottom is still in view, shown
+    // once its bottom edge passes above the top of the viewport, and hidden
+    // again if the user scrolls back up into the hero.
+    const cornerSignature = document.getElementById('corner-signature');
+    window.addEventListener('scroll', () => {
+      const scrolledPastHero = window.scrollY > window.innerHeight * 2;
+      scrollPanda.classList.toggle('panda-visible', scrolledPastHero);
+      if (cornerSignature) cornerSignature.classList.toggle('signature-visible', scrolledPastHero);
     }, { passive: true });
 
 
