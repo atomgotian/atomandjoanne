@@ -718,12 +718,26 @@
   <!-- ================= HOW TO GET THERE ================= -->
   <section id="directions" class="relative py-6 md:py-9 px-6 lg:px-10 flex flex-col items-center justify-center full-screen">
     <div class="max-w-2xl mx-auto text-center">
-      <div class="reveal mb-1">
+      <div class="reveal mb-6 md:mb-8">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
         <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Directions</h2>
       </div>
     </div>
-    
+
+    <div class="directions-map-scroll">
+    <div class="reveal mb-10 shadow-soft" style="width:96%; max-width:1000px; position:relative;" id="directions-map-block">
+      <div class="overflow-hidden rounded-6xl" style="position:relative;">
+        <img src="photos/event-details/illustration-map-venue.png" alt="Map"
+            class="w-full h-auto" loading="lazy" />
+        <svg viewBox="0 0 1366 768" preserveAspectRatio="xMidYMid meet"
+            style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;">
+          <image id="directions-map-car" href="photos/event-details/illustration-car.png" width="150" height="150"
+              style="offset-path: path('M879,680 L899,677 L896,342 L791,125 L779,121 L750,153 L740,155 L691,98 L636,89 L621,96 L624,145 L617,157 L541,156 L527,172 L519,195 L498,189 L494,195'); offset-distance: 0%; offset-anchor: 76px 79px; offset-rotate: 0deg;" />
+        </svg>
+      </div>
+    </div>
+    </div>
+
     <div class="reveal mb-10 justify-center gap-6 flex flex-wrap">
       <a href="https://www.google.com/maps/dir/Sacred+Heart+of+Jesus+Parish,+Don+Jesus+Blvd,+Cupang,+Muntinlupa,+Metro+Manila,+Philippines/%C3%89lan+by+the+Bay:+Manila's+Premier+Canvas+for+Unforgettable+Celebrations,+88+Clinton+Avenue,+Para%C3%B1aque,+1700+Metro+Manila,+Philippines/@14.4815091,120.9698575,13z/data=!3m1!4b1!4m14!4m13!1m5!1m1!1s0x3397d029b5a03d63:0x3255defb80fa4af5!2m2!1d121.0421069!2d14.4348041!1m5!1m1!1s0x3397cd4bdb433fb7:0xfceaa9acd6633929!2m2!1d120.9766972!2d14.5103865!3e0?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D"
         target="_blank" rel="noopener"
@@ -738,19 +752,6 @@
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H8M17 7V16"/></svg>
       </a>
     </div>
-
-    <div class="directions-map-scroll">
-    <div class="reveal mb-10" style="width:96%; max-width:1000px; position:relative;" id="directions-map-block">
-      <img src="photos/event-details/illustration-map-venue.png" alt="Map"
-          class="w-full h-auto" loading="lazy" />
-      <svg viewBox="0 0 1366 768" preserveAspectRatio="xMidYMid meet"
-          style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;">
-        <image id="directions-map-car" href="photos/event-details/illustration-car.png" width="150" height="150"
-            style="offset-path: path('M879,680 L899,677 L896,342 L791,125 L779,121 L750,153 L740,155 L691,98 L636,89 L621,96 L624,145 L617,157 L541,156 L527,172 L519,195 L498,189 L494,195'); offset-distance: 0%; offset-anchor: 76px 79px; offset-rotate: 0deg;" />
-      </svg>
-    </div>
-    </div>
-
     
   </section>
 
@@ -761,31 +762,13 @@
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Dress Code</h2>
       </div>
-
-      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10">
-        <div class="reveal flex flex-col items-center text-center">
-          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-            <img src="photos/event-details/barong-2.png" alt="Men's dress code" class="w-full h-full object-cover" loading="lazy" />
-          </div>
-          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">For Him</p>
-          <p class="font-display text-2xl md:text-3xl" style="color:var(--ink)">Barong</p>
-        </div>
-
-        <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
-          <div class="w-52 h-52 md:w-64 md:h-64 rounded-full overflow-hidden shadow-lifted mb-6">
-            <img src="https://placehold.co/400x600?text=Womens+Attire" alt="Women's dress code" class="w-full h-full object-cover" loading="lazy" />
-          </div>
-          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">For Her</p>
-          <p class="text-[15px] max-w-[15rem]">Cool, pale, muted pastels &mdash; think dusty rose, powder blue, sage, and soft lavender. Avoid bright, warm, or neon tones.</p>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- ================= RSVP ================= -->
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
-      <div class="reveal text-center mb-12">
+      <div class="reveal text-center mb-6 md:mb-8">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Please let us know if you can join us.</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP</h2>
       </div>
@@ -878,7 +861,7 @@
   </section>
 
   <footer class="py-10 text-center">
-    <p class="font-display text-2xl italic" style="color:var(--ink-soft)">Atom &amp; Joanne &middot; 02.20.2027</p>
+    <p class="font-hand text-4xl" style="color:var(--ink)">02.20.2027</p>
   </footer>
 
   <script>
