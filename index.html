@@ -494,6 +494,20 @@
     .detail-arch-mobile{ display: none; }
   }
 
+  /* ---------- Directions map: bigger + scrollable on mobile instead of shrinking ---------- */
+  @media (max-width: 767px){
+    .directions-map-scroll{
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      -webkit-mask-image: linear-gradient(to right, black 92%, transparent);
+      mask-image: linear-gradient(to right, black 92%, transparent);
+    }
+    #directions-map-block{
+      width: 640px !important;
+      max-width: none !important;
+    }
+  }
+
   /* Church is tall (dome + cross) — sits better shifted up */
   .arch-church{
     transform: translate(-50%, calc(-50% - 125px));
@@ -709,6 +723,7 @@
     <div class="max-w-2xl mx-auto text-center">
       <div class="reveal mb-1">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
+        <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Directions</h2>
       </div>
     </div>
     
@@ -727,9 +742,16 @@
       </a>
     </div>
 
-    <div class="reveal mb-10" style="width:96%; max-width:1000px;">
+    <div class="directions-map-scroll">
+    <div class="reveal mb-10" style="width:96%; max-width:1000px; position:relative;" id="directions-map-block">
       <img src="photos/event-details/illustration-map-venue.png" alt="Map"
           class="w-full h-auto" loading="lazy" />
+      <svg viewBox="0 0 1366 768" preserveAspectRatio="xMidYMid meet"
+          style="position:absolute; inset:0; width:100%; height:100%; pointer-events:none;">
+        <image id="directions-map-car" href="photos/event-details/illustration-car.png" width="150" height="150"
+            style="offset-path: path('M879,680 L899,677 L896,342 L791,125 L779,121 L750,153 L740,155 L691,98 L636,89 L621,96 L624,145 L617,157 L541,156 L527,172 L519,195 L498,189 L494,195'); offset-distance: 0%; offset-anchor: 76px 79px; offset-rotate: 0deg;" />
+      </svg>
+    </div>
     </div>
 
     
@@ -767,9 +789,8 @@
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-12">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">RSVP</p>
-        <h2 class="font-display text-4xl md:text-5xl mb-5" style="color:var(--ink)">See you there!</h2>
-        <p class="text-[15px] mb-2">We can&rsquo;t wait to celebrate with you. Please let us know if you&rsquo;ll be joining us!</p>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Please let us know if you can join us.</p>
+        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP</h2>
       </div>
 
       <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
@@ -993,6 +1014,66 @@
       });
     }, { threshold: 0.15 });
     document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
+
+    // ---------- Directions map: car drives the route once the map scrolls into view ----------
+    const directionsMapBlock = document.getElementById('directions-map-block');
+    if (directionsMapBlock) {
+      const reduceMapMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const directionsCar = document.getElementById('directions-map-car');      
+      const directionsMapObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            directionsMapObserver.unobserve(entry.target);
+            if (reduceMapMotion || !directionsCar) return;
+            const drive = directionsCar.animate(
+              [{ offsetDistance: '0%' }, { offsetDistance: '100%' }],
+              { duration: 6000, easing: 'ease-in-out', fill: 'forwards' }
+            );
+            drive.finished.then(() => spawnFireworks(directionsMapBlock)).catch(() => {});
+          }
+        });
+      }, { threshold: 0.3 });
+      
+      function spawnFireworks(container) {
+        const bursts = [
+          { left: '34%', top: '25%', delay: 0 },     // where the car arrives (Elan)
+          { left: '55%', top: '14%', delay: 130 },
+          { left: '20%', top: '42%', delay: 260 },
+          { left: '65%', top: '52%', delay: 380 },
+          { left: '45%', top: '60%', delay: 500 },
+          { left: '75%', top: '28%', delay: 620 },
+          { left: '15%', top: '16%', delay: 740 },
+          { left: '60%', top: '68%', delay: 860 },
+        ];
+        bursts.forEach(b => setTimeout(() => burst(container, b.left, b.top), b.delay));
+      }
+
+      function burst(container, originLeft, originTop) {
+        const size = 130 + Math.random() * 60; // varies per burst so they don't look copy-pasted
+        const rotation = Math.random() * 360;
+
+        const img = document.createElement('img');
+        img.src = 'photos/event-details/illustration-fireworks.png';
+        img.alt = '';
+        img.setAttribute('aria-hidden', 'true');
+        img.style.cssText = `position:absolute; left:${originLeft}; top:${originTop};
+          width:${size}px; height:${size}px;
+          transform: translate(-50%, -50%) scale(0.3) rotate(${rotation}deg);
+          opacity:0; pointer-events:none; z-index:5;`;
+        container.appendChild(img);
+
+        img.animate(
+          [
+            { transform: `translate(-50%, -50%) scale(0.3) rotate(${rotation}deg)`, opacity: 0 },
+            { transform: `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`, opacity: 1, offset: 0.35 },
+            { transform: `translate(-50%, -50%) scale(1.1) rotate(${rotation}deg)`, opacity: 0 },
+          ],
+          { duration: 1800, easing: 'ease-out', fill: 'forwards' }
+        ).finished.then(() => img.remove()).catch(() => {});
+      }
+      
+      directionsMapObserver.observe(directionsMapBlock);
+    }
 
     // ---------- Our Story gallery: hover-flip tiles (mouse), tap-flip tiles (touch) ----------
     const ourStoryFiles = [
