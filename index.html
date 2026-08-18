@@ -13,7 +13,7 @@
 <style>
   :root{
     --bg:        #F5F0F2;   /* color-50 — sitewide background */
-    --cream:     #F5F0F2;   /* near-white — elevated card/form surface */
+    --cream:     #FDF8F6;   /* near-white — elevated card/form surface */
     --ink-soft:  #9A6580;   /* color-500 — secondary text, nav links */
     --ink:       #472E3B;   /* color-800 — body text, headings */
     --accent:    #A5CCE6;   /* color-300 — borders, dividers, subtle accents */
@@ -285,8 +285,8 @@
   /* ---------- Dress code color preview ---------- */
   .dress-stage{
     position: relative;
-    width: 260px;
-    max-width: 68vw;
+    width: 450px;
+    max-width: 96vw;
     aspect-ratio: 1 / 1;
     margin: 0 auto;
   }
@@ -318,24 +318,12 @@
   }
   .swatch-row{
     display: grid;
-    /* repeat(5, 1fr) forced exactly 5 columns regardless of available width —
-       fine when the card was wide, but once the card shrinks below ~230px of
-       usable interior width, 5 columns no longer fit and the swatches spill
-       past the card's edge. auto-fit lets the grid recompute how many
-       columns actually fit and wrap the rest onto new rows automatically. */
-    grid-template-columns: repeat(auto-fit, minmax(30px, 44px));
-    /* auto-fit needs a DEFINITE width to compute the fitting column count
-       against. .swatch-row sits inside a flex column (.attire-card) where,
-       in this codebase, flex children haven't been stretching to the
-       container's width by default — so without an explicit width here, the
-       grid falls back to sizing itself by its own content preference
-       (enough columns to lay all 10 swatches out near-flat) instead of
-       actually respecting the card's narrower width. width:100% fixes that. */
+    grid-template-columns: repeat(5, 1fr);
     width: 100%;
     justify-content: center;
     justify-items: center;
     align-items: flex-start;
-    gap: 14px 10px;
+    gap: 2px 2px;
     max-width: 420px;
     margin: 0 auto;
   }
@@ -399,7 +387,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
     margin: 0 auto;
   }
   .attire-photo{
@@ -414,26 +402,38 @@
     flex-direction: column;
     justify-content: center;
   }
+
+  @media (max-width: 1023px){
+    .attire-card-weather{
+      display: none;
+    }
+  }
+
   @media (min-width: 1024px){
+    .swatch-row{
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .attire-anchor{
       position: relative;
       display: block;
     }
-    .dress-stage{ width: clamp(380px, 34vw, 560px); }   /* ← bigger photo */
+    .dress-stage{ width: clamp(380px, 42vw, 1000px); }   /* ← bigger photo */
+
     .attire-card{
       position: absolute;
-      width: clamp(200px, 16vw, 260px);                  /* ← smaller cards */
-      min-height: 260px;                                  /* ← smaller cards */
+      width: clamp(200px, 16vw, 360px);                  /* ← smaller cards */
+      min-height: 460px;                                  /* ← smaller cards */
     }
     .attire-card-weather{
       top: 50%;
       right: 100%;
-      margin-right: 1.5rem;
+      margin-right: 1rem;
     }
     .attire-card-colors{
       top: 50%;
       left: 100%;
-      margin-left: 1.5rem;
+      margin-left: 1rem;
     }
     /* The cards also carry .reveal (for their scroll-in fade/slide). .reveal
        and .reveal.in-view both set `transform`, and .reveal.in-view has two
@@ -703,7 +703,7 @@
       mask-image: linear-gradient(to right, black 92%, transparent);
     }
     #directions-map-block{
-      width: 640px !important;
+      width: 450px !important;
       max-width: none !important;
     }
   }
@@ -888,7 +888,7 @@
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-church" src="photos/event-details/illustration-sacred-heart.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6">
+            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -902,7 +902,7 @@
         <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-elan" src="photos/event-details/illustration-elan.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6">
+            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -926,7 +926,7 @@
 
     <div class="directions-map-scroll">
     <div class="reveal mb-10 shadow-soft" style="background:var(--background); width:96%; max-width:1000px; position:relative;" id="directions-map-block">
-      <div class="overflow-hidden rounded-6xl" style="position:relative;">
+      <div class="overflow-hidden rounded-6xl" style="background:var(--cream);position:relative;">
         <img src="photos/event-details/illustration-map-venue.png" alt="Map"
             class="w-full h-auto" loading="lazy" />
         <svg viewBox="0 0 1366 768" preserveAspectRatio="xMidYMid meet"
@@ -956,11 +956,12 @@
   </section>
 
   <!-- ================= DRESS CODE ================= -->
-  <section id="attire" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
+  <section id="attire" class="relative py-6 md:py-9 px-2 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
-      <div class="reveal text-center mb-10">
+      <div class="reveal text-center mb-3">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
-        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Dress Code</h2>
+        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Cool, soft, summer pale</h2>
+        <h2 class="font-hand text-3xl md:text-3xl" style="color:var(--ink)">(and Barong for men)</h2>
       </div>
 
     </div>
@@ -985,14 +986,14 @@
     <div class="attire-anchor">
 
       <!-- Weather info card -->
-      <div class="attire-card attire-card-weather reveal reveal-delay-1 rounded-[28px] shadow-soft p-6 md:p-8" style="background:#FDF8F6;">
+      <div class="attire-card attire-card-weather reveal reveal-delay-1 rounded-[28px] shadow-soft p-6 md:p-8" style="background:var(--cream);">
         <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-6 text-center" style="color:var(--accent-deep)">February in Manila</p>
         <div class="flex flex-col items-center justify-center gap-8">
           <div class="flex items-center gap-4 flex-shrink-0">
             <img src="photos/event-details/sun.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
             <img src="photos/event-details/breeze.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
           </div>
-          <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-2 text-[15px]">
+          <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-2 text-[12px]">
             <span class="font-semibold text-right" style="color:var(--ink)">Average high:</span><span class="text-left">31&deg;C</span>
             <span class="font-semibold text-right" style="color:var(--ink)">Average low:</span><span class="text-left">21&deg;C</span>
             <span class="font-semibold text-right" style="color:var(--ink)">&#x1F327;&#xFE0F; Rain:</span><span class="text-left">&#x1F91E; 0% &#x1F91E;</span>
@@ -1013,8 +1014,8 @@
       </div>
 
       <!-- Color selector card -->
-      <div class="attire-card attire-card-colors reveal reveal-delay-2 rounded-[28px] shadow-soft p-6 md:p-8" style="background:#FDF8F6;">
-        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-6 text-center" style="color:var(--accent-deep)">Preview a color</p>
+      <div class="attire-card attire-card-colors reveal reveal-delay-2 rounded-[28px] shadow-soft p-6 md:p-8" style="background:var(--cream);">
+        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-2 text-center" style="color:var(--accent-deep)">Preview a color</p>
         <p class="text-center text-[13px] mb-6" style="color:var(--ink-soft)">Showing: <strong id="dress-color-name" style="color:var(--ink)">White (default)</strong></p>
         <div class="swatch-row" id="dress-swatches">
           <button type="button" class="swatch-btn" data-color="#DAC8DF" data-name="Soft Lilac" title="Soft Lilac" aria-label="Soft Lilac">
