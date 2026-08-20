@@ -22,7 +22,7 @@
 
   @font-face {
     font-family: 'Joanne Hand';
-    src: url('fonts/Myfont2-Regular.otf') format('opentype');
+    src: url('fonts/MyFont2-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -703,7 +703,7 @@
       mask-image: linear-gradient(to right, black 92%, transparent);
     }
     #directions-map-block{
-      width: 450px !important;
+      width: 500px !important;
       max-width: none !important;
     }
   }
@@ -806,8 +806,8 @@
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
       <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
-        <li><a href="#our-story" class="nav-link whitespace-nowrap">Our Story</a></li>
-        <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
+        <li><a href="#venue" class="nav-link whitespace-nowrap">Schedule</a></li>
+        <li><a href="#attire" class="nav-link whitespace-nowrap">Dress Code</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
     </div>
@@ -920,7 +920,8 @@
     <div class="max-w-2xl mx-auto text-center">
       <div class="reveal mb-6 md:mb-8">
         <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
-        <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Directions</h2>
+        <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Allow 30-45 mins drive</h2>
+        <h2 class="font-hand text-2xl md:text-3xl mb-2" style="color:var(--ink)">(Parking is provided)</h2>
       </div>
     </div>
 
@@ -1305,7 +1306,7 @@
             if (reduceMapMotion || !directionsCar) return;
             const drive = directionsCar.animate(
               [{ offsetDistance: '0%' }, { offsetDistance: '100%' }],
-              { duration: 6000, easing: 'ease-in-out', fill: 'forwards' }
+              { duration: 4000, easing: 'ease-in-out', fill: 'forwards' }
             );
             drive.finished.then(() => spawnFireworks(directionsMapBlock)).catch(() => {});
           }
