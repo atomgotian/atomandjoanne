@@ -22,7 +22,7 @@
 
   @font-face {
     font-family: 'Joanne Hand';
-    src: url('fonts/MyFont2-Regular.otf') format('opentype');
+    src: url('fonts/Myfont2-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -1094,6 +1094,25 @@
           <p id="rsvp-name-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
+        <div id="email-step" class="hidden space-y-6">
+          <div>
+            <label for="rsvp-email" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Email Address</label>
+            <input id="rsvp-email" name="EMAIL" type="email" required placeholder="you@example.com"
+                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
+          </div>
+          <div>
+            <label for="rsvp-email-confirm" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Confirm Email Address</label>
+            <input id="rsvp-email-confirm" type="email" required placeholder="you@example.com"
+                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
+          </div>
+
+          <button type="button" id="rsvp-email-continue" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Continue
+          </button>
+
+          <p id="rsvp-email-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
+        </div>
+
         <div id="details-step" class="hidden space-y-6">
           <div>
             <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be attending?</p>
@@ -1435,6 +1454,7 @@
     const lastNameInput = document.getElementById('rsvp-last-name');
     const continueBtn = document.getElementById('rsvp-continue');
     const nameMessage = document.getElementById('rsvp-name-message');
+    const emailStep = document.getElementById('email-step');
     const detailsStep = document.getElementById('details-step');
 
     continueBtn.addEventListener('click', async () => {
@@ -1457,7 +1477,7 @@
           firstNameInput.readOnly = true;
           lastNameInput.readOnly = true;
           continueBtn.classList.add('hidden');
-          detailsStep.classList.remove('hidden');
+          emailStep.classList.remove('hidden');
         } else {
           continueBtn.disabled = false;
           continueBtn.textContent = 'Continue';
@@ -1470,6 +1490,35 @@
         nameMessage.textContent = 'Something went wrong checking the guest list. Please try again.';
         nameMessage.classList.remove('hidden');
       }
+    });
+
+    // ---------- RSVP email step ----------
+    // Guests enter their email twice; both copies must match (case-insensitive)
+    // before the attendance/dietary fields are revealed. The confirmation input
+    // has no `name` attribute, so it's never included in the submitted FormData —
+    // only the first `rsvp-email` field (name="EMAIL") is sent.
+    const emailInput = document.getElementById('rsvp-email');
+    const emailConfirmInput = document.getElementById('rsvp-email-confirm');
+    const emailContinueBtn = document.getElementById('rsvp-email-continue');
+    const emailMessage = document.getElementById('rsvp-email-message');
+
+    emailContinueBtn.addEventListener('click', () => {
+      if (!emailInput.reportValidity() || !emailConfirmInput.reportValidity()) return;
+
+      const email = emailInput.value.trim();
+      const emailConfirm = emailConfirmInput.value.trim();
+
+      if (email.toLowerCase() !== emailConfirm.toLowerCase()) {
+        emailMessage.textContent = "Those email addresses don't match — please check and try again.";
+        emailMessage.classList.remove('hidden');
+        return;
+      }
+
+      emailMessage.classList.add('hidden');
+      emailInput.readOnly = true;
+      emailConfirmInput.readOnly = true;
+      emailContinueBtn.classList.add('hidden');
+      detailsStep.classList.remove('hidden');
     });
 
     // ---------- RSVP toggle ----------
@@ -1488,6 +1537,77 @@
       });
     });
 
+    // ---------- RSVP celebration: fireworks around the RSVP box ----------
+    // Fires once, when a guest who "Joyfully Accept"s successfully submits
+    // their RSVP. Uses a fixed full-viewport overlay (separate from the
+    // directions-map fireworks above, which are confined to that map's own
+    // container) so bursts can be positioned around #rsvp-form regardless of
+    // scroll position. Same Web Animations technique as the map fireworks,
+    // just bigger and ringed around the box instead of scattered randomly.
+    const celebrationOverlay = document.createElement('div');
+    celebrationOverlay.id = 'celebration-overlay';
+    celebrationOverlay.setAttribute('aria-hidden', 'true');
+    celebrationOverlay.style.cssText = 'position:fixed; inset:0; z-index:150; pointer-events:none; overflow:hidden;';
+    document.body.appendChild(celebrationOverlay);
+
+    const reduceCelebrationMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function celebrateRSVP() {
+      if (reduceCelebrationMotion) return;
+      explodeScreenFireworks();
+    }
+
+    // Bursts ring the RSVP box itself — points are placed just outside each of
+    // its four edges (in viewport-relative px, since #rsvp-form may be scrolled
+    // anywhere) rather than scattered randomly across the whole screen.
+    function explodeScreenFireworks() {
+      const rect = rsvpForm.getBoundingClientRect();
+      const pad = 30; // base distance outside the box edge
+      const points = [];
+
+      const TOP_BOTTOM_COUNT = 4;
+      for (let i = 0; i < TOP_BOTTOM_COUNT; i++) {
+        const x = rect.left + (rect.width * (i + 0.5)) / TOP_BOTTOM_COUNT;
+        points.push({ x, y: rect.top - pad - Math.random() * 50 });
+        points.push({ x, y: rect.bottom + pad + Math.random() * 50 });
+      }
+
+      const SIDE_COUNT = 3;
+      for (let i = 0; i < SIDE_COUNT; i++) {
+        const y = rect.top + (rect.height * (i + 0.5)) / SIDE_COUNT;
+        points.push({ x: rect.left - pad - Math.random() * 50, y });
+        points.push({ x: rect.right + pad + Math.random() * 50, y });
+      }
+
+      points.forEach((p, i) => {
+        const delay = i * 110 + Math.random() * 100;
+        setTimeout(() => screenFireworkBurst(p.x, p.y), delay);
+      });
+    }
+
+    function screenFireworkBurst(x, y) {
+      const size = 260 + Math.random() * 160; // bigger bursts
+      const rotation = Math.random() * 360;
+
+      const img = document.createElement('img');
+      img.src = 'photos/event-details/illustration-fireworks.png';
+      img.alt = '';
+      img.style.cssText = `position:absolute; left:${x}px; top:${y}px;
+        width:${size}px; height:${size}px;
+        transform: translate(-50%, -50%) scale(0.3) rotate(${rotation}deg);
+        opacity:0;`;
+      celebrationOverlay.appendChild(img);
+
+      img.animate(
+        [
+          { transform: `translate(-50%, -50%) scale(0.3) rotate(${rotation}deg)`, opacity: 0 },
+          { transform: `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`, opacity: 1, offset: 0.35 },
+          { transform: `translate(-50%, -50%) scale(1.15) rotate(${rotation}deg)`, opacity: 0 },
+        ],
+        { duration: 1600, easing: 'ease-out', fill: 'forwards' }
+      ).finished.then(() => img.remove()).catch(() => {});
+    }
+
     // ---------- RSVP submit ----------
     const rsvpSubmit = document.getElementById('rsvp-submit');
 
@@ -1499,6 +1619,7 @@
         return;
       }
 
+      const isJoyfullyAccepting = attendingInput.value === 'Yes';
       const formData = new FormData(rsvpForm);
       rsvpSubmit.disabled = true;
       rsvpSubmit.textContent = 'Submitting...';
@@ -1519,6 +1640,7 @@
         rsvpMessage.textContent = 'Thank you! Your RSVP has been received. We can\'t wait to celebrate with you.';
         rsvpMessage.style.color = 'var(--ink)';
         rsvpMessage.classList.remove('hidden');
+        if (isJoyfullyAccepting) celebrateRSVP();
       } catch (err) {
         rsvpSubmit.disabled = false;
         rsvpSubmit.textContent = 'Send RSVP';
