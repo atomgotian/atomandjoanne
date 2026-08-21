@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>Atom &amp; Joanne — February 20, 2027</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23F7E4E7'/%3E%3Ctext x='32' y='42' font-family='Georgia,serif' font-size='26' fill='%238B7BAE' text-anchor='middle'%3EA%26J%3C/text%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="photos/hero/panda.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -65,10 +65,6 @@
   .fade-edge-bottom{
     -webkit-mask-image: linear-gradient(to bottom, black 99%, transparent);
     mask-image: linear-gradient(to bottom, black 99%, transparent);
-  }
-  .fade-edge-both{
-    -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
   }
 
   .tracking-wide-label{
@@ -180,7 +176,7 @@
     }
     @keyframes stickerPopInMobile{
       0%{ opacity:0; transform: translateX(-50%) scale(0.3) rotate(-28deg); }
-      70%{ opacity:1; transform: translateX(-50%) scale(3.3) rotate(22deg); } /* much smaller overshoot than desktop's 4.15 — keeps it sharp */
+      70%{ opacity:1; transform: translateX(-50%) scale(2.8) rotate(22deg); } /* much smaller overshoot than desktop's 4.15 — keeps it sharp */
       100%{ opacity:1; transform: translateX(-50%) scale(1) rotate(0deg); }
     }
   }
@@ -400,21 +396,22 @@
 
   /* ---------- Dress code sandwich layout ---------- */
   /* Below 1024px: plain flow. .attire-anchor is just a centered flex column —
-     weather card, photo, color card stack in DOM order with a gap between
-     them. Nothing is absolutely positioned, so a taller card simply pushes
-     the next item down; it can never climb up and overlap the section header
-     above. (An earlier version anchored the cards to the photo's box with
-     position:absolute at every width — on a phone-width column that put the
-     weather card's top edge above the *photo's* top edge by more than the
-     card's own height, so it landed on top of the "Dress Code" heading. This
-     flow-based approach is immune to that by construction: it doesn't matter
-     how tall the card gets.)
+     photo, color card, weather card stack in DOM order (weather card last,
+     per Atom's request) with a gap between them. Nothing is absolutely
+     positioned, so a taller card simply pushes the next item down; it can
+     never climb up and overlap the section header above. (An earlier
+     version anchored the cards to the photo's box with position:absolute at
+     every width — on a phone-width column that put a card's top edge above
+     the *photo's* top edge by more than the card's own height, so it landed
+     on top of the "Dress Code" heading. This flow-based approach is immune
+     to that by construction: it doesn't matter how tall the card gets.)
 
      At 1024px+: the photo becomes the anchor. It's still in flow (so it
      still contributes to the anchor's height, keeping the anchor vertically
      clear of the header), but the two cards switch to position:absolute and
      hook onto its left/right edges — so resizing .dress-stage at this
-     breakpoint never pushes the cards around. */
+     breakpoint never pushes the cards around, and DOM order no longer
+     matters since both cards are positioned independently of it. */
   .attire-anchor{
     display: flex;
     flex-direction: column;
@@ -433,12 +430,6 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-  }
-
-  @media (max-width: 1023px){
-    .attire-card-weather{
-      display: none;
-    }
   }
 
   @media (min-width: 1024px){
@@ -484,19 +475,6 @@
     .attire-card.attire-card-colors.reveal{
       transform: translateY(-50%);
     }
-  }
-
-  /* ---------- Dress code preview card: Elan venue illustration as background ---------- */
-  /* Replaces the flat #FDF8F6 card + shadow-soft with the same Elan by the Bay
-     line illustration used elsewhere on the page (circle photo, margin echo),
-     so the venue itself shows through behind the color swatches — no card
-     shadow, no solid fill. */
-  .dress-preview-card{
-    position: relative;
-    background-image: url('photos/event-details/illustration-elan-interior.png');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
   }
 
   /* Photo pile: nine photos land on top of each other in the center, one at
@@ -668,7 +646,7 @@
     width:100%;
     margin-bottom: 1.1rem;
     background: var(--cream);
-    padding: 1rem 1rem 1.1rem;
+    padding: 1rem 0.4rem 1.1rem;
     box-shadow:
       0 2px 5px rgba(74,54,72,0.14),
       0 14px 26px rgba(74,54,72,0.14);
@@ -678,12 +656,12 @@
     font-weight:600;
     letter-spacing:0.14em;
     text-transform:uppercase;
-    font-size:0.75rem;
+    font-size:1rem;
     color:var(--accent-deep);
     text-align:center;
     margin:0 0 0.65rem;
   }
-  .story-card .card-photo{ background:#fff; padding:0.3rem; }
+
   .story-card .card-photo img{ width:100%; height:auto; display:block; }
   .story-card .card-text{
     font-family:'DM Sans', sans-serif;
@@ -720,10 +698,15 @@
     width stretched the photo into a tall skinny strip — so below the sm
     breakpoint it switches to a height that scales with the photo's own
     width instead, closer to a portrait print than a full-height banner. */
-  .story-closer-img{ height:85vh; max-height:820px; }
+  .story-closer-img{ height:auto; }
   @media (max-width: 639px){
     .story-closer-img{ height:auto; aspect-ratio: 4 / 5; max-height:none; }
   }
+  .story-closer{ width:70%; }
+  @media (max-width: 639px){
+    .story-closer{ width:92%; max-width:none; }
+  }
+  
 
   /* ---------- Event Details: architectural margin echo ---------- */
   /* The same venue illustrations already used in the circles, blown up large,
@@ -754,21 +737,6 @@
     top: -180px;
     width: 700px;
     height: auto;
-  }
-
-  .dress-preview-echo{
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 140%;
-    max-width: none;
-    height: auto;
-    opacity: 0.5;
-    z-index: -1;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    -webkit-mask-image: radial-gradient(circle, black 35%, transparent 72%);
-    mask-image: radial-gradient(circle, black 35%, transparent 72%);
   }
 
   /* ---------- Event Details: circle-centered echo (below 1024px) ---------- */
@@ -804,7 +772,7 @@
       mask-image: linear-gradient(to right, black 92%, transparent);
     }
     #directions-map-block{
-      width: 500px !important;
+      width: 525px !important;
       max-width: none !important;
     }
   }
@@ -907,7 +875,7 @@
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
       <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
-        <li><a href="#venue" class="nav-link whitespace-nowrap">Schedule</a></li>
+        <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
         <li><a href="#attire" class="nav-link whitespace-nowrap">Dress Code</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
       </ul>
@@ -953,9 +921,9 @@
     --bg (unchanged) — only each individual photo gets a white border. -->
     <section id="our-story" class="relative pt-24 md:pt-32 px-6 lg:px-10">
       <div class="max-w-6xl mx-auto">
-        <div class="reveal text-center mb-14 md:mb-16">
+        <div class="reveal text-center mb-6 md:mb-8">
           <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How did we meet?</p>
-          <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)"> Our story</h2>
+          <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)">This is our story</h2>
         </div>
 
         <div class="sm:columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4" id="our-story-grid">
@@ -965,7 +933,10 @@
       
       <!-- Join Us — closer photo, framed with a white border; large and immersive, not full-bleed -->
       <div class="reveal relative full-screen items-center">
-        <div class="story-closer bg-white shadow-soft p-1 md:p-2" style="width:92%; max-width:1100px;">
+        <div class="text-center mb-4 md:mb-4">
+          <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)">Welcome to our story!</h2>
+        </div>
+        <div class="story-closer bg-white shadow-soft p-1 md:p-2" style="max-width:800px; margin:0 auto;">
           <img class="story-closer-img" src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
               style="width:100%; object-fit:cover; object-position:center; display:block;" />
         </div>
@@ -1021,15 +992,15 @@
   <section id="directions" class="relative py-6 md:py-9 px-6 lg:px-10 flex flex-col items-center justify-center full-screen">
     <div class="max-w-2xl mx-auto text-center">
       <div class="reveal mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <br class="sm:hidden"> <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
         <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Allow 30-45 mins drive</h2>
         <h2 class="font-hand text-2xl md:text-3xl mb-2" style="color:var(--ink)">(Parking is provided)</h2>
       </div>
     </div>
 
     <div class="directions-map-scroll">
-    <div class="reveal mb-10 shadow-soft" style="background:var(--background); width:96%; max-width:1000px; position:relative;" id="directions-map-block">
-      <div class="overflow-hidden rounded-6xl" style="background:var(--cream);position:relative;">
+    <div class="reveal mb-10 shadow-soft" style="background:var(--cream); width:96%; max-width:1000px; position:relative;" id="directions-map-block">
+      <div class="overflow-hidden rounded-[28px]" style="background:var(--cream);position:relative;">
         <img src="photos/event-details/illustration-map-venue.png" alt="Map"
             class="w-full h-auto" loading="lazy" />
         <svg viewBox="0 0 1366 768" preserveAspectRatio="xMidYMid meet"
@@ -1069,7 +1040,7 @@
 
     </div>
 
-    <!-- Below 1024px: plain stacked flow, weather -> photo -> colors, top to
+    <!-- Below 1024px: plain stacked flow, photo -> colors -> weather, top to
          bottom. At 1024px+: the photo becomes the positioning anchor and both
          cards switch to position:absolute, flanking it left/right. See
          .attire-anchor / .attire-card-weather / .attire-card-colors in the
@@ -1087,23 +1058,6 @@
          line up) looked fine. Always let this track .dress-stage's real
          width; don't hardcode a number here again. -->
     <div class="attire-anchor">
-
-      <!-- Weather info card -->
-      <div class="attire-card attire-card-weather reveal reveal-delay-1 rounded-[28px] shadow-soft p-6 md:p-8" style="background:var(--cream);">
-        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-6 text-center" style="color:var(--accent-deep)">February in Manila</p>
-        <div class="flex flex-col items-center justify-center gap-8">
-          <div class="flex items-center gap-4 flex-shrink-0">
-            <img src="photos/event-details/sun.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
-            <img src="photos/event-details/breeze.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
-          </div>
-          <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-2 text-[12px]">
-            <span class="font-semibold text-right" style="color:var(--ink)">Average high:</span><span class="text-left">31&deg;C</span>
-            <span class="font-semibold text-right" style="color:var(--ink)">Average low:</span><span class="text-left">21&deg;C</span>
-            <span class="font-semibold text-right" style="color:var(--ink)">&#x1F327;&#xFE0F; Rain:</span><span class="text-left">&#x1F91E; 0% &#x1F91E;</span>
-            <span class="font-semibold text-right" style="color:var(--ink)">&#x1F305; Sunset:</span><span class="text-left">&#x1F60D; 100% &#x1F60D;</span>
-          </div>
-        </div>
-      </div>
 
       <!-- Photo, standing alone — this box (and only this box) is what the cards
            anchor to at 1024px+. The "Showing: <color>" caption lives in the
@@ -1164,13 +1118,35 @@
         </div>
         <p class="text-center text-[12px] mt-5 italic" style="color:var(--ink)">Please avoid white, beige or black.</p>
       </div>
+
+      <!-- Weather info card — placed after the color card so it lands last in
+           the mobile/tablet stack (photo, then colors, then weather). At
+           1024px+ this DOM position has no visual effect: .attire-card-weather
+           is absolutely positioned to the photo's left edge regardless of
+           where it sits in the markup. -->
+      <div class="attire-card attire-card-weather reveal reveal-delay-2 rounded-[28px] shadow-soft p-6 md:p-8" style="background:var(--cream);">
+        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-6 text-center" style="color:var(--accent-deep)">February in Manila</p>
+        <div class="flex flex-col items-center justify-center gap-6 sm:gap-8">
+          <div class="flex items-center gap-4 flex-shrink-0">
+            <img src="photos/event-details/sun.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
+            <img src="photos/event-details/breeze.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
+          </div>
+          <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-2 text-[14px] sm:text-[12px]">
+            <span class="font-semibold text-right" style="color:var(--ink)">Average high:</span><span class="text-left">31&deg;C</span>
+            <span class="font-semibold text-right" style="color:var(--ink)">Average low:</span><span class="text-left">21&deg;C</span>
+            <span class="font-semibold text-right" style="color:var(--ink)">&#x1F327;&#xFE0F; Rain:</span><span class="text-left">&#x1F91E; 0% &#x1F91E;</span>
+            <span class="font-semibold text-right" style="color:var(--ink)">&#x1F305; Sunset:</span><span class="text-left">&#x1F60D; 100% &#x1F60D;</span>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
   <!-- ================= RSVP ================= -->
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">Please let us know if you can join us.</p>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">We can't wait to celebrate with you!</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP</h2>
       </div>
 
@@ -1319,7 +1295,6 @@
       if (introFinished) return;
       introFinished = true;
       introOverlay.classList.add('intro-exit');
-      document.body.classList.add('intro-done');
       document.body.style.overflow = '';
       playSequence(heroSequence);
       setTimeout(() => { introOverlay.style.display = 'none'; }, 550);
@@ -1480,12 +1455,12 @@
     const ourStoryFiles = [
       { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017',
         text: "We were both shiftees. Joanne shifted from architecture then moved to Industrial Engineering in the first semester of A.Y. 2016-2017. Atom shifted from Sociology in the second semester. Fun fact is Atom applied in the first semester but they only accepted one applicant and that was Joanne which is why Atom had to wait another semester to apply again. This is our frist photo together. Joanne as a member of IE Club, Atom as an applicant trying complete tasks." },
-      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023',
-        text: "Picture with the sunflowers! We both graduate Magna Cum Laude 🤩 our GWAs were 0.01 apart." },
-      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023',
-        text: "Joanne got Panda just as the pandemic started. This was one of the first times we brought him out on a trip." },
       { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022',
         text: "Our first out of town trip together! We visited Dumaguete and Siquijor in the summer of 2022." },
+      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023',
+        text: "Joanne got Panda just as the pandemic started. This was one of the first times we brought him out on a trip." },
+      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023',
+        text: "Picture with the sunflowers! We both graduate Magna Cum Laude 🤩 our GWAs were 0.01 apart." },
       { file: 'video-call.jpg', w: 2000, h: 924, date: 'Nov 2023',
         text: "Atom moved to Sydney in November 2023 so it's been a long distance relationship ever since. On top of our daily video calls and chats, we like to celebrate special moments with \"online dates.\" We'll schedule a date in advanced and decide on what we're going to eat, making sure we eat the same or similar food to make it feel like we are together. In this photo, we are both eating pasta salad! Joanne went out to eat, while Atom prepared food at home." },
       { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024',
@@ -1494,7 +1469,7 @@
         text: "Coogee to Bondi walk. This is the walk that made Atom decide to stay in Sydney so it was something Joanne had to do. This was taken in the middle of our walk by Bronte Beach." },
       { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025',
         text: "Back where we began! Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
-      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2022',
+      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026',
         text: "Joanne in Sydney!" },
     ];
 
