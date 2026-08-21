@@ -624,6 +624,75 @@
     margin:0;
   }
 
+  /* ---------- Our Story gallery: mobile stacked cards (single column, no flip) ----------
+    Below the sm breakpoint the flip interaction is dropped and the grid is
+    built as plain cards instead (see the JS branch further down) — flip-on-
+    hover has no mobile equivalent, and the CSS-column masonry it sat on is
+    unreliable on iOS Safari besides. A single vertical column means there's
+    no column math to get wrong, so nothing gets ejected. Each card shows the
+    date, then the photo, then a caption clamped to 2 lines with a "Read
+    more" toggle so the longer story entries don't overwhelm the scroll. */
+  .story-card{
+    width:100%;
+    margin-bottom: 1.1rem;
+    background: var(--cream);
+    padding: 1rem 1rem 1.1rem;
+    box-shadow:
+      0 2px 5px rgba(74,54,72,0.14),
+      0 14px 26px rgba(74,54,72,0.14);
+  }
+  .story-card .card-date{
+    font-family:'Joanne Hand', cursive;
+    font-weight:600;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-size:0.75rem;
+    color:var(--accent-deep);
+    text-align:center;
+    margin:0 0 0.65rem;
+  }
+  .story-card .card-photo{ background:#fff; padding:0.3rem; }
+  .story-card .card-photo img{ width:100%; height:auto; display:block; }
+  .story-card .card-text{
+    font-family:'DM Sans', sans-serif;
+    font-weight:400;
+    font-size:0.85rem;
+    line-height:1.55;
+    color:var(--ink);
+    margin:0.75rem 0 0;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
+  }
+  .story-card .card-text.expanded{
+    -webkit-line-clamp:unset;
+    overflow:visible;
+  }
+  .story-card .card-toggle{
+    display:block;
+    background:none;
+    border:none;
+    padding:0;
+    margin-top:0.4rem;
+    font-family:'DM Sans', sans-serif;
+    font-size:0.78rem;
+    font-weight:500;
+    color:var(--accent-deep);
+    cursor:pointer;
+  }
+
+  /* ---------- Our Story closer photo ----------
+    Desktop/tablet keeps the original tall, cinematic crop (85vh, capped at
+    820px). On mobile that same fixed height paired with a much narrower
+    width stretched the photo into a tall skinny strip — so below the sm
+    breakpoint it switches to a height that scales with the photo's own
+    width instead, closer to a portrait print than a full-height banner. */
+  .story-closer-img{ height:85vh; max-height:820px; }
+  @media (max-width: 639px){
+    .story-closer-img{ height:auto; aspect-ratio: 4 / 5; max-height:none; }
+  }
+
   /* ---------- Event Details: architectural margin echo ---------- */
   /* The same venue illustrations already used in the circles, blown up large,
     faded out, and bled off the screen edge as ambient background texture.
@@ -856,16 +925,16 @@
           <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)"> Our story</h2>
         </div>
 
-        <div class="columns-2 sm:columns-3 md:columns-4 gap-3 md:gap-4" id="our-story-grid">
+        <div class="sm:columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4" id="our-story-grid">
           <!-- populated below -->
         </div>
       </div>
       
       <!-- Join Us — closer photo, framed with a white border; large and immersive, not full-bleed -->
       <div class="reveal relative full-screen items-center">
-        <div class="bg-white shadow-soft p-1 md:p-2" style="width:92%; max-width:1100px;">
-          <img src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
-              style="width:100%; height:85vh; max-height:820px; object-fit:cover; object-position:center; display:block;" />
+        <div class="story-closer bg-white shadow-soft p-1 md:p-2" style="width:92%; max-width:1100px;">
+          <img class="story-closer-img" src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
+              style="width:100%; object-fit:cover; object-position:center; display:block;" />
         </div>
       </div>
     </section>
@@ -1396,37 +1465,72 @@
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
-    ourStoryFiles.forEach((story, i) => {
-      const tile = document.createElement('div');
-      tile.className = 'story-tile';
-      tile.style.aspectRatio = `${story.w} / ${story.h}`;
-      tile.setAttribute('data-index', i);
-      tile.innerHTML = `
-        <div class="flip-inner">
-          <div class="tile-face tile-front">
-            <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
-          </div>
-          <div class="tile-face tile-back">
-            <p class="tile-date">${story.date}</p>
-            <p class="tile-text">${story.text}</p>
-          </div>
-        </div>
-      `;
-      storyGrid.appendChild(tile);
-    });
-
-    // Devices with a real pointer keep relying purely on the CSS :hover rule
-    // above. Touch devices have no hover state at all, so there a tap toggles
-    // the same "flipped" class directly instead — checked once via matchMedia
-    // rather than guessing from screen width, and only attached when needed
-    // so hover and tap never fight over the same tile on desktop.
+    const mobileQuery = window.matchMedia('(max-width: 639px)');
     const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    if (!supportsHover) {
-      storyGrid.addEventListener('click', (e) => {
+
+    // Rebuilds the whole grid for the current width. Called on load, and
+    // again any time the width crosses the 640px line — so resizing a
+    // browser window (e.g. testing in DevTools) updates live instead of
+    // needing a full page reload to pick a layout.
+    function renderStoryGrid() {
+      storyGrid.innerHTML = '';
+      if (mobileQuery.matches) {
+        ourStoryFiles.forEach((story, i) => {
+          const card = document.createElement('div');
+          card.className = 'story-card';
+          card.setAttribute('data-index', i);
+          card.innerHTML = `
+            <p class="card-date">${story.date}</p>
+            <div class="card-photo">
+              <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
+            </div>
+            <p class="card-text">${story.text}</p>
+            <button type="button" class="card-toggle">Read more</button>
+          `;
+          storyGrid.appendChild(card);
+        });
+      } else {
+        ourStoryFiles.forEach((story, i) => {
+          const tile = document.createElement('div');
+          tile.className = 'story-tile';
+          tile.style.aspectRatio = `${story.w} / ${story.h}`;
+          tile.setAttribute('data-index', i);
+          tile.innerHTML = `
+            <div class="flip-inner">
+              <div class="tile-face tile-front">
+                <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
+              </div>
+              <div class="tile-face tile-back">
+                <p class="tile-date">${story.date}</p>
+                <p class="tile-text">${story.text}</p>
+              </div>
+            </div>
+          `;
+          storyGrid.appendChild(tile);
+        });
+      }
+    }
+
+    renderStoryGrid();
+    mobileQuery.addEventListener('change', renderStoryGrid);
+
+    // One delegated listener handles both layouts: the mobile "Read more"
+    // toggle, and tap-to-flip for touch devices on the desktop/tablet grid
+    // (devices with a real pointer keep relying purely on the CSS :hover
+    // rule instead).
+    storyGrid.addEventListener('click', (e) => {
+      const toggleBtn = e.target.closest('.card-toggle');
+      if (toggleBtn) {
+        const text = toggleBtn.previousElementSibling;
+        const expanded = text.classList.toggle('expanded');
+        toggleBtn.textContent = expanded ? 'Show less' : 'Read more';
+        return;
+      }
+      if (!supportsHover) {
         const tile = e.target.closest('.story-tile');
         if (tile) tile.querySelector('.flip-inner').classList.toggle('flipped');
-      });
-    }
+      }
+    });
 
     // ---------- Dress code color swatches ----------
     const dressTint = document.getElementById('dress-tint');
