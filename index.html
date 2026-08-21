@@ -22,7 +22,7 @@
 
   @font-face {
     font-family: 'Joanne Hand';
-    src: url('fonts/Myfont2-Regular.otf') format('opentype');
+    src: url('fonts/MyFont2-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -303,7 +303,7 @@
     pointer-events: none;
   }
   .dress-tint{
-    background-color: transparent;
+    background-color: #DAC8DF;
     mix-blend-mode: multiply;
     -webkit-mask-image: url('photos/event-details/illustration-dress.png');
     mask-image: url('photos/event-details/illustration-dress.png');
@@ -1016,10 +1016,10 @@
 
       <!-- Color selector card -->
       <div class="attire-card attire-card-colors reveal reveal-delay-2 rounded-[28px] shadow-soft p-6 md:p-8" style="background:var(--cream);">
-        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-2 text-center" style="color:var(--accent-deep)">Preview a color</p>
-        <p class="text-center text-[13px] mb-6" style="color:var(--ink-soft)">Showing: <strong id="dress-color-name" style="color:var(--ink)">White (default)</strong></p>
+        <p class="text-[13px] font-bold tracking-[0.15em] uppercase mb-2 text-center" style="color:var(--accent-deep)">Try on a color</p>
+        <p class="text-center text-[13px] mb-6" style="color:var(--ink-soft)">Showing: <strong id="dress-color-name" style="color:var(--ink)">Soft Lilac (default)</strong></p>
         <div class="swatch-row" id="dress-swatches">
-          <button type="button" class="swatch-btn" data-color="#DAC8DF" data-name="Soft Lilac" title="Soft Lilac" aria-label="Soft Lilac">
+          <button type="button" class="swatch-btn active" data-color="#DAC8DF" data-name="Soft Lilac" title="Soft Lilac" aria-label="Soft Lilac">
               <span class="swatch-dot" style="background:#DAC8DF"></span>
               <span class="swatch-underline"></span>
             </button>
@@ -1060,8 +1060,8 @@
               <span class="swatch-underline"></span>
             </button>
         </div>
+        <p class="text-center text-[12px] mt-5 italic" style="color:var(--ink)">Please avoid white, beige or black.</p>
       </div>
-
     </div>
 
   <!-- ================= RSVP ================= -->
