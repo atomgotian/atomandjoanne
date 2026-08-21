@@ -1146,8 +1146,8 @@
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">We can't wait to celebrate with you!</p>
-        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP</h2>
+        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we RSVP?</p>
+        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP Here</h2>
       </div>
 
       <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
@@ -1193,13 +1193,13 @@
 
         <div id="details-step" class="hidden space-y-6">
           <div>
-            <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be attending?</p>
+            <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be joining?</p>
             <div class="grid grid-cols-2 gap-3">
               <button type="button" data-attend="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                Joyfully Accept
+                Yes!
               </button>
               <button type="button" data-attend="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                Regretfully Decline
+                No :(
               </button>
             </div>
             <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
@@ -1454,23 +1454,23 @@
     // ---------- Our Story gallery: hover-flip tiles (mouse), tap-flip tiles (touch) ----------
     const ourStoryFiles = [
       { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017',
-        text: "We were both shiftees. Joanne shifted from architecture then moved to Industrial Engineering in the first semester of A.Y. 2016-2017. Atom shifted from Sociology in the second semester. Fun fact is Atom applied in the first semester but they only accepted one applicant and that was Joanne which is why Atom had to wait another semester to apply again. This is our frist photo together. Joanne as a member of IE Club, Atom as an applicant trying complete tasks." },
+        text: "We met as shiftees. Joanne shifted from Architecture then moved to Industrial Engineering in the first semester of A.Y. 2016-2017. Atom shifted from Sociology in the following semester. And here's a fun fact! Atom applied in the first semester too except the Department of IE accepted only one applicant from outside the College of Engineering, and that was Joanne. Because his grades were lower, Atom had to wait another semester to apply again. This photo was taken when Atom was an applicant for IE Club trying to compete tasks with Joanne, who was already a member by this time." },
       { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022',
-        text: "Our first out of town trip together! We visited Dumaguete and Siquijor in the summer of 2022." },
+        text: "Our first trip out of town together!! We visited Dumaguete and Siquijor in the summer of 2022. This trip kicked off a string of adventures that saw us travel all over the Philippines." },
       { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023',
-        text: "Joanne got Panda just as the pandemic started. This was one of the first times we brought him out on a trip." },
+        text: "Panda's day out! Panda joined Joanne's family just as the pandemic started, so it wasn't until he was 2 that we began taking him out for trips." },
       { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023',
-        text: "Picture with the sunflowers! We both graduate Magna Cum Laude 🤩 our GWAs were 0.01 apart." },
+        text: "Mandatory grad pictures with UP's sunflowers! We both graduate Magna Cum Laude  🤩 our GWAs were 0.01 apart." },
       { file: 'video-call.jpg', w: 2000, h: 924, date: 'Nov 2023',
-        text: "Atom moved to Sydney in November 2023 so it's been a long distance relationship ever since. On top of our daily video calls and chats, we like to celebrate special moments with \"online dates.\" We'll schedule a date in advanced and decide on what we're going to eat, making sure we eat the same or similar food to make it feel like we are together. In this photo, we are both eating pasta salad! Joanne went out to eat, while Atom prepared food at home." },
+        text: "Atom moved to Australia in November 2023. On top of our daily video calls and chats, we like to celebrate special moments with \"online dates.\" We would schedule a date in advanced and decide on what we're going to eat, making sure we eat the same or similar food to make it feel like we are together. In this photo, we are both eating pasta salad! Joanne went out to eat, while Atom prepared food at home." },
       { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024',
-        text: "Joanne visits Australia for the first time! It's a two week trip where we visit Melbourne first then Sydney for Atom to introduce Joanne to his life. This is a photo with a kangaroo in Melbourne." },
+        text: "Joanne visits Australia for the first time! It's a two week trip where we visit Melbourne first then Sydney for Atom to introduce Joanne to his life." },
       { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025',
-        text: "Coogee to Bondi walk. This is the walk that made Atom decide to stay in Sydney so it was something Joanne had to do. This was taken in the middle of our walk by Bronte Beach." },
+        text: "Coogee to Bondi walk. This is the walk that made Atom choose to stay in Sydney over Melbourne so it was something Joanne had to do." },
       { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025',
         text: "Back where we began! Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
       { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026',
-        text: "Joanne in Sydney!" },
+        text: "A preview from our photoshoot in Sydney!" },
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
@@ -1594,7 +1594,7 @@
         } else {
           continueBtn.disabled = false;
           continueBtn.textContent = 'Continue';
-          nameMessage.textContent = "We couldn't find your name on the list — please check the spelling and try again.";
+          nameMessage.textContent = "We couldn't find your name on the list. Please check the spelling and try again.";
           nameMessage.classList.remove('hidden');
         }
       } catch (err) {
@@ -1750,7 +1750,12 @@
         rsvpForm.querySelectorAll('input, textarea, button[type=button]').forEach(el => el.style.display = 'none');
         rsvpSubmit.style.display = 'none';
         document.querySelectorAll('#rsvp-form label, #rsvp-form p.block').forEach(el => el.style.display = 'none');
-        rsvpMessage.textContent = 'Thank you! Your RSVP has been received. We can\'t wait to celebrate with you.';
+        document.getElementById('name-step').style.display = 'none';
+        document.getElementById('email-step').style.display = 'none';
+        document.getElementById('details-step').style.display = 'none';
+        rsvpMessage.textContent = isJoyfullyAccepting
+          ? 'See you there!! We can\'t wait to celebrate with you!'
+          : "Thank you for letting us know. We'll miss having you there!";
         rsvpMessage.style.color = 'var(--ink)';
         rsvpMessage.classList.remove('hidden');
         if (isJoyfullyAccepting) celebrateRSVP();
