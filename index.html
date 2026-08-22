@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Atom &amp; Joanne — February 20, 2027</title>
-<meta property="og:image" content="https://atomandjoanne.com/photos/hero/hero-full.jpeg">
+<meta property="og:image" content="photos/hero/hero-full.jpeg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="photos/hero/panda.png">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -129,8 +129,6 @@
     }
   }
 
-  #hero-sticker-mobile{ display: none; }
-
   @media (max-width: 767px){
     #hero-overlay{
       height: 100vh;
@@ -140,13 +138,13 @@
     #hero-content{
       padding-top: 0;
       padding-bottom: 0;
-      transform: translateY(-4vh);  /* adjust the vertical position of the hero content on mobile */
+      transform: translateY(-8vh);  /* adjust the vertical position of the hero content on mobile */
     }
     #hero-date{
       margin-bottom: 0.75rem; /* was ~2rem from mb-8 — tune this down further to close the gap more */
     }
     #hero-atom, #hero-joanne{
-      font-size: clamp(6rem, 26cqw, 12rem) !important;
+      font-size: clamp(5rem, 22cqw, 11rem) !important;
     }
     #hero-and{
       font-size: clamp(3rem, 8cqw, 4.5rem) !important;
@@ -154,32 +152,7 @@
     .hero-sticker{
       width: 3em;
     }
-    #hero-sticker{
-      display: none; /* the "attached to the e" version is desktop-only now */
-    }
 
-    #hero-sticker-mobile{
-      display: block;
-      position: absolute;
-      bottom: 100%;     
-      margin-bottom: -1.5rem;
-      left: 46%;
-      width: 19rem;         /* TUNE: fixed size — no longer tied to the heading font, so no more blur */
-      max-width: none;
-      height: auto;
-      opacity: 0;
-      transform: translateX(-50%) scale(0.3) rotate(-28deg);
-      filter: drop-shadow(0 8px 18px rgba(0,0,0,0.35));
-      pointer-events: none;
-    }
-    #hero-sticker-mobile.play{
-      animation: stickerPopInMobile 0.7s cubic-bezier(0.34,1.56,0.64,1) 2.4s forwards;
-    }
-    @keyframes stickerPopInMobile{
-      0%{ opacity:0; transform: translateX(-50%) scale(0.3) rotate(-28deg); }
-      70%{ opacity:1; transform: translateX(-50%) scale(2.8) rotate(22deg); } /* much smaller overshoot than desktop's 4.15 — keeps it sharp */
-      100%{ opacity:1; transform: translateX(-50%) scale(1) rotate(0deg); }
-    }
   }
 
   @keyframes pandaRollThroughMobile{
@@ -893,7 +866,6 @@
     <div class="absolute inset-0 mix-blend-multiply" style="background: linear-gradient(to bottom, rgba(38,28,54,0.35), transparent 80%);"></div>
     <div class="absolute inset-0 bg-gradient-to-b from-black/75 via-black/25 to-transparent"></div>
     <div id="hero-content" class="relative max-w-6xl mx-auto px-6 lg:px-10 pt-28 md:pt-36 pb-16 md:pb-24 text-white text-center">
-      <img id="hero-sticker-mobile" src="photos/hero/sticker-taiwan.png" alt="" aria-hidden="true" />
       <p id="hero-date" class="hero-date tracking-wide-label text-[clamp(12px,4cqw,22px)] mb-8 opacity-90">02.20.2027</p>
       <h1 class="font-display leading-[1]">
         <span id="hero-atom" class="hero-name text-[clamp(4.5rem,20cqw,12rem)]" style="color:var(--cream)">
@@ -1287,7 +1259,6 @@
       document.getElementById('hero-atom'),
       document.getElementById('hero-and'),
       document.getElementById('hero-sticker'),
-      document.getElementById('hero-sticker-mobile'), 
       document.getElementById('hero-joanne'),
       document.querySelector('.site-nav'),
     ];
