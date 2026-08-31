@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Atom &amp; Joanne — February 20, 2027</title>
-<meta property="og:image" content="photos/hero/hero-full.jpeg">
+<meta property="og:image" content="https://atomandjoanne.com/photos/hero/hero-full.jpeg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="photos/hero/panda.png">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -29,6 +29,14 @@
     font-display: swap;
   }
 
+  @font-face {
+    font-family: 'Joanne Print';
+    src: url('fonts/Myfont5-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
   .font-hand {
     font-family: 'Joanne Hand', cursive;
   }
@@ -41,18 +49,33 @@
     width: 100%;
   }
 
-  body{
+  h1, h2, h3 {
+    font-family: 'Joanne Hand', cursive;
+    letter-spacing: -0.02em;
+  }
+  
+  .font-display {
+    /* font-family: 'Cormorant Garamond', serif; */
+    font-family: 'Joanne Print', sans-serif;
+    letter-spacing: 0.1em;
+  }
+
+  body {
     background: var(--bg);
     color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
+    /* font-family: 'DM Sans', sans-serif; */
+    font-family: 'Joanne Print', sans-serif;
+    letter-spacing: 0.1em;
     line-height: 1.7;
     overflow-x: hidden;
     width: 100%;
   }
 
-  h1, h2, h3, .font-display{
-    font-family: 'Cormorant Garamond', serif;
-    letter-spacing: -0.02em;
+  .tracking-wide-label{
+    /* font-family: 'DM Sans', sans-serif; */
+    font-family: 'Joanne Print', sans-serif;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
   }
 
   .full-screen{
@@ -66,12 +89,6 @@
   .fade-edge-bottom{
     -webkit-mask-image: linear-gradient(to bottom, black 99%, transparent);
     mask-image: linear-gradient(to bottom, black 99%, transparent);
-  }
-
-  .tracking-wide-label{
-    font-family: 'DM Sans', sans-serif;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
   }
 
   /* layered, color-tinted shadows */
@@ -247,7 +264,11 @@
     text-shadow: 0 2px 12px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.3);
   }
   
-  #hero-date, #hero-atom, #hero-and, #hero-joanne {
+  #hero-date {
+      font-family: 'Joanne Print', cursive;
+  }
+
+  #hero-atom, #hero-and, #hero-joanne {
     font-family: 'Joanne Hand', cursive;
   }
 
@@ -600,7 +621,7 @@
     margin:0 0 0.45rem;
   }
   .story-tile .tile-text{
-    font-family:'DM Sans', sans-serif;
+    font-family:'Joanne Print', sans-serif;
     font-weight:400;
     font-size:clamp(0.8rem, 1.7vw, 0.9rem);
     line-height:1.55;
@@ -638,7 +659,7 @@
 
   .story-card .card-photo img{ width:100%; height:auto; display:block; }
   .story-card .card-text{
-    font-family:'DM Sans', sans-serif;
+    font-family:'Joanne Print', sans-serif;
     font-weight:400;
     font-size:0.85rem;
     line-height:1.55;
@@ -659,7 +680,7 @@
     border:none;
     padding:0;
     margin-top:0.4rem;
-    font-family:'DM Sans', sans-serif;
+    font-family:'Joanne Print', sans-serif;
     font-size:0.78rem;
     font-weight:500;
     color:var(--accent-deep);
@@ -848,7 +869,7 @@
   <!-- ================= NAV ================= -->
   <nav class="site-nav fixed top-0 inset-x-0 z-50 bg-[#FDF8F6]/90 backdrop-blur-md shadow-soft-sm">
     <div class="max-w-6xl mx-auto px-6 lg:px-10 flex items-center justify-center h-16">
-      <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label">
+      <ul class="flex items-center gap-[clamp(1.25rem,5vw,4rem)] text-[clamp(8px,2.8vw,16px)] tracking-wide-label font-bold">
         <li><a href="#venue" class="nav-link whitespace-nowrap">Event Details</a></li>
         <li><a href="#attire" class="nav-link whitespace-nowrap">Dress Code</a></li>
         <li><a href="#rsvp" class="nav-link btn-outline px-3 py-1.5 rounded-full whitespace-nowrap">RSVP</a></li>
@@ -895,7 +916,7 @@
     <section id="our-story" class="relative pt-24 md:pt-32 px-6 lg:px-10">
       <div class="max-w-6xl mx-auto">
         <div class="reveal text-center mb-6 md:mb-8">
-          <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How did we meet?</p>
+          <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How did we meet?</p>
           <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)">This is our story</h2>
         </div>
 
@@ -924,7 +945,7 @@
 
     <div class="max-w-4xl mx-auto relative z-10">
       <div class="reveal text-center mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">When and where is the wedding?</p>
+        <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">When and where is the wedding?</p>
         <h2 class="font-hand text-4xl md:text-5xl mb-1" style="color:var(--ink)">Manila</h2>
         <h2 class="font-hand text-4xl md:text-5xl" style="color:var(--ink)">Saturday - Feb 20, 2027</h2>
       </div>
@@ -938,7 +959,7 @@
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
-          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
+          <p class="tracking-wide-label text-[16px] mb-3" style="color:var(--accent-deep)">Ceremony</p>
           <h3 class="font-display text-2xl md:text-3xl mb-3" style="color:var(--ink)">Starts 2:00 PM</h3>
           <p class="font-semibold mb-0">Sacred Heart of Jesus Parish</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">Don Jesus Blvd, Cupang, Muntinlupa</p>
@@ -952,7 +973,7 @@
               <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
-          <p class="tracking-wide-label text-[12px] mb-3" style="color:var(--accent-deep)">Reception</p>
+          <p class="tracking-wide-label text-[16px] mb-3" style="color:var(--accent-deep)">Reception</p>
           <h3 class="font-display text-2xl md:text-3xl mb-3" style="color:var(--ink)">Starts 4:30 PM</h3>
           <p class="font-semibold mb-0">Elan by the Bay</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
@@ -965,9 +986,9 @@
   <section id="directions" class="relative py-6 md:py-9 px-6 lg:px-10 flex flex-col items-center justify-center full-screen">
     <div class="max-w-2xl mx-auto text-center">
       <div class="reveal mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we get from <br class="sm:hidden"> <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
+        <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How do we get from <br class="sm:hidden"> <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
         <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Allow 30-45 mins drive</h2>
-        <h2 class="font-hand text-2xl md:text-3xl mb-2" style="color:var(--ink)">(Parking is provided)</h2>
+        <h2 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">(Parking is provided)</h2>
       </div>
     </div>
 
@@ -1006,9 +1027,9 @@
   <section id="attire" class="relative py-6 md:py-9 px-2 lg:px-10 full-screen">
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-3">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
+        <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Cool, soft, summer pale</h2>
-        <h2 class="font-hand text-3xl md:text-3xl" style="color:var(--ink)">(and Barong for men)</h2>
+        <h2 class="font-display text-3xl md:text-3xl" style="color:var(--ink)">(and long-sleeved Barong for men)</h2>
       </div>
 
     </div>
@@ -1104,7 +1125,7 @@
             <img src="photos/event-details/sun.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
             <img src="photos/event-details/breeze.png" alt="" class="w-14 h-14 md:w-16 md:h-16 object-contain" loading="lazy" />
           </div>
-          <div class="grid grid-cols-[auto_auto] gap-x-6 gap-y-2 text-[14px] sm:text-[12px]">
+          <div class="grid grid-cols-[auto_auto] gap-x-4 gap-y-2 text-[14px] sm:text-[12px]">
             <span class="font-semibold text-right" style="color:var(--ink)">Average high:</span><span class="text-left">31&deg;C</span>
             <span class="font-semibold text-right" style="color:var(--ink)">Average low:</span><span class="text-left">21&deg;C</span>
             <span class="font-semibold text-right" style="color:var(--ink)">&#x1F327;&#xFE0F; Rain:</span><span class="text-left">&#x1F91E; 0% &#x1F91E;</span>
@@ -1119,7 +1140,7 @@
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
     <div class="max-w-xl mx-auto">
       <div class="reveal text-center mb-6 md:mb-8">
-        <p class="tracking-wide-label text-[12px] mb-4" style="color:var(--ink-soft)">How do we RSVP?</p>
+        <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How do we RSVP?</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP Here</h2>
       </div>
 
@@ -1230,7 +1251,7 @@
   </section>
 
   <footer class="py-10 text-center">
-    <p class="font-hand text-4xl" style="color:var(--ink)">02.20.2027</p>
+    <p class="font-display text-3xl font-bold" style="color:var(--ink)">02.20.2027</p>
   </footer>
 
   <script>
