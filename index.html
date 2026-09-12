@@ -620,6 +620,14 @@
     color:var(--accent-deep);
     margin:0 0 0.45rem;
   }
+  .story-tile .tile-header{
+    font-family:'Joanne Print', sans-serif;
+    font-weight:700;
+    font-size:clamp(0.85rem, 1.9vw, 1.05rem);
+    line-height:1.3;
+    color:var(--ink);
+    margin:0 0 0.4rem;
+  }
   .story-tile .tile-text{
     font-family:'Joanne Print', sans-serif;
     font-weight:400;
@@ -656,6 +664,15 @@
     text-align:center;
     margin:0 0 0.65rem;
   }
+  .story-card .card-header{
+    font-family:'Joanne Print', sans-serif;
+    font-weight:700;
+    font-size:1rem;
+    line-height:1.35;
+    color:var(--ink);
+    text-align:center;
+    margin:0.75rem 0 0;
+  }
 
   .story-card .card-photo img{ width:100%; height:auto; display:block; }
   .story-card .card-text{
@@ -665,14 +682,10 @@
     line-height:1.55;
     color:var(--ink);
     margin:0.75rem 0 0;
-    display:-webkit-box;
-    -webkit-line-clamp:2;
-    -webkit-box-orient:vertical;
-    overflow:hidden;
+    display:none;
   }
   .story-card .card-text.expanded{
-    -webkit-line-clamp:unset;
-    overflow:visible;
+    display:block;
   }
   .story-card .card-toggle{
     display:block;
@@ -950,11 +963,11 @@
         <h2 class="font-hand text-4xl md:text-5xl" style="color:var(--ink)">Saturday - Feb 20, 2027</h2>
       </div>
 
-      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 mb-16">
+      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 mb-8">
         <!-- Ceremony -->
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">
-            <img class="detail-arch-mobile arch-church" src="photos/event-details/illustration-sacred-heart.png" alt="" aria-hidden="true" />
+            <img class="detail-arch-mobile arch-church" src="photos/event-details/church-4.png" alt="" aria-hidden="true" />
             <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
@@ -978,6 +991,14 @@
           <p class="font-semibold mb-0">Elan by the Bay</p>
           <p class="text-[15px] mb-3" style="color:var(--ink-soft)">88 Clinton Avenue, Paranaque</p>
         </div>
+      </div>
+
+      <div class="reveal flex justify-center mb-16">
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Atom+%26+Joanne%27s+Wedding&dates=20270220T060000Z%2F20270220T160000Z&details=Ceremony+at+2%3A00+PM+%E2%80%94+Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa.%0A%0AReception+at+4%3A30+PM+%E2%80%94+Elan+by+the+Bay%2C+88+Clinton+Avenue%2C+Paranaque%2C+Metro+Manila.&location=Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa%2C+Metro+Manila%2C+Philippines"          target="_blank" rel="noopener"
+          class="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm bg-[#4285F4] text-white hover:bg-[#3367D6] transition-colors duration-200 min-w-[220px]">
+          Save to Calendar
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -1445,24 +1466,24 @@
     }
 
     // ---------- Our Story gallery: hover-flip tiles (mouse), tap-flip tiles (touch) ----------
-    const ourStoryFiles = [      
-      { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017',
-        text: "We met as shiftees. Joanne shifted from Architecture, then moved to Industrial Engineering in the first semester of A.Y. 2016-2017. Atom shifted from Sociology in the following semester. And here's a fun fact! Atom applied in the first semester too, except that the Department of IE accepted only one applicant from outside the College of Engineering, and that was Joanne. Because his grades were lower, Atom had to wait another semester to apply again. This photo was taken when Atom was an applicant for IE Club trying to complete tasks with Joanne, who was already a member by this time." },
-      { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022',
-        text: "Our first trip out of town together!! We visited Dumaguete and Siquijor in the summer of 2022. This trip kicked off a string of adventures that saw us travel all over the Philippines." },
-      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023',
-        text: "Panda's day out! Panda joined Joanne's family just as the pandemic started, so it wasn't until he was 2 that we began taking him out for trips." },
-      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023',
-        text: "Mandatory grad pictures with UP's sunflowers! We both graduated Magna Cum Laude 🤩 — our GWAs were 0.01 apart." },
-      { file: 'video-call.jpg', w: 2000, h: 924, date: 'Nov 2023',
-        text: "Atom moved to Australia in November 2023. On top of our daily video calls and chats, we like to celebrate special moments with \"online dates.\" We would schedule a date in advance and decide on what we're going to eat, making sure we eat the same or similar food to make it feel like we are together. In this photo, we are both eating pasta salad! Joanne went out to eat, while Atom prepared food at home." },
-      { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024',
-        text: "Joanne visited Australia for the first time! It was a two-week trip where we visited Melbourne first, then Sydney, for Atom to introduce Joanne to his life in Sydney." },
-      { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025',
-        text: "Coogee to Bondi walk. This is the walk that made Atom choose to stay in Sydney over Melbourne, so it was something Joanne had to do." },
-      { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025',
-        text: "Back where we began! Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip,\" Atom brought Joanne back to her favorite spots on the island, eventually proposing in the same resort where the earlier photo was taken." },
-      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026',
+    const ourStoryFiles = [
+      { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017', header: "How we met",
+        text: "This is our first photo together, taken in the IE Club tambayan. Atom was an applicant trying to complete tasks with Joanne, who was already a member. We got along as shiftees. Joanne shifted from Architecture to Industrial Engineering while Atom shifted from Sociology." },
+      { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022', header: "Siquijor",
+        text: "Our first out of town trip together!! This photo of us was taken in Coco Grove Resort where Atom would eventually propose to Joanne. This trip kicked off a string of adventures around the Philippines." },
+      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023', header: "Panda's day out!",
+        text: "Panda is Joanne's dog and we love him! When we can we like to take him on car rides." },
+      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023', header: "UP Naming Mahal",
+        text: "This photo was actually taken 3 years after we graduated because our actual graduation was postponed due to the pandemic. In the end, we both graduated Magna Cum Laude with GWAs 0.01 apart 🤩" },
+      { file: 'video-call.jpg', w: 2000, h: 924, date: 'Feb 2024', header: "HVD",
+        text: "When Atom moved to Australia, we celebrated special moments with \"online dates.\" This was our Valentine's Day Date of 2024 where we decided to both have pasta salad!" },
+      { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024', header: "Joanne visits Australia",
+        text: "For Joanne's first visit to Australia we planned a two week trip split between Melbourne and Sydney. This photo was taken in a zoo near Melbourne." },
+      { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025', header: "Sunset by Bronte Beach",
+        text: "This was Joanne's second visit to Sydney. The weather was great so we walked from Coogee to Bondi. A fun fact is that this walk is what made Atom choose Sydney over Melbourne. It's a must do!" },
+      { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Siquijor part 2",
+        text: "Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
+      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Sydney Prenup",
         text: "A preview from our photoshoot in Sydney!" },
     ];
 
@@ -1486,6 +1507,7 @@
             <div class="card-photo">
               <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
             </div>
+            ${story.header ? `<p class="card-header">${story.header}</p>` : ''}
             <p class="card-text">${story.text}</p>
             <button type="button" class="card-toggle">Read more</button>
           `;
@@ -1504,6 +1526,7 @@
               </div>
               <div class="tile-face tile-back">
                 <p class="tile-date">${story.date}</p>
+                ${story.header ? `<p class="tile-header">${story.header}</p>` : ''}
                 <p class="tile-text">${story.text}</p>
               </div>
             </div>
