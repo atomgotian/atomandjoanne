@@ -1254,13 +1254,13 @@
             <img src="photos/our-story/univ-grad.jpg" alt="Atom and Joanne at university graduation" loading="lazy" />
           </div>
           <div class="story-curtain-item" style="--tilt:5deg; --ox:-6px; --oy:12px">
-            <img src="photos/our-story/pandemic.jpg" alt="Atom, Joanne, and Panda" loading="lazy" />
+            <img src="photos/our-story/pandemic.jpg" alt="Atom and Joanne on an online pandemic date" loading="lazy" />
           </div>
           <div class="story-curtain-item" style="--tilt:-7deg; --ox:10px; --oy:10px">
             <img src="photos/our-story/siquijor.jpg" alt="Atom and Joanne in Siquijor" loading="lazy" />
           </div>
           <div class="story-curtain-item" style="--tilt:-5deg; --ox:-12px; --oy:-6px">
-            <img src="photos/our-story/video-call.jpg" alt="Atom and Joanne on a video call" loading="lazy" />
+            <img src="photos/our-story/goodbye.jpg" alt="Atom and Joanne saying goodbye at the airport" loading="lazy" />
           </div>
           <div class="story-curtain-item" style="--tilt:8deg; --ox:8px; --oy:-12px">
             <img src="photos/our-story/australia.jpg" alt="Joanne with a kangaroo in Melbourne" loading="lazy" />
@@ -1476,24 +1476,30 @@
 
     // ---------- Our Story gallery: hover-flip tiles (mouse), tap-flip tiles (touch) ----------
     const ourStoryFiles = [
-      { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017', header: "How we met",
-        text: "This is our first photo together, taken in the IE Club tambayan. Atom was an applicant trying to complete tasks with Joanne, who was already a member. We got along as shiftees. Joanne shifted from Architecture to Industrial Engineering while Atom shifted from Sociology." },
-      { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022', header: "Siquijor",
-        text: "Our first out of town trip together!! This photo of us was taken in Coco Grove Resort where Atom would eventually propose to Joanne. This trip kicked off a string of adventures around the Philippines." },
-      { file: 'pandemic.jpg', w: 3873, h: 2080, date: 'Jan 2023', header: "Panda's day out!",
-        text: "Panda is Joanne's dog and we love him! When we can we like to take him on car rides." },
-      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023', header: "UP Naming Mahal",
-        text: "This photo was actually taken 3 years after we graduated because our actual graduation was postponed due to the pandemic. In the end, we both graduated Magna Cum Laude with GWAs 0.01 apart 🤩" },
-      { file: 'video-call.jpg', w: 2000, h: 924, date: 'Feb 2024', header: "HVD",
-        text: "When Atom moved to Australia, we celebrated special moments with \"online dates.\" This was our Valentine's Day Date of 2024 where we decided to both have pasta salad!" },
-      { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024', header: "Joanne visits Australia",
-        text: "For Joanne's first visit to Australia we planned a two week trip split between Melbourne and Sydney. This photo was taken in a zoo near Melbourne." },
-      { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025', header: "Sunset by Bronte Beach",
-        text: "This was Joanne's second visit to Sydney. The weather was great so we walked from Coogee to Bondi. A fun fact is that this walk is what made Atom choose Sydney over Melbourne. It's a must do!" },
-      { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Siquijor part 2",
+      { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017', header: "Our first photo together",
+        text: "We were both shiftees into Industrial Engineering. Joanne shifted from Architecture while Atom shifted from Sociology. When Atom was applying for IE club, he took this photo to complete a task with Joanne, who was already a member, not knowing that this would be our first photo together!" },
+      { file: 'agsip.jpg', w: 2000, h: 1125, date: 'June 2019', header: "Our internship",
+        text: "We both interned at Globe in the summer before our senior year. We were assigned to different teams in different floors but we always met up for lunch. This photo was taken in the culminating case competition of the internship. We both have medals because our respective teams placed in the top 3 of the entire competition!" },
+      { file: 'pandemic.jpg', w: 2000, h: 1666, date: 'Feb 2021', header: "Our pandemic",
+        text: "During the pandemic, we celebrated special moments with \"online dates.\" This was our Valentine's Day Date of 2024, where we decided to both have pasta salad!" },
+      { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022', header: "Our first trip together",
+        text: "Siquijor in the summer of 2022 was our first out of town trip together. We loved driving around to the different beaches and waterfalls so much that the province has become our favorite and most memorable. After 6 years together, Atom surprised Joanne with a trip back to Siquijor so he could propose." },
+      { file: 'vermosa.jpg', w: 1335, h: 2000, date: 'Jan 2023', header: "Our Panda",
+        text: "We love taking out Joanne's dog, Panda! This is us bringing him to one of the runs we joined together." },
+      { file: 'univ-grad.jpg', w: 1500, h: 2000, date: 'Aug 2023', header: "Our (delayed) college graduation",
+        text: "We graduated in 2020 just as the pandemic started. We were forced to settle with an online graduation, but as soon as we could attend an in-person graduation, we took our photos with the sunflowers. In the end, we both graduated Magna Cum Laude with GWAs 0.01 apart 🤩" },
+      { file: 'goodbye.jpg', w: 1500, h: 2000, date: 'Nov 2023', header: "Our goodbye",
+        text: "We began our LDR journey when Atom left for Sydney in November 2023. It was a scary time for both of us but LDR turned out to be an amazing experience, bringing us lots of blessings and opportunities for growth." },
+      { file: 'online.jpg', w: 1000, h: 1700, date: 'Dec 2023', header: "Our LDR",
+        text: "For Atom, one of the best things about being in a long distance relationship is that he still gets to celebrate special events with his family through Joanne. This was our first Christmas apart." },
+      { file: 'australia.jpg', w: 1500, h: 2000, date: 'Aug 2024', header: "Our Australian reunion",
+        text: "For Joanne's first visit to Australia we planned a two week trip split between Melbourne and Sydney. We especially love Melbourne for its food and animals!" },
+      { file: 'sydney.jpg', w: 3024, h: 4032, date: 'Feb 2025', header: "Our favorite selfie",
+        text: "Coogee to Bondi walk. This is the walk that made Atom choose to stay in Sydney over Melbourne — so it was something Joanne had to do. During her second visit to Sydney, we finally got to do the Coogee to Bondi walk. Highly recommend doing it when visiting Sydney! Look at that sunset!" },
+      { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Our engagement",
         text: "Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
-      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Sydney Prenup",
-        text: "A preview from our photoshoot in Sydney!" },
+      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Our prenup",
+        text: "Here's a little preview of our prenup photoshoot in Sydney!" },
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
