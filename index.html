@@ -22,9 +22,17 @@
   }
 
   @font-face {
-    font-family: 'Joanne Hand';
+    font-family: 'Joanne Hero';
     src: url('fonts/Myfont2-Regular.otf') format('opentype');
     font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Joanne Hand';
+    src: url('fonts/Myfont7-Regular.otf') format('opentype');
+    font-weight: 800;
     font-style: normal;
     font-display: swap;
   }
@@ -51,7 +59,7 @@
 
   h1, h2, h3 {
     font-family: 'Joanne Hand', cursive;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
   }
   
   .font-display {
@@ -269,7 +277,7 @@
   }
 
   #hero-atom, #hero-and, #hero-joanne {
-    font-family: 'Joanne Hand', cursive;
+    font-family: 'Joanne Hero', cursive;
   }
 
   .hero-name{
@@ -930,7 +938,7 @@
       <div class="max-w-6xl mx-auto">
         <div class="reveal text-center mb-6 md:mb-8">
           <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How did we meet?</p>
-          <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)">This is our story</h2>
+          <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">This is our story</h2>
         </div>
 
         <div class="sm:columns-2 md:columns-3 lg:columns-4 gap-3 md:gap-4" id="our-story-grid">
@@ -941,7 +949,7 @@
       <!-- Join Us — closer photo, framed with a white border; large and immersive, not full-bleed -->
       <div class="reveal relative full-screen items-center">
         <div class="text-center mb-4 md:mb-4">
-          <h2 class="font-hand text-6xl md:text-6xl" style="color:var(--ink)">Welcome to our story!</h2>
+          <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Welcome to our wedding!</h2>
         </div>
         <div class="story-closer bg-white shadow-soft p-1 md:p-2" style="max-width:800px; margin:0 auto;">
           <img class="story-closer-img" src="photos/our-story/prenup.jpeg" alt="Atom and Joanne"
@@ -968,7 +976,7 @@
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-church" src="photos/event-details/church-4.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -982,7 +990,7 @@
         <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-elan" src="photos/event-details/illustration-elan.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-96 md:h-96 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -1009,7 +1017,7 @@
     <div class="max-w-2xl mx-auto text-center">
       <div class="reveal mb-6 md:mb-8">
         <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How do we get from <br class="sm:hidden"> <strong>Sacred Heart</strong> to <strong>Elan</strong>?</p>
-        <h2 class="font-hand text-4xl md:text-5xl mb-2" style="color:var(--ink)">Allow 30-45 mins drive</h2>
+        <h2 class="font-hand text-5xl md:text-5xl mb-2" style="color:var(--ink)">Allow 30-45 mins drive</h2>
         <h2 class="font-display text-2xl md:text-3xl mb-2" style="color:var(--ink)">(Parking is provided)</h2>
       </div>
     </div>
@@ -1050,7 +1058,7 @@
     <div class="max-w-2xl mx-auto">
       <div class="reveal text-center mb-3">
         <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">What do we wear?</p>
-        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">Cool, soft, summer pale</h2>
+        <h2 class="font-hand text-4xl md:text-4xl" style="color:var(--ink)">Garden formal in fun and joyful colors</h2>
         <h2 class="font-display text-3xl md:text-3xl" style="color:var(--ink)">(and long-sleeved Barong for men)</h2>
       </div>
 
@@ -1132,7 +1140,7 @@
               <span class="swatch-underline"></span>
             </button>
         </div>
-        <p class="text-center text-[12px] mt-5 italic" style="color:var(--ink)">Please avoid white, beige or black.</p>
+        <p class="text-center text-[14px] mt-4 mb-4" style="color:var(--ink-deep); line-height:1.7;">Kindly avoid white, beige, and black.</p>
       </div>
 
       <!-- Weather info card — placed after the color card so it lands last in
