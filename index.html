@@ -539,6 +539,37 @@
   .btn-outline:hover{ background: var(--accent-deep); color: var(--cream); transform: translateY(-2px); }
   .btn-outline:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
 
+  /* ---------- Directions map: replay button ---------- */
+  .directions-replay-btn{
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 6;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    background: var(--cream);
+    color: var(--accent-deep);
+    border: 1.5px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(74,54,72,0.14), 0 8px 16px rgba(74,54,72,0.14);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.35s ease, transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease;
+    cursor: pointer;
+    pointer-events: none;
+  }
+  .directions-replay-btn.is-visible{
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+  .directions-replay-btn:hover{ background: var(--accent-deep); color: var(--cream); transform: scale(1.06); }
+  .directions-replay-btn.is-visible:active{ transform: scale(0.94); }
+  .directions-replay-btn:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+
   /* ---------- RSVP toggle ---------- */
   .toggle-btn{
     transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
@@ -664,7 +695,7 @@
   }
   .story-card .card-date{
     font-family:'Joanne Hand', cursive;
-    font-weight:600;
+    font-weight:bold;
     letter-spacing:0.14em;
     text-transform:uppercase;
     font-size:1rem;
@@ -1033,6 +1064,12 @@
               style="offset-path: path('M879,680 L899,677 L896,342 L791,125 L779,121 L750,153 L740,155 L691,98 L636,89 L621,96 L624,145 L617,157 L541,156 L527,172 L519,195 L498,189 L494,195'); offset-distance: 0%; offset-anchor: 76px 79px; offset-rotate: 0deg;" />
         </svg>
       </div>
+      <button type="button" id="directions-replay-btn" class="directions-replay-btn" aria-label="Replay the drive animation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 4v5h5" />
+        </svg>
+      </button>
     </div>
     </div>
 
@@ -1245,7 +1282,7 @@
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
       </form>
 
-      <div id="our-story-dump" class="story-intro-scene relative flex flex-col items-center justify-center text-center" style="min-height: clamp(260px, 38vw, 420px); margin-top: 2.5rem;">
+     <div id="our-story-dump" class="story-intro-scene relative flex flex-col items-center justify-center text-center" style="min-height: clamp(260px, 38vw, 420px); margin-top: 2.5rem;">
         <div class="story-curtain">
           <div class="story-curtain-item" style="--tilt:-8deg; --ox:-10px; --oy:6px">
             <img src="photos/our-story/iec-app.jpg" alt="Joanne and Atom at the Industrial Engineering department" loading="lazy" />
@@ -1415,37 +1452,26 @@
     document.querySelectorAll('.reveal').forEach((el) => revealObserver.observe(el));
 
     // ---------- Directions map: car drives the route once the map scrolls into view ----------
+    // Also replayable via #directions-replay-btn, which fades in once the full
+    // sequence (drive + fireworks) finishes and hides again during a replay.
     const directionsMapBlock = document.getElementById('directions-map-block');
     if (directionsMapBlock) {
       const reduceMapMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const directionsCar = document.getElementById('directions-map-car');      
-      const directionsMapObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            directionsMapObserver.unobserve(entry.target);
-            if (reduceMapMotion || !directionsCar) return;
-            const drive = directionsCar.animate(
-              [{ offsetDistance: '0%' }, { offsetDistance: '100%' }],
-              { duration: 4000, easing: 'ease-in-out', fill: 'forwards' }
-            );
-            drive.finished.then(() => spawnFireworks(directionsMapBlock)).catch(() => {});
-          }
-        });
-      }, { threshold: 0.3 });
-      
-      function spawnFireworks(container) {
-        const bursts = [
-          { left: '34%', top: '25%', delay: 0 },     // where the car arrives (Elan)
-          { left: '55%', top: '14%', delay: 130 },
-          { left: '20%', top: '42%', delay: 260 },
-          { left: '65%', top: '52%', delay: 380 },
-          { left: '45%', top: '60%', delay: 500 },
-          { left: '75%', top: '28%', delay: 620 },
-          { left: '15%', top: '16%', delay: 740 },
-          { left: '60%', top: '68%', delay: 860 },
-        ];
-        bursts.forEach(b => setTimeout(() => burst(container, b.left, b.top), b.delay));
-      }
+      const directionsCar = document.getElementById('directions-map-car');
+      const directionsReplayBtn = document.getElementById('directions-replay-btn');
+      const FIREWORK_BURSTS = [
+        { left: '34%', top: '25%', delay: 0 },     // where the car arrives (Elan)
+        { left: '55%', top: '14%', delay: 130 },
+        { left: '20%', top: '42%', delay: 260 },
+        { left: '65%', top: '52%', delay: 380 },
+        { left: '45%', top: '60%', delay: 500 },
+        { left: '75%', top: '28%', delay: 620 },
+        { left: '15%', top: '16%', delay: 740 },
+        { left: '60%', top: '68%', delay: 860 },
+      ];
+      const LAST_BURST_DELAY = FIREWORK_BURSTS[FIREWORK_BURSTS.length - 1].delay;
+      const BURST_DURATION = 1800;
+      let currentDrive = null;
 
       function burst(container, originLeft, originTop) {
         const size = 130 + Math.random() * 60; // varies per burst so they don't look copy-pasted
@@ -1455,6 +1481,7 @@
         img.src = 'photos/event-details/illustration-fireworks.png';
         img.alt = '';
         img.setAttribute('aria-hidden', 'true');
+        img.className = 'directions-firework';
         img.style.cssText = `position:absolute; left:${originLeft}; top:${originTop};
           width:${size}px; height:${size}px;
           transform: translate(-50%, -50%) scale(0.3) rotate(${rotation}deg);
@@ -1467,10 +1494,53 @@
             { transform: `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`, opacity: 1, offset: 0.35 },
             { transform: `translate(-50%, -50%) scale(1.1) rotate(${rotation}deg)`, opacity: 0 },
           ],
-          { duration: 1800, easing: 'ease-out', fill: 'forwards' }
+          { duration: BURST_DURATION, easing: 'ease-out', fill: 'forwards' }
         ).finished.then(() => img.remove()).catch(() => {});
       }
-      
+
+      function spawnFireworks(container) {
+        FIREWORK_BURSTS.forEach(b => setTimeout(() => burst(container, b.left, b.top), b.delay));
+      }
+
+      function showReplayButton() {
+        if (directionsReplayBtn) directionsReplayBtn.classList.add('is-visible');
+      }
+
+      function hideReplayButton() {
+        if (directionsReplayBtn) directionsReplayBtn.classList.remove('is-visible');
+      }
+
+      function playDirectionsAnimation() {
+        if (reduceMapMotion || !directionsCar) return;
+        hideReplayButton();
+        // Clear any fireworks/timers still finishing from a previous play.
+        directionsMapBlock.querySelectorAll('.directions-firework').forEach((el) => el.remove());
+        if (currentDrive) currentDrive.cancel();
+        currentDrive = directionsCar.animate(
+          [{ offsetDistance: '0%' }, { offsetDistance: '100%' }],
+          { duration: 4000, easing: 'ease-in-out', fill: 'forwards' }
+        );
+        currentDrive.finished.then(() => {
+          spawnFireworks(directionsMapBlock);
+          setTimeout(showReplayButton, LAST_BURST_DELAY + BURST_DURATION);
+        }).catch(() => {});
+      }
+
+      const directionsMapObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            directionsMapObserver.unobserve(entry.target);
+            playDirectionsAnimation();
+          }
+        });
+      }, { threshold: 0.3 });
+
+      // No replay button at all when reduced motion is on — the drive never
+      // plays in the first place, so there's nothing to replay.
+      if (directionsReplayBtn && !reduceMapMotion) {
+        directionsReplayBtn.addEventListener('click', playDirectionsAnimation);
+      }
+
       directionsMapObserver.observe(directionsMapBlock);
     }
 
