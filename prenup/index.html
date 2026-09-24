@@ -150,7 +150,7 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0s linear 0.3s;
-    touch-action: pan-y;         /* let us handle horizontal swipes */
+    touch-action: none;          /* we handle swipe + pinch-zoom ourselves */
     user-select: none;
     -webkit-user-select: none;
   }
@@ -159,28 +159,35 @@
     visibility: visible;
     transition: opacity 0.3s ease;
   }
+  /* The stage holds two photos stacked on top of each other: the current one
+     (#lb-img, on top) and the next/previous one waiting underneath (#lb-under).
+     Swiping drags the top photo away to reveal the one behind it. */
   .lightbox-stage{
     position: relative;
-    max-width: min(92vw, 1400px);
-    max-height: 82vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: min(92vw, 1400px);
+    height: 82vh;
   }
   .lightbox-img{
+    position: absolute;
+    inset: 0;
+    margin: auto;               /* centres the photo inside the stage */
     display: block;
-    max-width: min(92vw, 1400px);
-    max-height: 82vh;
+    max-width: 100%;
+    max-height: 100%;
     width: auto;
     height: auto;
     background: #fff;
     padding: 0.35rem;
     box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    transform: scale(0.96);
-    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s ease;
+    transform-origin: center center;
+    will-change: transform;
+    -webkit-user-drag: none;
   }
-  .lightbox.is-open .lightbox-img{ transform: scale(1); }
-  .lightbox-img.is-swapping{ opacity: 0; }
+  .lightbox-under{
+    opacity: 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  }
+  .lightbox-img.is-zoomed{ cursor: grab; }
 
   .lightbox-btn{
     position: absolute;
@@ -222,7 +229,7 @@
     .lightbox-prev:hover, .lightbox-next:hover{ transform: scale(1.06); }
     .lightbox-prev{ left: 1.5rem; }
     .lightbox-next{ right: 1.5rem; }
-    .lightbox-img{ max-width: calc(100vw - 2rem); }
+    .lightbox-stage{ width: calc(100vw - 2rem); height: 78vh; }
   }
 
   body.lightbox-open{ overflow: hidden; }
@@ -258,6 +265,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
     </button>
     <div class="lightbox-stage">
+      <img class="lightbox-img lightbox-under" id="lb-under" alt="" aria-hidden="true" />
       <img class="lightbox-img" id="lb-img" alt="" />
     </div>
     <button type="button" class="lightbox-btn lightbox-next" id="lb-next" aria-label="Next photo">
@@ -325,59 +333,127 @@
   document.querySelectorAll('.gallery-item').forEach((el) => io.observe(el));
 
   // ---------- Lightbox: click a photo to expand, then browse ----------
-  // Click/tap = open. In the viewer: arrows or ← → keys or swipe = prev/next,
-  // Esc / X / tapping the dark background = close. Wraps around at the ends.
+  // Click/tap = open. In the viewer:
+  //   • swipe left/right (phone): next / previous
+  //   • pinch with two fingers, or double-tap: zoom in; drag to look around
+  //   • arrow buttons / ← → keys: next / previous
+  //   • Esc / X / tapping the dark background: close
+  // Wraps around at the ends.
   const lb = document.getElementById('lightbox');
+  const lbStage = lb.querySelector('.lightbox-stage');
   const lbImg = document.getElementById('lb-img');
+  const lbUnder = document.getElementById('lb-under');
   const lbCounter = document.getElementById('lb-counter');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
   let lbIndex = 0;
   let lastFocused = null;
+  let animating = false;
+
+  // Zoom/pan state for the top photo, plus how far it's being dragged sideways
+  let scale = 1, tx = 0, ty = 0, dragX = 0;
 
   // Read the photos from the page each time, so any removed (broken) ones are skipped
   const photoEls = () => Array.from(gallery.querySelectorAll('.gallery-item img'));
+  const wrap = (i, n) => (i + n) % n;
 
-  function showPhoto(i, animate){
+  function setTransition(el, on, ms){
+    el.style.transition = on && !reduceMotion
+      ? `transform ${ms || 350}ms ${EASE}, opacity ${ms || 350}ms ease`
+      : 'none';
+  }
+
+  // Draw the current state onto both photos
+  function render(){
+    const rot = dragX * 0.03;                                   // slight tilt while dragging
+    lbImg.style.transform = `translate(${dragX + tx}px, ${ty}px) rotate(${rot}deg) scale(${scale})`;
+    const w = lbStage.clientWidth || 1;
+    const p = Math.min(Math.abs(dragX) / w, 1);                 // 0 → 1 as the top photo leaves
+    lbUnder.style.transform = `scale(${0.9 + 0.1 * p})`;
+    lbUnder.style.opacity = dragX === 0 ? 0 : String(0.35 + 0.65 * p);
+    lbImg.classList.toggle('is-zoomed', scale > 1.01);
+  }
+
+  function resetZoom(){ scale = 1; tx = 0; ty = 0; }
+
+  // Keep a zoomed photo from being dragged off into empty space
+  function clampPan(){
+    const w = lbImg.offsetWidth, h = lbImg.offsetHeight;
+    const maxX = Math.max(0, (w * scale - lbStage.clientWidth) / 2);
+    const maxY = Math.max(0, (h * scale - lbStage.clientHeight) / 2);
+    tx = Math.max(-maxX, Math.min(maxX, tx));
+    ty = Math.max(-maxY, Math.min(maxY, ty));
+    if (scale <= 1){ tx = 0; ty = 0; }
+  }
+
+  // Put photo i on top, and prepare the one underneath for the given direction
+  function setTop(i){
     const photos = photoEls();
     if (!photos.length) return;
-    lbIndex = (i + photos.length) % photos.length;
-    const src = photos[lbIndex].src;
+    lbIndex = wrap(i, photos.length);
+    lbImg.src = photos[lbIndex].src;
+    lbImg.alt = photos[lbIndex].alt;
+    lbCounter.textContent = (lbIndex + 1) + ' / ' + photos.length;
+    // Preload neighbours so the photo underneath is ready the moment you swipe
+    [lbIndex + 1, lbIndex - 1].forEach((n) => { const pre = new Image(); pre.src = photos[wrap(n, photos.length)].src; });
+  }
+  function prepareUnder(dir){            // dir: +1 = next, -1 = previous
+    const photos = photoEls();
+    const src = photos[wrap(lbIndex + dir, photos.length)].src;
+    if (lbUnder.src !== src) lbUnder.src = src;
+  }
+
+  // Change photo with a quick fade (same as before the swipe-reveal experiment)
+  function commit(dir){
+    if (animating) return;
+    if (photoEls().length < 2) return;
+    animating = true;
+    resetZoom();
+    dragX = 0;
+    setTransition(lbImg, true, 100);
+    lbImg.style.opacity = '0';
     const swap = () => {
-      lbImg.src = src;
-      lbImg.alt = photos[lbIndex].alt;
-      lbCounter.textContent = (lbIndex + 1) + ' / ' + photos.length;
-      lbImg.classList.remove('is-swapping');
+      setTransition(lbImg, false);
+      setTop(lbIndex + dir);
+      render();
+      requestAnimationFrame(() => {
+        setTransition(lbImg, true, 100);
+        lbImg.style.opacity = '1';
+        animating = false;
+      });
     };
-    if (animate){
-      lbImg.classList.add('is-swapping');
-      setTimeout(swap, 150);
-    } else {
-      swap();
-    }
-    // Preload neighbours so next/prev feel instant
-    [lbIndex + 1, lbIndex - 1].forEach((n) => {
-      const p = photos[(n + photos.length) % photos.length];
-      if (p){ const pre = new Image(); pre.src = p.src; }
-    });
+    if (reduceMotion) { swap(); lbImg.style.opacity = '1'; } else setTimeout(swap, 100);
+  }
+
+  function snapBack(){
+    setTransition(lbImg, true, 300);
+    setTransition(lbUnder, true, 300);
+    dragX = 0;
+    clampPan();
+    render();
   }
 
   function openLightbox(i){
     lastFocused = document.activeElement;
-    showPhoto(i, false);
+    resetZoom(); dragX = 0;
+    setTransition(lbImg, false); setTransition(lbUnder, false);
+    setTop(i);
+    render();
     lb.classList.add('is-open');
     lb.setAttribute('aria-hidden', 'false');
     document.body.classList.add('lightbox-open');
-    document.getElementById('lb-close').focus();
+    document.getElementById('lb-close').focus({ preventScroll: true });
   }
 
   function closeLightbox(){
     lb.classList.remove('is-open');
     lb.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('lightbox-open');
-    if (lastFocused) lastFocused.focus();
+    if (lastFocused) lastFocused.focus({ preventScroll: true });
   }
 
-  const next = () => showPhoto(lbIndex + 1, true);
-  const prev = () => showPhoto(lbIndex - 1, true);
+  const next = () => commit(+1);
+  const prev = () => commit(-1);
 
   gallery.addEventListener('click', (e) => {
     const item = e.target.closest('.gallery-item');
@@ -398,7 +474,7 @@
 
   // Tapping the dark background (not the photo or buttons) closes it
   lb.addEventListener('click', (e) => {
-    if (e.target === lb || e.target.classList.contains('lightbox-stage')) closeLightbox();
+    if (e.target === lb || e.target === lbStage) closeLightbox();
   });
 
   document.addEventListener('keydown', (e) => {
@@ -408,21 +484,117 @@
     else if (e.key === 'Escape') closeLightbox();
   });
 
-  // Swipe left/right on touch screens
-  let touchX = null, touchY = null;
+  // ---------- Touch gestures: swipe, pinch-zoom, pan, double-tap ----------
+  const dist = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  const mid = (a, b) => ({ x: (a.clientX + b.clientX) / 2, y: (a.clientY + b.clientY) / 2 });
+  const stageCenter = () => {
+    const r = lbStage.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  };
+
+  let mode = null;                 // 'swipe' | 'pan' | 'pinch'
+  let start = null;                // gesture starting values
+  let lastTap = 0;
+
   lb.addEventListener('touchstart', (e) => {
-    touchX = e.touches[0].clientX;
-    touchY = e.touches[0].clientY;
-  }, { passive: true });
-  lb.addEventListener('touchend', (e) => {
-    if (touchX === null) return;
-    const dx = e.changedTouches[0].clientX - touchX;
-    const dy = e.changedTouches[0].clientY - touchY;
-    touchX = touchY = null;
-    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){   // mostly-horizontal swipe
-      dx < 0 ? next() : prev();
+    if (animating) return;
+    setTransition(lbImg, false);
+    setTransition(lbUnder, false);
+    if (e.touches.length === 2){
+      // Two fingers: pinch to zoom around the point between them
+      const m = mid(e.touches[0], e.touches[1]);
+      const c = stageCenter();
+      mode = 'pinch';
+      dragX = 0;
+      start = {
+        d: dist(e.touches[0], e.touches[1]),
+        s: scale,
+        // the photo point under the fingers, so it stays under them while zooming
+        ux: (m.x - c.x - tx) / scale,
+        uy: (m.y - c.y - ty) / scale,
+      };
+    } else if (e.touches.length === 1){
+      const t = e.touches[0];
+      mode = scale > 1.01 ? 'pan' : 'swipe';
+      start = { x: t.clientX, y: t.clientY, tx, ty, time: Date.now(), dir: null };
     }
   }, { passive: true });
+
+  lb.addEventListener('touchmove', (e) => {
+    if (!mode || animating) return;
+    if (e.cancelable) e.preventDefault();          // stop the page from scrolling/zooming
+    if (mode === 'pinch' && e.touches.length === 2){
+      const m = mid(e.touches[0], e.touches[1]);
+      const c = stageCenter();
+      scale = Math.min(4, Math.max(1, start.s * dist(e.touches[0], e.touches[1]) / start.d));
+      tx = m.x - c.x - scale * start.ux;
+      ty = m.y - c.y - scale * start.uy;
+      clampPan();
+      render();
+    } else if (mode === 'pan' && e.touches.length === 1){
+      const t = e.touches[0];
+      tx = start.tx + (t.clientX - start.x);
+      ty = start.ty + (t.clientY - start.y);
+      clampPan();
+      render();
+    } else if (mode === 'swipe' && e.touches.length === 1){
+      const t = e.touches[0];
+      const dx = t.clientX - start.x, dy = t.clientY - start.y;
+      if (!start.dir && Math.hypot(dx, dy) > 8) start.dir = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      // (photo stays put while swiping; the change happens on release)
+    }
+  }, { passive: false });
+
+  lb.addEventListener('touchend', (e) => {
+    if (!mode || animating) return;
+
+    if (mode === 'pinch'){
+      if (scale < 1.05) resetZoom();
+      clampPan();
+      setTransition(lbImg, true, 250);
+      render();
+      // one finger still down → keep panning from here
+      if (e.touches.length === 1){
+        const t = e.touches[0];
+        mode = scale > 1.01 ? 'pan' : null;
+        start = { x: t.clientX, y: t.clientY, tx, ty, time: Date.now(), dir: null };
+      } else mode = null;
+      return;
+    }
+
+    const t = e.changedTouches[0];
+    const moved = Math.hypot(t.clientX - start.x, t.clientY - start.y);
+
+    // Double-tap: zoom in to that spot, or back out if already zoomed
+    if (moved < 10 && e.target === lbImg){
+      const now = Date.now();
+      if (now - lastTap < 300){
+        lastTap = 0;
+        setTransition(lbImg, true, 300);
+        if (scale > 1.01){ resetZoom(); }
+        else {
+          const c = stageCenter();
+          scale = 2.5;
+          tx = -(scale - 1) * (t.clientX - c.x);
+          ty = -(scale - 1) * (t.clientY - c.y);
+          clampPan();
+        }
+        render();
+        mode = null;
+        return;
+      }
+      lastTap = now;
+    }
+
+    // Swipe: a mostly-sideways swipe of 40px+ changes the photo
+    if (mode === 'swipe' && start.dir === 'x'){
+      const dx = t.clientX - start.x;
+      if (Math.abs(dx) > 40) commit(dx < 0 ? +1 : -1);
+    }
+    mode = null;
+  }, { passive: true });
+
+  lb.addEventListener('touchcancel', () => { mode = null; snapBack(); }, { passive: true });
 </script>
 </body>
 </html>
