@@ -652,7 +652,7 @@
   .story-tile .tile-face{ position:absolute; inset:0; backface-visibility:hidden; overflow:hidden; }
   .story-tile .tile-front{ background:#fff; padding:0.3rem; }
   .story-tile .tile-front img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.5s ease; }
-  .story-tile img[src$="online.jpg"]{ object-position: top; }
+  .story-tile .tile-front img[src$="online.jpg"]{object-position: center 15% !important;}
   .story-tile:hover .tile-front img{ transform:scale(1.03); }
   .story-tile .tile-back{
     background: var(--cream);
@@ -731,7 +731,7 @@
   .story-card img[src$="online.jpg"]{
     aspect-ratio: 2 / 3;       /* frame shape: width / height. Bigger 2nd number = taller */
     object-fit: cover;         /* fill the frame, cropping whatever doesn't fit */
-    object-position: top;      /* keep the top, crop from the bottom */
+    object-position: center 10%;      /* keep the top, crop from the bottom */
   }
 
 
@@ -744,6 +744,15 @@
     margin:0.75rem 0 0;
     display:none;
   }
+  /* "See all our prenup photos" link inside the story text (desktop + mobile) */
+   .story-link{
+    color:var(--accent-deep);
+    font-weight:600;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .story-link:hover{ color:var(--ink); }
+
   .story-card .card-text.expanded{
     display:block;
   }
@@ -1638,7 +1647,7 @@
       { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Our engagement",
         text: "Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
       { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Our prenup",
-        text: "Here's a little preview of our prenup photoshoot in Sydney!" },
+        text: "Here's a little <a href=\"prenup/\" class=\"story-link\">preview</a> of our prenup photoshoot in Sydney!" },
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
@@ -1698,6 +1707,7 @@
     // (devices with a real pointer keep relying purely on the CSS :hover
     // rule instead).
     storyGrid.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return; // let links (e.g. prenup gallery) open without flipping the tile
       const toggleBtn = e.target.closest('.card-toggle');
       if (toggleBtn) {
         const text = toggleBtn.previousElementSibling;
