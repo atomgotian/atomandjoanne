@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Our Prenup — Atom &amp; Joanne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:image" content="https://atomandjoanne.com/photos/our-story/our-story-hero.jpeg">
+<link rel="icon" type="image/png" href="../photos/hero/panda.png">
+<style>
+  :root{
+    --bg:        #F5F0F2;
+    --cream:     #FDF8F6;
+    --ink-soft:  #9A6580;
+    --ink:       #472E3B;
+    --accent:    #A5CCE6;
+    --accent-deep: #2D74A4;
+  }
+
+  /* Same fonts as the main site. Paths are ../ because this page lives one
+     folder down, in /prenup/. */
+  @font-face{
+    font-family: 'Joanne Hand';
+    src: url('../fonts/Myfont8-Regular.otf') format('opentype');
+    font-weight: 800; font-style: normal; font-display: swap;
+  }
+  @font-face{
+    font-family: 'Joanne Print';
+    src: url('../fonts/Myfont5-Regular.otf') format('opentype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html{ overflow-x: hidden; }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Joanne Print', sans-serif;
+    letter-spacing: 0.1em;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Back button (stays pinned top-left while scrolling) ---------- */
+  .back-btn{
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem 0.55rem 0.85rem;
+    border-radius: 9999px;
+    background: var(--cream);
+    color: var(--ink-soft);
+    border: 1.5px solid var(--accent);
+    font-family: 'Joanne Print', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(74,54,72,0.12), 0 8px 16px rgba(74,54,72,0.12);
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease;
+  }
+  .back-btn:hover{ background: var(--accent-deep); color: var(--cream); transform: translateY(-2px); }
+  .back-btn:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+  .back-btn svg{ width: 16px; height: 16px; }
+
+  /* ---------- Header ---------- */
+  .page-header{
+    text-align: center;
+    padding: 5.5rem 1.5rem 2rem;
+  }
+  .page-label{
+    margin: 0 0 1rem;
+    font-size: 16px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .page-title{
+    margin: 0;
+    font-family: 'Joanne Hand', cursive;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 7vw, 3.75rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  /* ---------- Gallery grid ----------
+    All the prenup photos are landscape, so a plain grid lines them up in
+    neat rows, left to right, in list order. 21 photos = 7 full rows of 3 on
+    tablet/desktop, and one big photo per row on phones, so no empty gaps.
+    If you add or remove photos, keep the total a multiple of 3 to avoid a
+    short last row. */
+  .gallery{
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 4rem;   /* 1.5rem side gap = same as the main site on mobile */
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  @media (min-width: 768px){ .gallery{ grid-template-columns: repeat(3, 1fr); gap: 1rem; } }
+
+  .gallery-item{
+    margin: 0;
+    background: #fff;
+    padding: 0.3rem;          /* thin white print border, like the story photos */
+    box-shadow: 0 2px 5px rgba(74,54,72,0.14), 0 14px 26px rgba(74,54,72,0.16);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+  .gallery-item.is-in{ opacity: 1; transform: none; }
+  .gallery-item img{ width: 100%; height: auto; display: block; }
+
+  .gallery-empty{
+    text-align: center;
+    color: var(--ink-soft);
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ---------- Hover: photo lifts and gently zooms inside its frame ---------- */
+  .gallery-item{ cursor: zoom-in; overflow: hidden; position: relative; }
+  .gallery-item img{ transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), filter 0.4s ease; }
+  .gallery-item.is-in{ transition: opacity 0.6s ease, transform 0.35s cubic-bezier(0.34,1.4,0.64,1), box-shadow 0.35s ease; }
+  @media (hover: hover) and (pointer: fine){
+    .gallery-item.is-in:hover{
+      transform: translateY(-6px) rotate(-0.6deg);
+      box-shadow: 0 4px 10px rgba(74,54,72,0.16), 0 22px 40px rgba(74,54,72,0.22);
+    }
+    .gallery-item:nth-child(even).is-in:hover{ transform: translateY(-6px) rotate(0.6deg); }
+    .gallery-item:hover img{ transform: scale(1.04); filter: brightness(1.04); }
+  }
+  .gallery-item:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 4px; }
+
+  /* ---------- Lightbox (expanded photo viewer) ---------- */
+  .lightbox{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(40,26,34,0.92);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+    touch-action: pan-y;         /* let us handle horizontal swipes */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .lightbox.is-open{
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease;
+  }
+  .lightbox-stage{
+    position: relative;
+    max-width: min(92vw, 1400px);
+    max-height: 82vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lightbox-img{
+    display: block;
+    max-width: min(92vw, 1400px);
+    max-height: 82vh;
+    width: auto;
+    height: auto;
+    background: #fff;
+    padding: 0.35rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+    transform: scale(0.96);
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1), opacity 0.25s ease;
+  }
+  .lightbox.is-open .lightbox-img{ transform: scale(1); }
+  .lightbox-img.is-swapping{ opacity: 0; }
+
+  .lightbox-btn{
+    position: absolute;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 9999px;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    background: rgba(253,248,246,0.12);
+    color: var(--cream);
+    cursor: pointer;
+    transition: background-color 0.25s ease, transform 0.25s cubic-bezier(0.34,1.4,0.64,1);
+  }
+  .lightbox-btn:hover{ background: rgba(253,248,246,0.28); transform: scale(1.06); }
+  .lightbox-btn:focus-visible{ outline: 2px solid var(--accent); outline-offset: 3px; }
+  .lightbox-btn svg{ width: 22px; height: 22px; }
+  .lightbox-close{ top: 1rem; right: 1rem; }
+  .lightbox-prev{ left: 1rem; top: 50%; transform: translateY(-50%); }
+  .lightbox-next{ right: 1rem; top: 50%; transform: translateY(-50%); }
+  .lightbox-prev:hover, .lightbox-next:hover{ transform: translateY(-50%) scale(1.06); }
+
+  .lightbox-counter{
+    position: absolute;
+    bottom: 1.1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(253,248,246,0.8);
+    font-size: 0.85rem;
+    letter-spacing: 0.2em;
+  }
+
+  /* Phones: arrows sit at the bottom beside the counter, out of the photo's way
+     (swiping is the main way to move there anyway) */
+  @media (max-width: 767px){
+    .lightbox-prev, .lightbox-next{ top: auto; bottom: 0.6rem; transform: none; width: 44px; height: 44px; }
+    .lightbox-prev:hover, .lightbox-next:hover{ transform: scale(1.06); }
+    .lightbox-prev{ left: 1.5rem; }
+    .lightbox-next{ right: 1.5rem; }
+    .lightbox-img{ max-width: calc(100vw - 2rem); }
+  }
+
+  body.lightbox-open{ overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce){
+    .gallery-item, .gallery-item img, .lightbox, .lightbox-img{ opacity: 1; transform: none; transition: none; }
+    .lightbox:not(.is-open){ opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- "../" = the site's home page (one folder up from /prenup/) -->
+  <a href="../" class="back-btn" aria-label="Back to the home page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    Home
+  </a>
+
+  <header class="page-header">
+    <p class="page-label">Sydney · May 2026</p>
+    <h1 class="page-title">Our Prenup</h1>
+  </header>
+
+  <main class="gallery" id="gallery"></main>
+  <p class="gallery-empty" id="gallery-empty" hidden>Photos coming soon.</p>
+
+  <!-- Expanded photo viewer: opens when a photo is clicked/tapped -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Photo viewer" aria-hidden="true">
+    <button type="button" class="lightbox-btn lightbox-close" id="lb-close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <button type="button" class="lightbox-btn lightbox-prev" id="lb-prev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="lightbox-stage">
+      <img class="lightbox-img" id="lb-img" alt="" />
+    </div>
+    <button type="button" class="lightbox-btn lightbox-next" id="lb-next" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+    <p class="lightbox-counter" id="lb-counter"></p>
+  </div>
+
+<script>
+  // ============================================================
+  //  EDIT THIS LIST: one line per photo in photos/gallery/.
+  //  Order here = order on the page. Names must match exactly,
+  //  including upper/lower case and the extension (.jpg vs .jpeg).
+  // ============================================================
+  const PRENUP_PHOTOS = [
+    'DSC04147.jpeg',
+    'DSC04180.jpeg',
+    'DSC04225.jpeg',
+    'DSC04236.jpeg',
+    'DSC04239.jpeg',
+    'DSC04283.jpeg',
+    'DSC04315.jpeg',
+    'DSC04520.jpeg',
+    'DSC04551.jpeg',
+    'DSC04630.jpeg',
+    'DSC04689.jpeg',
+    'DSC04785.jpeg',
+    'DSC04814.jpeg',
+    'DSC04855.jpeg',
+    'DSC04962.jpeg',
+    'DSC05006.jpeg',
+    'DSC05033.jpeg',
+    'DSC05084.jpeg',
+    'DSC05735.jpeg',
+    'DSC05816.jpeg',
+    'DSC06128.jpeg',
+  ];
+
+  const gallery = document.getElementById('gallery');
+
+  PRENUP_PHOTOS.forEach((file, i) => {
+    const item = document.createElement('figure');
+    item.className = 'gallery-item';
+    item.tabIndex = 0;                      // keyboard users can Tab to photos
+    item.setAttribute('role', 'button');
+    item.setAttribute('aria-label', 'Open photo ' + (i + 1));
+    const img = document.createElement('img');
+    img.src = '../photos/gallery/' + file;
+    img.alt = 'Atom and Joanne prenup photo ' + (i + 1);
+    img.loading = i < 6 ? 'eager' : 'lazy';
+    // Hide any photo whose file name is wrong instead of showing a broken icon
+    img.onerror = () => item.remove();
+    item.appendChild(img);
+    gallery.appendChild(item);
+  });
+
+  if (!PRENUP_PHOTOS.length) document.getElementById('gallery-empty').hidden = false;
+
+  // Gentle fade-up as photos scroll into view
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((e) => {
+      if (e.isIntersecting){ e.target.classList.add('is-in'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.gallery-item').forEach((el) => io.observe(el));
+
+  // ---------- Lightbox: click a photo to expand, then browse ----------
+  // Click/tap = open. In the viewer: arrows or ← → keys or swipe = prev/next,
+  // Esc / X / tapping the dark background = close. Wraps around at the ends.
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  const lbCounter = document.getElementById('lb-counter');
+  let lbIndex = 0;
+  let lastFocused = null;
+
+  // Read the photos from the page each time, so any removed (broken) ones are skipped
+  const photoEls = () => Array.from(gallery.querySelectorAll('.gallery-item img'));
+
+  function showPhoto(i, animate){
+    const photos = photoEls();
+    if (!photos.length) return;
+    lbIndex = (i + photos.length) % photos.length;
+    const src = photos[lbIndex].src;
+    const swap = () => {
+      lbImg.src = src;
+      lbImg.alt = photos[lbIndex].alt;
+      lbCounter.textContent = (lbIndex + 1) + ' / ' + photos.length;
+      lbImg.classList.remove('is-swapping');
+    };
+    if (animate){
+      lbImg.classList.add('is-swapping');
+      setTimeout(swap, 150);
+    } else {
+      swap();
+    }
+    // Preload neighbours so next/prev feel instant
+    [lbIndex + 1, lbIndex - 1].forEach((n) => {
+      const p = photos[(n + photos.length) % photos.length];
+      if (p){ const pre = new Image(); pre.src = p.src; }
+    });
+  }
+
+  function openLightbox(i){
+    lastFocused = document.activeElement;
+    showPhoto(i, false);
+    lb.classList.add('is-open');
+    lb.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('lightbox-open');
+    document.getElementById('lb-close').focus();
+  }
+
+  function closeLightbox(){
+    lb.classList.remove('is-open');
+    lb.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('lightbox-open');
+    if (lastFocused) lastFocused.focus();
+  }
+
+  const next = () => showPhoto(lbIndex + 1, true);
+  const prev = () => showPhoto(lbIndex - 1, true);
+
+  gallery.addEventListener('click', (e) => {
+    const item = e.target.closest('.gallery-item');
+    if (!item) return;
+    openLightbox(Array.from(gallery.querySelectorAll('.gallery-item')).indexOf(item));
+  });
+  gallery.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const item = e.target.closest('.gallery-item');
+    if (!item) return;
+    e.preventDefault();
+    openLightbox(Array.from(gallery.querySelectorAll('.gallery-item')).indexOf(item));
+  });
+
+  document.getElementById('lb-next').addEventListener('click', (e) => { e.stopPropagation(); next(); });
+  document.getElementById('lb-prev').addEventListener('click', (e) => { e.stopPropagation(); prev(); });
+  document.getElementById('lb-close').addEventListener('click', (e) => { e.stopPropagation(); closeLightbox(); });
+
+  // Tapping the dark background (not the photo or buttons) closes it
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target.classList.contains('lightbox-stage')) closeLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'ArrowRight') next();
+    else if (e.key === 'ArrowLeft') prev();
+    else if (e.key === 'Escape') closeLightbox();
+  });
+
+  // Swipe left/right on touch screens
+  let touchX = null, touchY = null;
+  lb.addEventListener('touchstart', (e) => {
+    touchX = e.touches[0].clientX;
+    touchY = e.touches[0].clientY;
+  }, { passive: true });
+  lb.addEventListener('touchend', (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    const dy = e.changedTouches[0].clientY - touchY;
+    touchX = touchY = null;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){   // mostly-horizontal swipe
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+</script>
+</body>
+</html>
