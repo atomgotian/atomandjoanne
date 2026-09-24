@@ -520,6 +520,17 @@
     .story-curtain-item{ width: 15rem; }
   }
 
+  /* Our Story photo pile — mobile size */
+  @media (max-width: 767px){
+    .story-curtain-item{
+      width: 12rem;            /* photo width — was 8rem. Try 11–14rem */
+    }
+    #our-story-dump{
+      min-height: 380px !important;  /* box height — was 260px. Make it about 1.6× the photo width (12rem ≈ 192px → about 310–380px) */
+      margin-top: 3.5rem !important; /* space above the pile, keeps tilted photos off the RSVP tile */
+    }
+  }
+
   /* ---------- Buttons ---------- */
   .btn-accent{
     background: var(--accent);
@@ -641,6 +652,7 @@
   .story-tile .tile-face{ position:absolute; inset:0; backface-visibility:hidden; overflow:hidden; }
   .story-tile .tile-front{ background:#fff; padding:0.3rem; }
   .story-tile .tile-front img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform 0.5s ease; }
+  .story-tile img[src$="online.jpg"]{ object-position: top; }
   .story-tile:hover .tile-front img{ transform:scale(1.03); }
   .story-tile .tile-back{
     background: var(--cream);
@@ -698,8 +710,9 @@
     font-weight:bold;
     letter-spacing:0.14em;
     text-transform:uppercase;
-    font-size:1rem;
-    color:var(--accent-deep);
+    font-size:1.1rem;
+    color:#1B4F75;                      /* darker than --accent-deep so it reads on cream */
+    -webkit-text-stroke:0.4px currentColor; /* thickens the hand font's thin strokes */
     text-align:center;
     margin:0 0 0.65rem;
   }
@@ -714,6 +727,14 @@
   }
 
   .story-card .card-photo img{ width:100%; height:auto; display:block; }
+
+  .story-card img[src$="online.jpg"]{
+    aspect-ratio: 2 / 3;       /* frame shape: width / height. Bigger 2nd number = taller */
+    object-fit: cover;         /* fill the frame, cropping whatever doesn't fit */
+    object-position: top;      /* keep the top, crop from the bottom */
+  }
+
+
   .story-card .card-text{
     font-family:'Joanne Print', sans-serif;
     font-weight:400;
@@ -821,6 +842,54 @@
     #directions-map-block{
       width: 525px !important;
       max-width: none !important;
+    }
+  }
+
+  /* ---------- Mobile: one consistent side gutter for every section ----------
+    Our Story sets the reference: its cards sit 1.5rem (px-6) from the screen
+    edge. Everything below is tuned to land on that same line. */
+  @media (max-width: 639px){
+    :root{ --mobile-gutter: 1.5rem; }
+
+    /* Join Us closer photo: was 92% of the column (inset past the gutter) —
+       now fills the column so it lines up with the story cards above */
+    .story-closer{
+      width: 100%;
+    }
+
+    /* Venue circles: grow to fill the column up to the gutter (capped so they
+       don't balloon on wider phones) */
+    #venue .venue-circle{
+      width: min(calc(100vw - 2 * var(--mobile-gutter)), 22rem);
+      height: min(calc(100vw - 2 * var(--mobile-gutter)), 22rem);
+    }
+
+    /* RSVP tile: same width + inner padding as the dress code color/weather
+       cards (.attire-card: min(90vw, 460px), p-6) */
+    #rsvp{
+      padding-left: 0;
+      padding-right: 0;
+    }
+    #rsvp > .max-w-xl{
+      width: 100%;
+    }
+    #rsvp-form{
+      width: min(80vw, 460px);
+      margin-left: auto;
+      margin-right: auto;
+      padding: 1.5rem;
+    }
+
+    /* Map: same as desktop (fits the width, no sideways scroll), just inset
+       to the shared gutter. Overrides the 525px scroll setup above. */
+    .directions-map-scroll{
+      width: 100%;
+      overflow: visible;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    #directions-map-block{
+      width: 100% !important;
     }
   }
 
@@ -1007,7 +1076,7 @@
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-church" src="photos/event-details/church-4.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -1021,7 +1090,7 @@
         <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-elan" src="photos/event-details/illustration-elan.png" alt="" aria-hidden="true" />
-            <div class="w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
               <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -1855,7 +1924,7 @@
         document.getElementById('email-step').style.display = 'none';
         document.getElementById('details-step').style.display = 'none';
         rsvpMessage.textContent = isJoyfullyAccepting
-          ? 'See you there!! We can\'t wait to celebrate with you!'
+          ? 'YAY see you there!! We can\'t wait to celebrate with you!'
           : "Thank you for letting us know. We'll miss having you there!";
         rsvpMessage.style.color = 'var(--ink)';
         rsvpMessage.classList.remove('hidden');
