@@ -745,7 +745,7 @@
     display:none;
   }
   /* "See all our prenup photos" link inside the story text (desktop + mobile) */
-   .story-link{
+  .story-link{
     color:var(--accent-deep);
     font-weight:600;
     text-decoration:underline;
@@ -1400,10 +1400,17 @@
   </footer>
 
   <script>
+    // Coming back from the prenup page? (flag is set when the prenup link is clicked)
+    let returnScrollY = null;
+    try {
+      returnScrollY = sessionStorage.getItem('returnScrollY');
+      sessionStorage.removeItem('returnScrollY');
+    } catch (e) {}
+
     if ('scrollRestoration' in history) {
       history.scrollRestoration = 'manual';
     }
-    window.scrollTo(0, 0);
+    if (returnScrollY === null) window.scrollTo(0, 0);
 
     // ---------- Panda intro ----------
     const introOverlay = document.getElementById('intro-overlay');
@@ -1445,6 +1452,41 @@
     // reveal the hero only once the panda has actually finished rolling off the left edge
     introPanda.addEventListener('animationend', finishIntro);
     setTimeout(finishIntro, 4000); // safety fallback in case animationend never fires
+
+    // Returning from the prenup page: skip the panda and jump back to the same
+    // story card, at the same spot on screen. Anchoring to the card (not a raw
+    // pixel position) keeps it accurate even while photos above are loading.
+    if (returnScrollY !== null) {
+      introOverlay.style.display = 'none';
+      finishIntro();
+      let saved = {};
+      try { saved = JSON.parse(returnScrollY) || {}; } catch (e) {}
+      const jumpBack = () => {
+        const card = saved.card != null
+          ? document.querySelector(`#our-story-grid [data-index="${saved.card}"]`)
+          : null;
+        const top = card
+          ? card.getBoundingClientRect().top + window.scrollY - (saved.offset || 0)
+          : (saved.y || 0);
+        window.scrollTo({ top, behavior: 'instant' });
+      };
+      requestAnimationFrame(jumpBack);
+      [300, 1000].forEach((t) => setTimeout(jumpBack, t));       // re-settle as photos load
+      window.addEventListener('load', jumpBack, { once: true });
+    }
+
+    // Remember where we were when leaving for the prenup page
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="prenup"]');
+      if (!link) return;
+      const card = link.closest('[data-index]');
+      const info = { y: window.scrollY };
+      if (card) {
+        info.card = card.getAttribute('data-index');
+        info.offset = card.getBoundingClientRect().top;   // card's position on screen
+      }
+      try { sessionStorage.setItem('returnScrollY', JSON.stringify(info)); } catch (err) {}
+    });
 
     // ---------- Nav: hide on scroll down, show on scroll up ----------
     const siteNav = document.querySelector('.site-nav');
@@ -1668,7 +1710,7 @@
           card.innerHTML = `
             <p class="card-date">${story.date}</p>
             <div class="card-photo">
-              <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" loading="lazy" />
+              <img src="photos/our-story/${story.file}" alt="Our story — ${story.date}" width="${story.w}" height="${story.h}" loading="lazy" />
             </div>
             ${story.header ? `<p class="card-header">${story.header}</p>` : ''}
             <p class="card-text">${story.text}</p>
