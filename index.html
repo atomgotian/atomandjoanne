@@ -5,7 +5,7 @@
 <title>Atom &amp; Joanne — February 20, 2027</title>
 <meta property="og:image" content="https://atomandjoanne.com/photos/hero/hero-full.jpeg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" type="image/png" href="photos/hero/panda.png">
+<link rel="icon" type="image/png" href="photos/event-details/illustration-dance.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,18 +139,18 @@
     animation: pandaRollThrough 3s cubic-bezier(0.5,0.05,0.5,0.95) forwards;
   }
   @keyframes pandaRollThrough{
-    0%{ opacity: 0; transform: translate(130vw, -45vh) rotate(0deg); }
+    0%{ opacity: 0; transform: translate(130vw, -50vh) rotate(0deg); }
     8%{ opacity: 1; }
-    50%{ transform: translate(0vw, 5vh) rotate(-480deg); }
+    50%{ transform: translate(0vw, -5vh) rotate(-480deg); }
     92%{ opacity: 1; }
-    100%{ opacity: 0; transform: translate(-130vw, 45vh) rotate(-960deg); }
+    100%{ opacity: 0; transform: translate(-130vw, 50vh) rotate(-960deg); }
   }
   /* Same horizontal travel/rotation as desktop, but the vertical path is shifted up
      30vh throughout — the desktop vh values land too low on narrow/tall viewports. */
   @media (max-width: 1000px) {
     #intro-panda{
       animation-name: pandaRollThroughMobile;
-      width: clamp(10rem, 35vw, 16rem);
+      width: clamp(13rem, 45vw, 19rem);
     }
   }
 
@@ -923,7 +923,7 @@
     position: fixed;
     right: clamp(0.75rem, 5vw, 1.75rem);
     bottom: clamp(0.75rem, 5vw, 1.75rem);
-    width: clamp(3.25rem, 8vw, 5.5rem);
+    width: clamp(4rem, 9vw, 6rem);
     height: auto;
     z-index: 60;
     filter: drop-shadow(0 6px 14px rgba(74,54,72,0.28));
@@ -936,6 +936,12 @@
     opacity: 1;
   }
 
+  @media (max-width: 639px){
+    #scroll-panda{
+      bottom: 0.5rem;   /* was about 1.2rem on a phone. Lower number = lower panda */
+    }
+  }
+
   /* ---------- Corner signature: "Atom & Joanne", bottom-left ---------- */
   /* Same handwritten wordmark as the hero title, scaled way down to roughly
      the same footprint as the panda sticker opposite it. Same fade behavior
@@ -944,7 +950,7 @@
   #corner-signature{
     position: fixed;
     left: clamp(0.75rem, 5vw, 1.75rem);
-    bottom: clamp(0.75rem, 5vw, 1.75rem);
+    bottom: clamp(1rem, 5vw, 2rem);
     z-index: 60;
     font-family: 'Joanne Hand', cursive;
     color: var(--ink);
@@ -982,7 +988,7 @@
 
   <!-- ================= PANDA INTRO ================= -->
   <div id="intro-overlay" class="fixed inset-0 z-[200] flex items-center justify-center" role="button" tabindex="0" aria-label="Skip intro animation">
-    <img id="intro-panda" src="photos/hero/panda.png" alt="" class="w-36 sm:w-48 md:w-56" />
+    <img id="intro-panda" src="photos/hero/panda.png" alt="" class="w-48 sm:w-56 md:w-64" />
     <p class="intro-hint absolute bottom-10 md:bottom-14 tracking-wide-label text-[12px]" style="color:var(--ink-soft)">tap anywhere to skip</p>
   </div>
 
@@ -1080,7 +1086,7 @@
         <h2 class="font-hand text-4xl md:text-5xl" style="color:var(--ink)">Saturday - Feb 20, 2027</h2>
       </div>
 
-      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 mb-6">
+      <div class="grid sm:grid-cols-2 gap-16 sm:gap-10 lg:gap-x-24 mb-6">
         <!-- Ceremony -->
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">

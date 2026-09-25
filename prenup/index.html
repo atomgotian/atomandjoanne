@@ -5,7 +5,7 @@
 <title>Our Prenup — Atom &amp; Joanne</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta property="og:image" content="https://atomandjoanne.com/photos/our-story/our-story-hero.jpeg">
-<link rel="icon" type="image/png" href="../photos/hero/panda.png">
+<link rel="icon" type="image/png" href="../photos/event-details/illustration-dance.png">
 <style>
   :root{
     --bg:        #F5F0F2;
@@ -90,21 +90,28 @@
     color: var(--ink);
   }
 
-  /* ---------- Gallery grid ----------
-    All the prenup photos are landscape, so a plain grid lines them up in
-    neat rows, left to right, in list order. 21 photos = 7 full rows of 3 on
-    tablet/desktop, and one big photo per row on phones, so no empty gaps.
-    If you add or remove photos, keep the total a multiple of 3 to avoid a
-    short last row. */
+  /* ---------- Gallery: tidy 2-to-1 grid ----------
+    Every landscape photo is one row tall; every portrait photo is exactly
+    two rows tall (so it lines up with two landscapes stacked beside it).
+    Row height comes from the column width (set by sizeRows() in the script),
+    so it stays exact at any screen size. Portraits are cropped very slightly
+    top and bottom to fit — the expanded view always shows the full photo.
+    --gap sets the space between photos (both directions). */
   .gallery{
+    --gap: 0.4rem;             /* phones: tighter gap so 3 columns still have room */
     max-width: 64rem;
     margin: 0 auto;
     padding: 0 1.5rem 4rem;   /* 1.5rem side gap = same as the main site on mobile */
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 0.9rem;
+    grid-template-columns: repeat(3, 1fr);   /* 3 columns on every screen size */
+    grid-auto-rows: 220px;     /* placeholder — replaced by sizeRows() */
+    grid-auto-flow: row dense; /* fills any hole a portrait leaves with the next photo that fits */
+    gap: var(--gap);
   }
-  @media (min-width: 768px){ .gallery{ grid-template-columns: repeat(3, 1fr); gap: 1rem; } }
+  @media (min-width: 768px){ .gallery{ --gap: 1rem; } }
+  /* phones: thinner white border so the small tiles are mostly photo */
+  @media (max-width: 767px){ .gallery-item{ padding: 0.15rem; } }
+  .gallery-item.is-portrait{ grid-row: span 2; }
 
   .gallery-item{
     margin: 0;
@@ -116,7 +123,7 @@
     transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16,1,0.3,1);
   }
   .gallery-item.is-in{ opacity: 1; transform: none; }
-  .gallery-item img{ width: 100%; height: auto; display: block; }
+  .gallery-item img{ width: 100%; height: 100%; object-fit: cover; display: block; }
 
   .gallery-empty{
     text-align: center;
@@ -280,28 +287,61 @@
   //  Order here = order on the page. Names must match exactly,
   //  including upper/lower case and the extension (.jpg vs .jpeg).
   // ============================================================
-  const PRENUP_PHOTOS = [
+    const PRENUP_PHOTOS = [
+    'DSC04092.jpeg',
+    'DSC04131.jpeg',
     'DSC04147.jpeg',
-    'DSC04180.jpeg',
+    'DSC04204.jpeg',
     'DSC04225.jpeg',
     'DSC04236.jpeg',
     'DSC04239.jpeg',
-    'DSC04283.jpeg',
+    'DSC04268.jpeg',
     'DSC04315.jpeg',
+    'DSC04384.jpeg',
+    'DSC04415.jpeg',
+    'DSC04485.jpeg',
     'DSC04520.jpeg',
     'DSC04551.jpeg',
     'DSC04630.jpeg',
     'DSC04689.jpeg',
+    'DSC04733.jpeg',
+    'DSC04782.jpeg',
     'DSC04785.jpeg',
     'DSC04814.jpeg',
     'DSC04855.jpeg',
+    'DSC04887.jpeg',
+    'DSC04888.jpeg',
+    'DSC04950.jpeg',
     'DSC04962.jpeg',
+    'DSC04978.jpeg',
+    'DSC05001.jpeg',
     'DSC05006.jpeg',
+    'DSC05014.jpeg',
     'DSC05033.jpeg',
+    'DSC05068.jpeg',
     'DSC05084.jpeg',
+    'DSC05101.jpeg',
+    'DSC05137.jpeg',
+    'DSC05267.jpeg',
+    'DSC05268.jpeg',
+    'DSC05301.jpeg',
+    'DSC05327.jpeg',
+    'DSC05423.jpeg',
+    'DSC05542.jpeg',
+    'DSC05560.jpeg',
+    'DSC05638.jpeg',
     'DSC05735.jpeg',
+    'DSC05768.jpeg',
     'DSC05816.jpeg',
-    'DSC06128.jpeg',
+    'DSC05841.jpeg',
+    'DSC05909.jpeg',
+    'DSC05923.jpeg',
+    'DSC06009.jpeg',
+    'DSC06177.jpeg',
+    'DSC06195.jpeg',
+    'DSC06262.jpeg',
+    'DSC06317.jpeg',
+    'DSC06360.jpeg'
   ];
 
   const gallery = document.getElementById('gallery');
@@ -313,16 +353,34 @@
     item.setAttribute('role', 'button');
     item.setAttribute('aria-label', 'Open photo ' + (i + 1));
     const img = document.createElement('img');
-    img.src = '../photos/gallery/' + file;
+    img.src = '../photos/gallery/thumbs/' + file;       // small copy for the grid
+    img.dataset.full = '../photos/gallery/' + file;      // full size for the expanded view
     img.alt = 'Atom and Joanne prenup photo ' + (i + 1);
     img.loading = i < 6 ? 'eager' : 'lazy';
     // Hide any photo whose file name is wrong instead of showing a broken icon
     img.onerror = () => item.remove();
+    // Portrait photo? Make it two rows tall
+    img.onload = () => item.classList.toggle('is-portrait', img.naturalHeight > img.naturalWidth);
     item.appendChild(img);
     gallery.appendChild(item);
   });
 
   if (!PRENUP_PHOTOS.length) document.getElementById('gallery-empty').hidden = false;
+
+  // ---------- Row height ----------
+  // One row = the height of a 3:2 landscape photo at the current column width
+  // (plus its white border), so landscapes show uncropped and two of them
+  // stacked (with the gap between) match one portrait exactly.
+  function sizeRows(){
+    const first = gallery.querySelector('.gallery-item');
+    if (!first) return;
+    const pad = parseFloat(getComputedStyle(first).paddingTop) || 0;
+    const colW = first.getBoundingClientRect().width;
+    gallery.style.gridAutoRows = ((colW - pad * 2) * 2 / 3 + pad * 2) + 'px';
+  }
+  sizeRows();
+  let resizeTimer;
+  window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(sizeRows, 100); });
 
   // Gentle fade-up as photos scroll into view
   const io = new IntersectionObserver((entries) => {
@@ -391,11 +449,11 @@
     const photos = photoEls();
     if (!photos.length) return;
     lbIndex = wrap(i, photos.length);
-    lbImg.src = photos[lbIndex].src;
+    lbImg.src = photos[lbIndex].dataset.full;
     lbImg.alt = photos[lbIndex].alt;
     lbCounter.textContent = (lbIndex + 1) + ' / ' + photos.length;
     // Preload neighbours so the photo underneath is ready the moment you swipe
-    [lbIndex + 1, lbIndex - 1].forEach((n) => { const pre = new Image(); pre.src = photos[wrap(n, photos.length)].src; });
+    [lbIndex + 1, lbIndex - 1].forEach((n) => { const pre = new Image(); pre.src = photos[wrap(n, photos.length)].dataset.full; });
   }
   function prepareUnder(dir){            // dir: +1 = next, -1 = previous
     const photos = photoEls();
