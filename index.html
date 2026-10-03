@@ -974,6 +974,136 @@
     margin: -0.1em 0;
   }
 
+
+  /* ================= FAQ =================
+     Accordion: each .faq-item toggles .is-open. The answer panel grows with
+     the grid-template-rows 0fr -> 1fr trick, so items below get pushed down
+     smoothly (no fixed max-height). The +/x icon hangs off the left edge of
+     the centered question text, inside reserved side padding (--faq-side).
+
+     Answer layouts:
+     - .faq-body (default): two columns, sticker on the left, answer on the right.
+     - .faq-body-gift (gifts question only): answer centered on top, then a
+       row underneath with the sticker on the left and the QR code on the right. */
+  #faq{ --faq-side: 44px; --faq-sticker: 128px; }
+  @media (min-width: 768px){ #faq{ --faq-side: 56px; --faq-sticker: 168px; } }
+
+  .faq-item{ border-bottom: 1px solid var(--accent); }
+  .faq-item:first-child{ border-top: 1px solid var(--accent); }
+
+  .faq-q{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1.15rem var(--faq-side);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    color: var(--ink);
+    text-align: center;
+    border-radius: 14px;
+    transition: background-color .25s ease;
+  }
+  .faq-q:hover{ background-color: rgba(165,204,230,0.14); }
+  .faq-q:active{ background-color: rgba(165,204,230,0.26); }
+  .faq-q:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+
+  .faq-q-text{
+    position: relative;
+    display: inline-block;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  @media (min-width: 768px){ .faq-q-text{ font-size: 16px; } }
+
+  .faq-icon{
+    position: absolute;
+    right: calc(100% + 12px);
+    top: 50%;
+    width: 20px; height: 20px;
+    margin-top: -10px;
+    color: var(--ink-soft);
+    transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  .faq-item.is-open .faq-icon{ transform: rotate(45deg); }
+
+  .faq-panel{
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .45s cubic-bezier(.22,.8,.24,1);
+  }
+  .faq-item.is-open .faq-panel{ grid-template-rows: 1fr; }
+  .faq-panel-inner{
+    overflow: hidden;
+    min-height: 0;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity .3s ease, transform .3s ease;
+  }
+  .faq-item.is-open .faq-panel-inner{
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: .08s;
+  }
+
+  /* Default: sticker left, answer right */
+  .faq-body{
+    display: grid;
+    grid-template-columns: var(--faq-sticker) 1fr;
+    align-items: center;
+    column-gap: 1.1rem;
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 0.25rem 1rem 1.4rem;
+  }
+  .faq-body .faq-answer{ text-align: left; }
+
+  .faq-answer{
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+
+  .faq-sticker{
+    width: var(--faq-sticker);
+    height: var(--faq-sticker);
+    object-fit: contain;
+    opacity: 0;
+    transform: scale(.4);
+    transition: opacity .25s ease, transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .faq-item.is-open .faq-sticker{
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: .12s;
+  }
+
+  /* Gifts: answer centered, then sticker (left) + QR (right) */
+  .faq-body-gift{
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 0.25rem 1rem 1.4rem;
+    text-align: center;
+  }
+  .faq-gift-row{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.25rem, 5vw, 2.5rem);
+    margin-top: 1rem;
+  }
+  .faq-qr{
+    width: clamp(130px, 36vw, 170px);
+    aspect-ratio: 1 / 1;
+    border-radius: 18px;
+    background: var(--cream);
+    padding: 10px;
+    overflow: hidden;
+  }
+  .faq-qr img{ width: 100%; height: 100%; object-fit: contain; display: block; }
+
   @media (prefers-reduced-motion: reduce){
     *, *::before, *::after{
       animation-duration: 0.01ms !important;
@@ -1261,7 +1391,7 @@
               <span class="swatch-underline"></span>
             </button>
         </div>
-        <p class="text-center text-[14px] mt-4 mb-4" style="color:var(--ink-deep); line-height:1.7;">Feel free to play with your colors. Theme is fun and joyful. Kindly avoid white, beige, and black.</p>
+        <!-- <p class="text-center text-[14px] mt-4 mb-4" style="color:var(--ink-deep); line-height:1.7;">Feel free to play with your colors. Theme is fun and joyful. Kindly avoid white, beige, and black.</p> -->
       </div>
 
       <!-- Weather info card — placed after the color card so it lands last in
@@ -1281,6 +1411,129 @@
             <span class="font-semibold text-right" style="color:var(--ink)">Average low:</span><span class="text-left">21&deg;C</span>
             <span class="font-semibold text-right" style="color:var(--ink)">&#x1F327;&#xFE0F; Rain:</span><span class="text-left">&#x1F91E; 0% &#x1F91E;</span>
             <span class="font-semibold text-right" style="color:var(--ink)">&#x1F305; Sunset:</span><span class="text-left">&#x1F60D; 100% &#x1F60D;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <!-- Stickers live in photos/faqs/ (attire, parking, plusone, gifts, hotel, panda .png);
+       the gift QR code is photos/faqs/qr.png. -->
+  <section id="faq" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
+    <div class="max-w-2xl mx-auto w-full">
+      <div class="reveal text-center mb-6 md:mb-8">
+        <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">Any questions?</p>
+        <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">FAQs</h2>
+      </div>
+
+      <div class="reveal reveal-delay-1" id="faq-list">
+        <!-- Q1 -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q1" aria-expanded="false" aria-controls="faq-a1">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Does our attire need to match the colors above exactly?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a1" role="region" aria-labelledby="faq-q1">
+            <div class="faq-panel-inner">
+              <div class="faq-body">
+                <img class="faq-sticker" src="photos/faqs/attire.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                <p class="faq-answer">Not exactly, no. Please feel free to play with your colors! Our theme is fun and joyful. May we only request that you kindly avoid white, beige, and black. Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Q2 -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q2" aria-expanded="false" aria-controls="faq-a2">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              What is the parking situation?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a2" role="region" aria-labelledby="faq-q2">
+            <div class="faq-panel-inner">
+              <div class="faq-body">
+                <img class="faq-sticker" src="photos/faqs/parking.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                <p class="faq-answer">Both Sacred Heart and Elan by the Bay have parking.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Q3 -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q5" aria-expanded="false" aria-controls="faq-a5">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Where can we stay?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a5" role="region" aria-labelledby="faq-q5">
+            <div class="faq-panel-inner">
+              <div class="faq-body">
+                <img class="faq-sticker" src="photos/faqs/hotel.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                <p class="faq-answer">We have booked rooms for before and after the day of our wedding at Seda Manila Bay. You are most welcome to join us. Please let us know in the RSVP form below.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Q4 -->
+        <!-- DRAFT answer: original in the sheet was unfinished. Replace once final. -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q3" aria-expanded="false" aria-controls="faq-a3">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Can I bring a plus one?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a3" role="region" aria-labelledby="faq-q3">
+            <div class="faq-panel-inner">
+              <div class="faq-body">
+                <img class="faq-sticker" src="photos/faqs/plusone.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                <p class="faq-answer">We have personally messaged everyone invited to our wedding. If your name doesn&rsquo;t appear in the RSVP form below, we&rsquo;re sorry we can&rsquo;t accommodate a plus one. Thank you so much for understanding.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Q5 -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q4" aria-expanded="false" aria-controls="faq-a4">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              Can we send you two a gift?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a4" role="region" aria-labelledby="faq-q4">
+            <div class="faq-panel-inner">
+              <div class="faq-body-gift">
+                <p class="faq-answer">Of course! &#x1F979; We appreciate even the thought.</p>
+                <div class="faq-gift-row">
+                  <img class="faq-sticker" src="photos/faqs/gifts.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                  <div class="faq-qr">
+                    <img src="photos/faqs/qr.png" alt="QR code for wedding gifts" loading="lazy" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Q6 -->
+        <div class="faq-item">
+          <button type="button" class="faq-q" id="faq-q6" aria-expanded="false" aria-controls="faq-a6">
+            <span class="faq-q-text">
+              <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+              What is Panda&rsquo;s breed?
+            </span>
+          </button>
+          <div class="faq-panel" id="faq-a6" role="region" aria-labelledby="faq-q6">
+            <div class="faq-panel-inner">
+              <div class="faq-body">
+                <img class="faq-sticker" src="photos/faqs/panda.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
+                <p class="faq-answer">Maltese, Shihtzu</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1847,6 +2100,15 @@
         btn.classList.add('active');
         dressTint.style.backgroundColor = btn.dataset.color;
         dressColorName.textContent = btn.dataset.name;
+      });
+    });
+
+    // ---------- FAQ accordion: click a question to open/close it ----------
+    document.querySelectorAll('#faq .faq-q').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const open = item.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       });
     });
 
