@@ -1289,7 +1289,7 @@
 
   <!-- ================= RSVP ================= -->
   <section id="rsvp" class="relative py-6 md:py-9 px-6 lg:px-10 full-screen">
-    <div class="max-w-xl mx-auto">
+    <div class="max-w-xl mx-auto w-full">
       <div class="reveal text-center mb-6 md:mb-8">
         <p class="tracking-wide-label text-[16px] mb-4" style="color:var(--ink-soft)">How do we RSVP?</p>
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP Here</h2>
@@ -1474,24 +1474,76 @@
     // Returning from the prenup page: skip the panda and jump back to the same
     // story card, at the same spot on screen. Anchoring to the card (not a raw
     // pixel position) keeps it accurate even while photos above are loading.
+    //
+    // Mobile notes:
+    // - On mobile the card text is hidden until "Read more" is tapped, and the
+    //   page reloads with it collapsed. So we re-open that card's text first,
+    //   otherwise the card is shorter and we'd land past it (in the venue section).
+    // - We anchor to the "preview" link itself, which sits at the bottom of a
+    //   tall mobile card, rather than the card's top edge.
+    // - html has `scroll-behavior: smooth`; we switch it off while jumping so
+    //   phones jump instantly instead of slowly gliding down from the top.
+    // - Re-settling stops as soon as the guest touches/scrolls, so a late photo
+    //   load never yanks them back.
     if (returnScrollY !== null) {
       introOverlay.style.display = 'none';
       finishIntro();
       let saved = {};
       try { saved = JSON.parse(returnScrollY) || {}; } catch (e) {}
+
+      const rootEl = document.documentElement;
+      rootEl.style.scrollBehavior = 'auto';
+      let userTookOver = false;
+      const stopSettling = () => { userTookOver = true; rootEl.style.scrollBehavior = ''; };
+      ['touchstart', 'wheel', 'keydown'].forEach((ev) =>
+        window.addEventListener(ev, stopSettling, { once: true, passive: true }));
+
+      let reopened = false;
       const jumpBack = () => {
+        if (userTookOver) return;
         const card = saved.card != null
           ? document.querySelector(`#our-story-grid [data-index="${saved.card}"]`)
           : null;
-        const top = card
-          ? card.getBoundingClientRect().top + window.scrollY - (saved.offset || 0)
-          : (saved.y || 0);
-        window.scrollTo({ top, behavior: 'instant' });
+
+        // Mobile card: re-open the text if it was open when they left
+        if (card && saved.expanded && !reopened) {
+          const text = card.querySelector('.card-text');
+          const btn = card.querySelector('.card-toggle');
+          if (text && !text.classList.contains('expanded')) {
+            text.classList.add('expanded');
+            if (btn) btn.textContent = 'Show less';
+          }
+          reopened = true;
+        }
+
+        const link = card ? card.querySelector('a[href^="prenup"]') : null;
+        const linkVisible = link && link.getClientRects().length > 0;
+        let top;
+        if (linkVisible && saved.linkOffset != null) {
+          top = link.getBoundingClientRect().top + window.scrollY - saved.linkOffset;
+        } else if (card) {
+          top = card.getBoundingClientRect().top + window.scrollY - (saved.offset || 0);
+        } else {
+          top = saved.y || 0;
+        }
+        window.scrollTo(0, Math.max(0, top));
       };
       requestAnimationFrame(jumpBack);
-      [300, 1000].forEach((t) => setTimeout(jumpBack, t));       // re-settle as photos load
-      window.addEventListener('load', jumpBack, { once: true });
+      [300, 1000, 2000].forEach((t) => setTimeout(jumpBack, t));  // re-settle as photos/fonts load
+      window.addEventListener('load', () => {
+        jumpBack();
+        setTimeout(() => { jumpBack(); if (!userTookOver) rootEl.style.scrollBehavior = ''; }, 300);
+      }, { once: true });
     }
+
+    // Phone back button/swipe often restores the page from memory (bfcache)
+    // instead of reloading it. The scroll position is kept in that case, but
+    // the saved flag would linger and hijack the next refresh, so clear it.
+    window.addEventListener('pageshow', (e) => {
+      if (e.persisted) {
+        try { sessionStorage.removeItem('returnScrollY'); } catch (err) {}
+      }
+    });
 
     // Remember where we were when leaving for the prenup page
     document.addEventListener('click', (e) => {
@@ -1501,7 +1553,10 @@
       const info = { y: window.scrollY };
       if (card) {
         info.card = card.getAttribute('data-index');
-        info.offset = card.getBoundingClientRect().top;   // card's position on screen
+        info.offset = card.getBoundingClientRect().top;      // card's position on screen
+        info.linkOffset = link.getBoundingClientRect().top;  // link's position on screen
+        const text = card.querySelector('.card-text');
+        info.expanded = !!(text && text.classList.contains('expanded'));  // mobile "Read more" state
       }
       try { sessionStorage.setItem('returnScrollY', JSON.stringify(info)); } catch (err) {}
     });
