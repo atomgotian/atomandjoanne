@@ -101,7 +101,7 @@
     --gap: 0.4rem;             /* phones: tighter gap so 3 columns still have room */
     max-width: 64rem;
     margin: 0 auto;
-    padding: 0 1.5rem 4rem;   /* 1.5rem side gap = same as the main site on mobile */
+    padding: 0 1.5rem 8rem;   /* extra bottom room so the corner panda/signature don't cover the last row; 1.5rem side gap = same as the main site on mobile */
     display: grid;
     grid-template-columns: repeat(3, 1fr);   /* 3 columns on every screen size */
     grid-auto-rows: 220px;     /* placeholder — replaced by sizeRows() */
@@ -245,9 +245,51 @@
     .gallery-item, .gallery-item img, .lightbox, .lightbox-img{ opacity: 1; transform: none; transition: none; }
     .lightbox:not(.is-open){ opacity: 0; }
   }
+
+  /* ---------- Corner pieces (same as the main site) ----------
+     Panda bottom-right spins as you scroll; "Atom & Joanne" bottom-left.
+     Copied from index.html. Always visible here (no hero to scroll past). */
+  #scroll-panda{
+    position: fixed;
+    right: clamp(0.75rem, 5vw, 1.75rem);
+    bottom: clamp(0.75rem, 5vw, 1.75rem);
+    width: clamp(4rem, 9vw, 6rem);
+    height: auto;
+    z-index: 60;
+    filter: drop-shadow(0 6px 14px rgba(74,54,72,0.28));
+    pointer-events: none;
+    will-change: transform;
+  }
+  @media (max-width: 639px){
+    #scroll-panda{ bottom: 0.5rem; }
+  }
+  #corner-signature{
+    position: fixed;
+    left: clamp(0.75rem, 5vw, 1.75rem);
+    bottom: clamp(1rem, 5vw, 2rem);
+    z-index: 60;
+    font-family: 'Joanne Hand', cursive;
+    font-weight: 800;
+    letter-spacing: normal;
+    color: var(--ink);
+    line-height: 1;
+    text-align: center;
+    filter: drop-shadow(0 4px 10px rgba(74,54,72,0.22));
+    pointer-events: none;
+  }
+  #corner-signature .corner-signature-name{ display: block; font-size: clamp(1rem, 3vw, 2rem); }
+  #corner-signature .corner-signature-and{ display: block; font-size: clamp(0.65rem, 2vw, 1rem); margin: -0.1em 0; }
 </style>
 </head>
 <body>
+  <!-- Corner pieces (same as the main site) -->
+  <img id="scroll-panda" src="../photos/hero/panda.png" alt="" aria-hidden="true" />
+  <div id="corner-signature" aria-hidden="true">
+    <span class="corner-signature-name">Atom</span>
+    <span class="corner-signature-and">&amp;</span>
+    <span class="corner-signature-name">Joanne</span>
+  </div>
+
 
   <!-- "../" = the site's home page (one folder up from /prenup/) -->
   <a href="../" class="back-btn" aria-label="Back to the home page">
@@ -653,6 +695,16 @@
   }, { passive: true });
 
   lb.addEventListener('touchcancel', () => { mode = null; snapBack(); }, { passive: true });
+</script>
+<script>
+  // Panda spins with scroll position (same speed as the main site)
+  (function(){
+    const panda = document.getElementById('scroll-panda');
+    if (!panda || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const spin = () => { panda.style.transform = 'rotate(' + (window.scrollY * 0.5) + 'deg)'; };
+    window.addEventListener('scroll', spin, { passive: true });
+    spin();
+  })();
 </script>
 </body>
 </html>
