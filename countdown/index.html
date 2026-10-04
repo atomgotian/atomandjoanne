@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Countdown — Atom &amp; Joanne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:image" content="https://atomandjoanne.com/photos/hero/hero-full.jpeg">
+<link rel="icon" type="image/png" href="../photos/event-details/illustration-dance.png">
+
+<style>
+  /* Same colour tokens and fonts as the main site (index.html) */
+  :root{
+    --bg:        #F5F0F2;
+    --cream:     #FDF8F6;
+    --ink-soft:  #9A6580;
+    --ink:       #472E3B;
+    --accent:    #A5CCE6;
+    --accent-deep: #2D74A4;
+  }
+  @font-face{ font-family:'Joanne Hand';  src:url('../fonts/Myfont8-Regular.otf') format('opentype'); font-weight:800; font-display:swap; }
+  @font-face{ font-family:'Joanne Print'; src:url('../fonts/Myfont5-Regular.otf') format('opentype'); font-weight:400; font-display:swap; }
+
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ margin:0; overflow-x:hidden; }
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Joanne Print', sans-serif;
+    letter-spacing:0.1em;
+    line-height:1.6;
+  }
+
+  .wrap{ max-width:640px; margin:0 auto; padding:24px 16px 64px; }
+
+  .back{
+    display:inline-block;
+    color:var(--ink-soft);
+    text-decoration:none;
+    font-size:14px;
+  }
+  .back:hover{ color:var(--ink); }
+
+  /* ---------- Header countdown ---------- */
+  header{ text-align:center; margin:28px 0 32px; }
+  .eyebrow{ color:var(--ink-soft); font-size:15px; margin:0 0 6px; }
+  .big{
+    font-family:'Joanne Hand', cursive;
+    font-size:clamp(72px, 22vw, 140px);
+    line-height:1;
+    letter-spacing:-0.03em;
+    margin:0;
+    color:var(--ink);
+  }
+  .sub{
+    font-family:'Joanne Hand', cursive;
+    font-size:clamp(24px, 6vw, 34px);
+    letter-spacing:-0.02em;
+    margin:6px 0 0;
+  }
+
+  /* ---------- Grid: 7 columns (Sun → Sat) × 20 rows ---------- */
+  .weekdays, .grid{
+    display:grid;
+    grid-template-columns:repeat(7, 1fr);
+    gap:6px;
+  }
+  .weekdays{ margin-bottom:6px; }
+  .weekdays span{ text-align:center; font-size:12px; color:var(--ink-soft); }
+
+  .tile{
+    position:relative;
+    aspect-ratio:1 / 1;
+    border-radius:6px;
+    overflow:hidden;
+    background:var(--cream);
+    border:1px solid rgba(165,204,230,0.45);
+    display:flex; align-items:center; justify-content:center;
+    padding:0;
+    font:inherit; color:inherit;
+  }
+  .tile .date{
+    font-size:clamp(8px, 2.2vw, 11px);
+    letter-spacing:0.04em;
+    color:var(--ink-soft);
+    opacity:0.6;
+    text-align:center;
+    line-height:1.2;
+  }
+  .tile img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;              /* square crop in the grid */
+    opacity:0; transition:opacity .5s ease;
+  }
+  .tile.loaded img{ opacity:1; }
+  .tile.loaded{ cursor:zoom-in; border-color:transparent; }
+  .tile.loaded .date{ display:none; }
+  .tile.loaded:hover img{ transform:scale(1.04); transition:transform .3s ease, opacity .5s ease; }
+  .tile:focus-visible{ outline:2px solid var(--accent-deep); outline-offset:2px; }
+
+  .tile.revealed:not(.loaded) .date{ opacity:0.9; }   /* day has come, photo not uploaded yet */
+  .tile.today{ box-shadow:0 0 0 2px var(--accent); }
+  .tile.wedding{ border:2px solid var(--accent-deep); }
+  .tile.wedding .date{ color:var(--accent-deep); opacity:1; font-weight:600; }
+  .tile img.wedding-sticker{ position:static; display:block; width:clamp(56px, 30vw, 88px); height:auto; margin:-40px auto 0; opacity:1; object-fit:contain; transform:translateY(6px); }
+
+  /* ---------- Lightbox (photo shown at its original shape) ---------- */
+  .lb{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(40,25,33,0.92);
+    display:none; align-items:center; justify-content:center;
+    touch-action:pan-y;
+  }
+  .lb.open{ display:flex; }
+  .lb img{
+    max-width:92vw; max-height:84vh;
+    width:auto; height:auto;
+    object-fit:contain;
+    border-radius:4px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.35);
+    user-select:none; -webkit-user-drag:none;
+  }
+  .lb button{
+    position:absolute;
+    background:none; border:none; cursor:pointer;
+    color:#fff; opacity:0.85;
+    font-size:34px; line-height:1;
+    padding:14px;
+  }
+  .lb button:hover{ opacity:1; }
+  .lb .close{ top:8px; right:8px; }
+  .lb .prev{ left:4px; top:50%; transform:translateY(-50%); }
+  .lb .next{ right:4px; top:50%; transform:translateY(-50%); }
+  .lb .caption{
+    position:absolute; bottom:16px; left:0; right:0;
+    text-align:center; color:#fff; opacity:0.8; font-size:13px;
+  }
+  @media (max-width:640px){ .lb .prev, .lb .next{ display:none; } } /* swipe on phones */
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="../#faq">&larr; Back to Atom &amp; Joanne</a>
+
+    <header>
+      <p class="big" id="big">&nbsp;</p>
+      <p class="sub" id="sub">&nbsp;</p>
+    </header>
+
+    <div class="weekdays" aria-hidden="true">
+      <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="close" id="lb-close" aria-label="Close">&times;</button>
+    <button class="prev" id="lb-prev" aria-label="Previous photo">&#8249;</button>
+    <img id="lb-img" alt="">
+    <button class="next" id="lb-next" aria-label="Next photo">&#8250;</button>
+    <p class="caption" id="lb-cap"></p>
+  </div>
+
+<script>
+(function(){
+  // ------------------------------------------------------------------
+  // HOW THIS WORKS
+  // Each tile is one calendar day. Its number = sleeps left on that day.
+  //   Top-left  = Sun 4 Oct 2026  = 139   -> photos/countdown/139.jpg
+  //   Bottom-right = Sat 20 Feb 2027 = 0  -> photos/countdown/0.jpg
+  // A tile reveals once that day arrives (Manila time). The page looks for
+  // N.jpg first, then N.png. If neither exists, the tile just shows its date.
+  //
+  // Preview trick: add ?sleeps=50 to the URL to see the page as it will
+  // look when there are 50 sleeps left.
+  // ------------------------------------------------------------------
+  const TOTAL = 143;
+  const WEDDING_UTC = Date.UTC(2027, 1, 20);   // 20 Feb 2027 (month is 0-based)
+  const DAY = 86400000;
+  const PHOTO_DIR = '../photos/countdown/';
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // Today's date in Manila, as a plain calendar date
+  function manilaTodayUTC(){
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone:'Asia/Manila', year:'numeric', month:'2-digit', day:'2-digit'
+    }).format(new Date()).split('-').map(Number);
+    return Date.UTC(parts[0], parts[1] - 1, parts[2]);
+  }
+  function sleepsLeft(){
+    const override = new URLSearchParams(location.search).get('sleeps');
+    if (override !== null && override !== '' && !isNaN(override)) return parseInt(override, 10);
+    return Math.round((WEDDING_UTC - manilaTodayUTC()) / DAY);
+  }
+
+  // ---------- Header ----------
+  function renderHeader(s){
+    const big = document.getElementById('big');
+    const sub = document.getElementById('sub');
+    if (s > 0){
+      big.textContent = s;
+      sub.textContent = (s === 1 ? 'sleep' : 'sleeps') + ' until our day!';
+    } else if (s === 0){
+      big.textContent = 'Today!';
+      sub.textContent = 'Today’s the day ♡';
+    } else {
+      big.textContent = 'Married!';
+      sub.textContent = '20.02.2027';
+    }
+  }
+
+  // ---------- Grid ----------
+  const grid = document.getElementById('grid');
+  const tiles = [];
+
+  function buildGrid(){
+    for (let k = 0; k < 4; k++){              // empty spaces: Sun–Wed before Thu 1 Oct
+      const sp = document.createElement('div');
+      sp.setAttribute('aria-hidden', 'true');
+      grid.appendChild(sp);
+    }
+    for (let i = 0; i < TOTAL; i++){
+      const n = TOTAL - 1 - i;                    // 139 ... 0
+      const d = new Date(WEDDING_UTC - n * DAY);
+      const label = d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()];
+
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'tile' + (n === 0 ? ' wedding' : '');
+      tile.dataset.n = n;
+      tile.dataset.label = label;
+      tile.tabIndex = -1;
+      tile.setAttribute('aria-label', label);
+      tile.innerHTML = '<span class="date">' + (n === 0 ? label + '<img class="wedding-sticker" src="../photos/hero/sticker-taiwan-outline.png" alt="">' : label) + '</span>';
+      grid.appendChild(tile);
+      tiles.push(tile);
+    }
+  }
+
+  function loadPhoto(tile){
+    if (tile.dataset.tried) return;
+    tile.dataset.tried = '1';
+    const n = tile.dataset.n;
+    const img = new Image();
+    img.alt = 'Photo for ' + tile.dataset.label;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.onload = () => {
+      tile.classList.add('loaded');
+      tile.tabIndex = 0;
+      tile.setAttribute('aria-label', 'Open photo for ' + tile.dataset.label);
+    };
+    img.onerror = () => {
+      if (img.src.endsWith('.jpg')) img.src = PHOTO_DIR + n + '.png';   // try .png next
+      else img.remove();                                                 // no photo yet
+    };
+    img.src = PHOTO_DIR + n + '.jpg';
+    tile.appendChild(img);
+  }
+
+  function renderGrid(s){
+    tiles.forEach(tile => {
+      const n = parseInt(tile.dataset.n, 10);
+      tile.classList.toggle('today', n === s);
+      if (n >= s){                       // that day has arrived
+        tile.classList.add('revealed');
+        loadPhoto(tile);
+      }
+    });
+  }
+
+  // ---------- Lightbox ----------
+  const lb = document.getElementById('lb');
+  const lbImg = document.getElementById('lb-img');
+  const lbCap = document.getElementById('lb-cap');
+  let seq = [], pos = 0, lastFocus = null;
+
+  function show(){
+    const tile = seq[pos];
+    const src = tile.querySelector('img:not(.wedding-sticker)').src;
+    lbImg.src = src;
+    lbImg.alt = 'Photo for ' + tile.dataset.label;
+    lbCap.textContent = tile.dataset.label;
+  }
+  function open(tile){
+    seq = tiles.filter(t => t.classList.contains('loaded'));   // grid order
+    pos = seq.indexOf(tile);
+    if (pos < 0) return;
+    lastFocus = tile;
+    show();
+    lb.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('lb-close').focus();
+  }
+  function close(){
+    lb.classList.remove('open');
+    document.body.style.overflow = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  function step(dir){
+    if (seq.length < 2) return;
+    pos = (pos + dir + seq.length) % seq.length;
+    show();
+  }
+
+  grid.addEventListener('click', e => {
+    const tile = e.target.closest('.tile.loaded');
+    if (tile) open(tile);
+  });
+  document.getElementById('lb-close').addEventListener('click', close);
+  document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); step(-1); });
+  document.getElementById('lb-next').addEventListener('click', e => { e.stopPropagation(); step(1); });
+  lb.addEventListener('click', e => { if (e.target === lb) close(); });   // tap the dark background to close
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') step(-1);
+    else if (e.key === 'ArrowRight') step(1);
+  });
+
+  // Swipe left / right on phones
+  let x0 = null, y0 = null;
+  lb.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive:true });
+  lb.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    const dy = e.changedTouches[0].clientY - y0;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) step(dx < 0 ? 1 : -1);
+    x0 = y0 = null;
+  });
+
+  // ---------- Go ----------
+  buildGrid();
+  let current = sleepsLeft();
+  renderHeader(current);
+  renderGrid(current);
+
+  // Tick over at Manila midnight if the page is left open
+  setInterval(() => {
+    const s = sleepsLeft();
+    if (s !== current){ current = s; renderHeader(s); renderGrid(s); }
+  }, 60000);
+})();
+</script>
+</body>
+</html>
