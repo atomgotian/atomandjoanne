@@ -1715,7 +1715,7 @@
                         class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
             </div>
             <div>
-              <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Are you interested in booking a room at Seda Manila Bay?</p>
+              <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Are you interested in hotel accommodations for the night of Feb 20-21?</p>
               <div class="grid grid-cols-2 gap-3">
                 <button type="button" data-seda="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
                   Yes!
@@ -1734,6 +1734,11 @@
         </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
+
+        <!-- Shown only after a successful RSVP; resets the form for the next guest -->
+        <button type="button" id="rsvp-another" class="btn-outline w-full py-4 rounded-xl font-semibold text-[15px] hidden">
+          RSVP for someone else too
+        </button>
       </form>
 
      <div id="our-story-dump" class="story-intro-scene relative flex flex-col items-center justify-center text-center" style="min-height: clamp(260px, 38vw, 420px); margin-top: 2.5rem;">
@@ -2354,6 +2359,7 @@
           }
         }
       } catch (err) {
+        console.error('Guest list check failed:', err);
         continueBtn.disabled = false;
         continueBtn.textContent = 'Continue';
         nameMessage.textContent = 'Something went wrong checking the guest list. Please try again.';
@@ -2532,6 +2538,8 @@
           : "Thank you for letting us know. We'll miss having you there!";
         rsvpMessage.style.color = 'var(--ink)';
         rsvpMessage.classList.remove('hidden');
+        rsvpAnotherBtn.style.display = '';
+        rsvpAnotherBtn.classList.remove('hidden');
         if (isJoyfullyAccepting) celebrateRSVP();
       } catch (err) {
         rsvpSubmit.disabled = false;
@@ -2539,6 +2547,51 @@
         rsvpMessage.textContent = 'Something went wrong sending your RSVP. Please try again.';
         rsvpMessage.classList.remove('hidden');
       }
+    });
+
+    // ---------- RSVP for someone else ----------
+    // Puts the form back to its starting state (name step) so the same device
+    // can submit another guest's RSVP. Each guest still has to pass the
+    // guest-list name check.
+    const rsvpAnotherBtn = document.getElementById('rsvp-another');
+
+    rsvpAnotherBtn.addEventListener('click', () => {
+      // Undo the inline display:none applied on successful submit
+      rsvpForm.querySelectorAll('input, textarea, button, label, p.block').forEach(el => el.style.display = '');
+      document.getElementById('name-step').style.display = '';
+      document.getElementById('email-step').style.display = '';
+      document.getElementById('details-step').style.display = '';
+
+      // Back to step one only
+      emailStep.classList.add('hidden');
+      detailsStep.classList.add('hidden');
+
+      // Clear values (form.reset() doesn't clear hidden inputs set via JS)
+      rsvpForm.reset();
+      attendingInput.value = '';
+      sedaInput.value = '';
+      guestNickname = '';
+      document.querySelectorAll('[data-attend], [data-seda]').forEach((b) => b.classList.remove('active'));
+      attendingFields.classList.remove('open');
+
+      // Unlock fields and restore buttons
+      [firstNameInput, lastNameInput, emailInput, emailConfirmInput].forEach(el => el.readOnly = false);
+      continueBtn.classList.remove('hidden');
+      continueBtn.disabled = false;
+      continueBtn.textContent = 'Continue';
+      emailContinueBtn.classList.remove('hidden');
+      rsvpSubmit.disabled = false;
+      rsvpSubmit.textContent = 'Send RSVP';
+
+      // Hide messages and this button
+      [nameMessage, emailMessage, rsvpMessage].forEach(el => el.classList.add('hidden'));
+      rsvpMessage.style.color = 'var(--ink-soft)';
+      rsvpAnotherBtn.classList.add('hidden');
+
+      if (getNameAttempts() >= MAX_NAME_ATTEMPTS) lockNameCheck();
+
+      rsvpForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      firstNameInput.focus({ preventScroll: true });
     });
   </script>
 </body>
