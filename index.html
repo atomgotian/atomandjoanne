@@ -1142,6 +1142,10 @@
     line-height: 1.7;
     color: var(--ink);
   }
+  
+  .faq-answer + .faq-answer {
+    margin-top: 0.75em;
+  }
 
   .faq-sticker{
     width: var(--faq-sticker);
@@ -1529,7 +1533,10 @@
             <div class="faq-panel-inner">
               <div class="faq-body">
                 <img class="faq-sticker" src="photos/faqs/attire.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
-                <p class="faq-answer">Not exactly, no. Please feel free to play with your colors! Our theme is fun and joyful. May we only request that you kindly avoid white, beige, and black. Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
+                <div class="faq-text">
+                  <p class="faq-answer">Please feel free to play with your colors! Our theme is fun and joyful. May we only request that you kindly avoid white, beige, and black.</p>
+                  <p class="faq-answer">Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1563,7 +1570,7 @@
             <div class="faq-panel-inner">
               <div class="faq-body">
                 <img class="faq-sticker" src="photos/faqs/hotel.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
-                <p class="faq-answer">We have booked rooms for before and after the day of our wedding at Seda Manila Bay. You are most welcome to join us. Please let us know in the RSVP form below.</p>
+                <p class="faq-answer">We can avail of discounted rates at Seda Manila Bay if we book at least 10 rooms. Please let us know in the RSVP form if you are interested.</p>
               </div>
             </div>
           </div>
@@ -1681,12 +1688,21 @@
         <div id="details-step" class="hidden space-y-6">
           <div>
             <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be joining us?</p>
-            <div class="grid grid-cols-2 gap-3">
-              <button type="button" data-attend="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                Yes!
+            <!-- One choice only. Dietary + hotel questions open for any option that includes the reception. -->
+            <div class="grid grid-cols-1 gap-3" role="radiogroup" aria-label="Will you be joining us?">
+              <button type="button" role="radio" aria-checked="false" data-attend="Ceremony only" data-reception="false" class="toggle-btn border-1.5 rounded-xl py-3 px-4 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Ceremony only
+                <span class="block text-[12px] font-normal opacity-80">2PM at Sacred Heart</span>
               </button>
-              <button type="button" data-attend="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                No :(
+              <button type="button" role="radio" aria-checked="false" data-attend="Reception only" data-reception="true" class="toggle-btn border-1.5 rounded-xl py-3 px-4 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Reception only
+                <span class="block text-[12px] font-normal opacity-80">4:30PM at Elan by the Bay</span>
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-attend="Both" data-reception="true" class="toggle-btn border-1.5 rounded-xl py-3 px-4 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Both ceremony and reception!
+              </button>
+              <button type="button" role="radio" aria-checked="false" data-attend="No" data-reception="false" class="toggle-btn border-1.5 rounded-xl py-3 px-4 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                I cannot make it :(
               </button>
             </div>
             <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
@@ -2385,14 +2401,19 @@
     const attendingFields = document.getElementById('attending-fields');
     document.querySelectorAll('[data-attend]').forEach((btn) => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('[data-attend]').forEach((b) => b.classList.remove('active'));
+        document.querySelectorAll('[data-attend]').forEach((b) => {
+          b.classList.remove('active');
+          b.setAttribute('aria-checked', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-checked', 'true');
         attendingInput.value = btn.getAttribute('data-attend');
-        if (btn.getAttribute('data-attend') === 'Yes') {
+        if (btn.getAttribute('data-reception') === 'true') {
           attendingFields.classList.add('open');
         } else {
           attendingFields.classList.remove('open');
-          // Not attending, so clear any hotel answer they'd picked
+          // Not at the reception, so clear any dietary/hotel answers they'd entered
+          document.getElementById('rsvp-dietary').value = '';
           sedaInput.value = '';
           document.querySelectorAll('[data-seda]').forEach((b) => b.classList.remove('active'));
         }
@@ -2491,8 +2512,9 @@
         return;
       }
 
-      const isJoyfullyAccepting = attendingInput.value === 'Yes';
-      if (isJoyfullyAccepting && !sedaInput.value) {
+      const isJoyfullyAccepting = attendingInput.value !== 'No';
+      const isAtReception = attendingInput.value === 'Reception only' || attendingInput.value === 'Both';
+      if (isAtReception && !sedaInput.value) {
         rsvpMessage.textContent = "Please let us know if you're interested in staying at Seda.";
         rsvpMessage.classList.remove('hidden');
         return;
@@ -2556,6 +2578,7 @@
       sedaInput.value = '';
       guestNickname = '';
       document.querySelectorAll('[data-attend], [data-seda]').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('[data-attend]').forEach((b) => b.setAttribute('aria-checked', 'false'));
       attendingFields.classList.remove('open');
 
       // Unlock fields and restore buttons
