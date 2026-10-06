@@ -678,6 +678,20 @@
     max-height: 600px; opacity:1;
   }
 
+  /* ---------- RSVP "remind me later" link ---------- */
+  .remind-link{
+    background: none; border: 0; padding: 0.25rem 0;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-underline-offset: 4px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+  }
+  .remind-link:hover{ color: var(--ink); }
+  .remind-link:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; border-radius: 4px; }
+  #remind-date{ min-height: 3rem; }
+
   input, textarea{
     background: var(--cream);
     border: 1.5px solid #E7D9DE;
@@ -1011,7 +1025,12 @@
   }
   #scroll-panda.panda-visible{
     opacity: 1;
+    /* Clickable only once it's showing, so hidden-panda clicks still pass through */
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
+
 
   @media (max-width: 639px){
     #scroll-panda{
@@ -1141,6 +1160,10 @@
     font-size: 15px;
     line-height: 1.7;
     color: var(--ink);
+  }
+  
+  .faq-answer + .faq-answer {
+    margin-top: 0.75em;
   }
 
   .faq-sticker{
@@ -1529,7 +1552,10 @@
             <div class="faq-panel-inner">
               <div class="faq-body">
                 <img class="faq-sticker" src="photos/faqs/attire.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
-                <p class="faq-answer">Not exactly, no. Please feel free to play with your colors! Our theme is fun and joyful. May we only request that you kindly avoid white, beige, and black. Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
+                <div class="faq-text">
+                  <p class="faq-answer">Please feel free to play with your colors! Our theme is fun and joyful. May we only request that you kindly avoid white, beige, and black.</p>
+                  <p class="faq-answer">Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1563,7 +1589,7 @@
             <div class="faq-panel-inner">
               <div class="faq-body">
                 <img class="faq-sticker" src="photos/faqs/hotel.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
-                <p class="faq-answer">We have booked rooms for before and after the day of our wedding at Seda Manila Bay. You are most welcome to join us. Please let us know in the RSVP form below.</p>
+                <p class="faq-answer">We can avail of discounted rates at Seda Manila Bay if we book at least 10 rooms. Please let us know in the RSVP form if you are interested.</p>
               </div>
             </div>
           </div>
@@ -1724,6 +1750,25 @@
           <button type="submit" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
             Send RSVP
           </button>
+
+          <!-- Remind me later: quiet link that opens a date picker. Dates are capped
+               before RSVP_DEADLINE (see script). Hidden entirely once that's passed. -->
+          <div id="remind-wrap" class="text-center">
+            <button type="button" id="remind-toggle" class="remind-link text-[14px]" aria-expanded="false" aria-controls="remind-panel">
+              Not ready to RSVP? Give us a date and we'll send you a reminder
+            </button>
+            <div id="remind-panel" class="field-reveal">
+              <div class="pt-4 space-y-3 text-left">
+                <label for="remind-date" class="block text-[13px] font-semibold" style="color:var(--ink)">Remind me on</label>
+                <input id="remind-date" type="date" class="w-full rounded-xl px-4 py-3 text-[15px]" />
+                <p id="remind-hint" class="text-[12px]" style="color:var(--ink-soft)"></p>
+                <button type="button" id="remind-submit" class="btn-outline w-full py-3 rounded-xl font-semibold text-[15px]">
+                  Remind me
+                </button>
+              </div>
+            </div>
+            <p id="remind-message" class="text-center text-[14px] mt-3 hidden" style="color:var(--ink-soft)"></p>
+          </div>
         </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
@@ -2494,6 +2539,167 @@
       ).finished.then(() => img.remove()).catch(() => {});
     }
 
+    // ---------- Panda sticker: click easter egg ----------
+    // Every click: the panda squishes and a small firework pops out of it.
+    // Every 5th click: a big screen-wide fireworks celebration.
+    // Squish uses the separate CSS `scale` property so it doesn't fight the
+    // scroll-driven `transform: rotate(...)` already set on the panda.
+    const pandaSticker = document.getElementById('scroll-panda');
+    const BIG_CELEBRATION_EVERY = 5;
+    let pandaClicks = 0;
+
+    function smallFireworkBurst(x, y) {
+      const size = 90 + Math.random() * 60;
+      const rotation = Math.random() * 360;
+      const img = document.createElement('img');
+      img.src = 'photos/event-details/illustration-fireworks.png';
+      img.alt = '';
+      img.style.cssText = `position:absolute; left:${x}px; top:${y}px;
+        width:${size}px; height:${size}px; opacity:0;`;
+      celebrationOverlay.appendChild(img);
+      img.animate(
+        [
+          { transform: `translate(-50%, -50%) scale(0.3) rotate(${rotation}deg)`, opacity: 0 },
+          { transform: `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`, opacity: 1, offset: 0.35 },
+          { transform: `translate(-50%, -50%) scale(1.15) rotate(${rotation}deg)`, opacity: 0 },
+        ],
+        { duration: 1100, easing: 'ease-out', fill: 'forwards' }
+      ).finished.then(() => img.remove()).catch(() => {});
+    }
+
+
+    function bigPandaCelebration() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      for (let i = 0; i < 12; i++) {
+        const x = w * (0.1 + Math.random() * 0.8);
+        const y = h * (0.1 + Math.random() * 0.7);
+        setTimeout(() => screenFireworkBurst(x, y), i * 120 + Math.random() * 80);
+      }
+    }
+
+    if (pandaSticker) {
+      pandaSticker.addEventListener('click', () => {
+        pandaClicks++;
+        const isBig = pandaClicks % BIG_CELEBRATION_EVERY === 0;
+
+        // Guests who've asked their device for less motion get no animation
+        if (reduceCelebrationMotion) return;
+
+        // Squish and bounce
+        pandaSticker.animate(
+          [
+            { scale: '1 1' },
+            { scale: '1.25 0.75', offset: 0.25 },
+            { scale: '0.9 1.15', offset: 0.55 },
+            { scale: '1.05 0.95', offset: 0.8 },
+            { scale: '1 1' },
+          ],
+          { duration: 500, easing: 'ease-out' }
+        );
+
+        // A couple of small pops above and to the left of the panda
+        const r = pandaSticker.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        smallFireworkBurst(cx - 20 - Math.random() * 50, cy - 50 - Math.random() * 40);
+        setTimeout(() => smallFireworkBurst(cx - 60 - Math.random() * 40, cy - 10 - Math.random() * 40), 140);
+
+        if (isBig) bigPandaCelebration();
+      });
+    }
+
+    // ---------- RSVP "remind me later" ----------
+    // Guests who've passed the name + email steps can pick a date to get an
+    // email nudge. The Apps Script (action=remind) saves it to the Reminders
+    // tab and a daily trigger sends the emails. Latest pickable date is the
+    // day before RSVP_DEADLINE; the script enforces the same cap.
+    const RSVP_DEADLINE = '2026-12-01'; // TENTATIVE, change here + in Apps Script
+    const remindWrap = document.getElementById('remind-wrap');
+    const remindToggle = document.getElementById('remind-toggle');
+    const remindPanel = document.getElementById('remind-panel');
+    const remindDate = document.getElementById('remind-date');
+    const remindHint = document.getElementById('remind-hint');
+    const remindSubmit = document.getElementById('remind-submit');
+    const remindMessage = document.getElementById('remind-message');
+
+    const toISODate = (d) => {
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    };
+    const fromISODate = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+    const prettyDate = (s) => fromISODate(s).toLocaleDateString('en-AU', { day: 'numeric', month: 'long' });
+
+    function setupReminderDates() {
+      const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
+      const lastDay = fromISODate(RSVP_DEADLINE); lastDay.setDate(lastDay.getDate() - 1);
+      const minISO = toISODate(tomorrow);
+      const maxISO = toISODate(lastDay);
+      if (minISO > maxISO) { remindWrap.style.display = 'none'; return; } // too close to the deadline
+      remindDate.min = minISO;
+      remindDate.max = maxISO;
+      remindHint.textContent = `RSVPs close ${prettyDate(RSVP_DEADLINE)}, so pick a date up to ${prettyDate(maxISO)}.`;
+    }
+    setupReminderDates();
+
+    function resetReminder() {
+      remindPanel.classList.remove('open');
+      remindToggle.setAttribute('aria-expanded', 'false');
+      remindToggle.classList.remove('hidden');
+      remindDate.value = '';
+      remindSubmit.disabled = false;
+      remindSubmit.textContent = 'Remind me';
+      remindMessage.classList.add('hidden');
+    }
+
+    remindToggle.addEventListener('click', () => {
+      const open = remindPanel.classList.toggle('open');
+      remindToggle.setAttribute('aria-expanded', String(open));
+      if (open) remindDate.focus({ preventScroll: true });
+    });
+
+    remindSubmit.addEventListener('click', async () => {
+      const date = remindDate.value;
+      const showError = (msg) => {
+        remindMessage.textContent = msg;
+        remindMessage.style.color = '#B5495B';
+        remindMessage.classList.remove('hidden');
+      };
+      if (!date) return showError('Please pick a date first.');
+      if (date < remindDate.min || date > remindDate.max) {
+        return showError(`Please pick a date between ${prettyDate(remindDate.min)} and ${prettyDate(remindDate.max)}.`);
+      }
+
+      remindSubmit.disabled = true;
+      remindSubmit.textContent = 'Saving...';
+      remindMessage.classList.add('hidden');
+
+      try {
+        const params = new URLSearchParams({
+          action: 'remind',
+          firstName: firstNameInput.value.trim(),
+          lastName: lastNameInput.value.trim(),
+          nickname: guestNickname || firstNameInput.value.trim(),
+          email: emailInput.value.trim(),
+          date,
+        });
+        const res = await fetch(RSVP_ENDPOINT + '?' + params.toString());
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.error || 'Reminder not saved');
+
+        remindPanel.classList.remove('open');
+        remindToggle.classList.add('hidden');
+        remindMessage.textContent = `Done! We'll email you a reminder on ${prettyDate(date)}. You can still RSVP above any time.`;
+        remindMessage.style.color = 'var(--ink)';
+        remindMessage.classList.remove('hidden');
+      } catch (err) {
+        console.error('Reminder failed:', err);
+        remindSubmit.disabled = false;
+        remindSubmit.textContent = 'Remind me';
+        showError('Something went wrong saving your reminder. Please try again.');
+      }
+    });
+
     // ---------- RSVP submit ----------
     const rsvpSubmit = document.getElementById('rsvp-submit');
 
@@ -2587,6 +2793,7 @@
       [nameMessage, emailMessage, rsvpMessage].forEach(el => el.classList.add('hidden'));
       rsvpMessage.style.color = 'var(--ink-soft)';
       rsvpAnotherBtn.classList.add('hidden');
+      resetReminder();
 
       if (getNameAttempts() >= MAX_NAME_ATTEMPTS) lockNameCheck();
 
