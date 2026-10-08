@@ -1819,7 +1819,7 @@
   </footer>
 
   <script>
-    // Coming back from the prenup page? (flag is set when the prenup link is clicked)
+    // Coming back from the prenup or countdown page? (flag is set when either link is clicked)
     let returnScrollY = null;
     try {
       returnScrollY = sessionStorage.getItem('returnScrollY');
@@ -1976,10 +1976,14 @@
           reopened = true;
         }
 
+        // Countdown link ("See you in X days"): anchor to that heading
+        const anchorEl = saved.anchor ? document.getElementById(saved.anchor) : null;
         const link = card ? card.querySelector('a[href^="prenup"]') : null;
         const linkVisible = link && link.getClientRects().length > 0;
         let top;
-        if (linkVisible && saved.linkOffset != null) {
+        if (anchorEl && saved.linkOffset != null) {
+          top = anchorEl.getBoundingClientRect().top + window.scrollY - saved.linkOffset;
+        } else if (linkVisible && saved.linkOffset != null) {
           top = link.getBoundingClientRect().top + window.scrollY - saved.linkOffset;
         } else if (card) {
           top = card.getBoundingClientRect().top + window.scrollY - (saved.offset || 0);
@@ -2005,13 +2009,17 @@
       }
     });
 
-    // Remember where we were when leaving for the prenup page
+    // Remember where we were when leaving for the prenup or countdown page
     document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="prenup"]');
+      const link = e.target.closest('a[href^="prenup"], a[href^="countdown"]');
       if (!link) return;
       const card = link.closest('[data-index]');
       const info = { y: window.scrollY };
-      if (card) {
+      const anchor = link.closest('#see-you-heading');
+      if (anchor) {
+        info.anchor = anchor.id;
+        info.linkOffset = anchor.getBoundingClientRect().top;  // heading's position on screen
+      } else if (card) {
         info.card = card.getAttribute('data-index');
         info.offset = card.getBoundingClientRect().top;      // card's position on screen
         info.linkOffset = link.getBoundingClientRect().top;  // link's position on screen
@@ -2020,6 +2028,18 @@
       }
       try { sessionStorage.setItem('returnScrollY', JSON.stringify(info)); } catch (err) {}
     });
+
+    // ---------- FAQ stickers: fetch early ----------
+    // The stickers sit inside closed accordion panels with loading="lazy", so phones
+    // didn't start downloading them until the guest reached the FAQ or opened a
+    // question, which is why they popped in late. Once the rest of the page has loaded,
+    // switch them to eager so they download in the background. They're ready
+    // (and cached) before anyone taps a question.
+    window.addEventListener('load', () => {
+      document.querySelectorAll('#faq img[loading="lazy"]').forEach((img) => {
+        img.loading = 'eager';
+      });
+    }, { once: true });
 
     // ---------- Nav: hide on scroll down, show on scroll up ----------
     const siteNav = document.querySelector('.site-nav');
