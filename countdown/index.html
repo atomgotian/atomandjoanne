@@ -16,6 +16,12 @@
     --ink:       #472E3B;
     --accent:    #A5CCE6;
     --accent-deep: #2D74A4;
+
+    /* Alternating month colours for the calendar tiles */
+    --month-a-bg:     #FDF8F6;                  /* Oct, Dec, Feb — cream */
+    --month-a-border: rgba(165,204,230,0.45);
+    --month-b-bg:     #F8F1F3;                /* Nov, Jan — slightly deeper blush */
+    --month-b-border: rgba(154,101,128,0.18);
   }
   @font-face{ font-family:'Joanne Hand';  src:url('../fonts/Myfont8-Regular.otf') format('opentype'); font-weight:800; font-display:swap; }
   @font-face{ font-family:'Joanne Print'; src:url('../fonts/Myfont5-Regular.otf') format('opentype'); font-weight:400; font-display:swap; }
@@ -57,6 +63,12 @@
     letter-spacing:-0.02em;
     margin:6px 0 0;
   }
+  .breakdown{
+    font-size:clamp(13px, 3.4vw, 15px);
+    color:var(--ink-soft);
+    margin:4px 0 0;
+  }
+  .breakdown:empty{ display:none; }
 
   /* ---------- Grid: 7 columns (Sun → Sat) × 20 rows ---------- */
   .weekdays, .grid{
@@ -72,11 +84,15 @@
     aspect-ratio:1 / 1;
     border-radius:6px;
     overflow:hidden;
-    background:var(--cream);
-    border:1px solid rgba(165,204,230,0.45);
+    background:var(--month-a-bg);
+    border:1px solid var(--month-a-border);
     display:flex; align-items:center; justify-content:center;
     padding:0;
     font:inherit; color:inherit;
+  }
+  .tile.month-b{
+    background:var(--month-b-bg);
+    border-color:var(--month-b-border);
   }
   .tile .date{
     font-size:clamp(8px, 2.2vw, 11px);
@@ -187,6 +203,7 @@
     <header>
       <p class="big" id="big">&nbsp;</p>
       <p class="sub" id="sub">&nbsp;</p>
+      <p class="breakdown" id="breakdown"></p>
     </header>
 
     <div class="weekdays" aria-hidden="true">
@@ -208,10 +225,13 @@
   // ------------------------------------------------------------------
   // HOW THIS WORKS
   // Each tile is one calendar day. Its number = sleeps left on that day.
-  //   Top-left  = Sun 4 Oct 2026  = 139   -> photos/countdown/139.jpg
+  //   Top-left  = Thu 1 Oct 2026  = 142   -> photos/countdown/142.jpg
   //   Bottom-right = Sat 20 Feb 2027 = 0  -> photos/countdown/0.jpg
   // A tile reveals once that day arrives (Manila time). The page looks for
   // N.jpg first, then N.png. If neither exists, the tile just shows its date.
+  //
+  // Months alternate between cream and a slightly deeper blush so you can tell
+  // where one month ends and the next begins.
   //
   // Preview trick: add ?sleeps=50 to the URL to see the page as it will
   // look when there are 50 sleeps left.
@@ -235,19 +255,46 @@
     return Math.round((WEDDING_UTC - manilaTodayUTC()) / DAY);
   }
 
+  // How many whole calendar months + leftover days between "s sleeps left" and the wedding
+  // e.g. 17 Oct 2026 -> 20 Feb 2027 = 4 months, 3 days
+  function monthsAndDays(s){
+    const from = new Date(WEDDING_UTC - s * DAY);
+    const to   = new Date(WEDDING_UTC);
+    let months = (to.getUTCFullYear() - from.getUTCFullYear()) * 12
+               + (to.getUTCMonth() - from.getUTCMonth());
+    if (from.getUTCDate() > to.getUTCDate()) months--;
+    // Step forward that many months from the start date (keeping the day in range)
+    const y = from.getUTCFullYear(), m = from.getUTCMonth() + months;
+    const lastDay = new Date(Date.UTC(y, m + 1, 0)).getUTCDate();
+    const anchor = Date.UTC(y, m, Math.min(from.getUTCDate(), lastDay));
+    const days = Math.round((WEDDING_UTC - anchor) / DAY);
+    return { months, days };
+  }
+  function breakdownText(s){
+    const { months, days } = monthsAndDays(s);
+    const bits = [];
+    if (months > 0) bits.push(months + (months === 1 ? ' month' : ' months'));
+    if (days > 0)   bits.push(days + (days === 1 ? ' day' : ' days'));
+    return '(' + bits.join(', ') + ')';
+  }
+
   // ---------- Header ----------
   function renderHeader(s){
     const big = document.getElementById('big');
     const sub = document.getElementById('sub');
+    const bd  = document.getElementById('breakdown');
     if (s > 0){
       big.textContent = s;
       sub.textContent = (s === 1 ? 'sleep' : 'sleeps') + ' until our day!';
+      bd.textContent  = breakdownText(s);
     } else if (s === 0){
       big.textContent = 'Today!';
       sub.textContent = 'Today’s the day ♡';
+      bd.textContent  = '';
     } else {
       big.textContent = 'Married!';
       sub.textContent = '20.02.2027';
+      bd.textContent  = '';
     }
   }
 
@@ -262,13 +309,14 @@
       grid.appendChild(sp);
     }
     for (let i = 0; i < TOTAL; i++){
-      const n = TOTAL - 1 - i;                    // 139 ... 0
+      const n = TOTAL - 1 - i;                    // 142 ... 0
       const d = new Date(WEDDING_UTC - n * DAY);
       const label = d.getUTCDate() + ' ' + MONTHS[d.getUTCMonth()];
+      const monthClass = (d.getUTCMonth() % 2 === 0) ? ' month-b' : ' month-a';   // Nov & Jan blush; Oct, Dec, Feb cream
 
       const tile = document.createElement('button');
       tile.type = 'button';
-      tile.className = 'tile' + (n === 0 ? ' wedding' : '');
+      tile.className = 'tile' + monthClass + (n === 0 ? ' wedding' : '');
       tile.dataset.n = n;
       tile.dataset.label = label;
       tile.tabIndex = -1;
