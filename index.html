@@ -1609,7 +1609,7 @@
                 <img class="faq-sticker" src="photos/faqs/attire.png" alt="" aria-hidden="true" loading="lazy" onerror="this.style.visibility='hidden'" />
                 <div class="faq-text">
                   <p class="faq-answer">Gentlemen are requested to wear a long-sleeved barong with long pants and closed shoes.</p>
-                  <p class="faq-answer">Ladies are free to wear any long gown in fun, joyful colors. We&rsquo;d love to see a mix of colors, textures and prints! We only ask that you kindly avoid white, beige and black. You may find some pegs here.<!-- TODO: link "here" to the pegs board once the URL is ready --></p>
+                  <p class="faq-answer">Ladies are free to wear any long gown in fun, joyful colors. We&rsquo;d love to see a mix of colors, textures and prints! We only ask that you kindly avoid white, beige and black. You may find some pegs <a href="pegs/" class="story-link">here</a>.</p>
                   <p class="faq-answer">(Cocktail hour will be held outdoors, so feel free to wear wedges or block heels so you can enjoy the night with us!)</p>
                 </div>
               </div>
@@ -2044,8 +2044,18 @@
           reopened = true;
         }
 
-        // Countdown link ("See you in X days"): anchor to that heading
+        // Countdown link ("See you in X days") or FAQ question: anchor to that element
         const anchorEl = saved.anchor ? document.getElementById(saved.anchor) : null;
+
+        // FAQ question (pegs link): re-open its answer if it's closed
+        if (anchorEl && saved.faqOpen && !reopened) {
+          const item = anchorEl.closest('.faq-item');
+          if (item && !item.classList.contains('is-open')) {
+            item.classList.add('is-open');
+            anchorEl.setAttribute('aria-expanded', 'true');
+          }
+          reopened = true;
+        }
         const link = card ? card.querySelector('a[href^="prenup"]') : null;
         const linkVisible = link && link.getClientRects().length > 0;
         let top;
@@ -2077,16 +2087,23 @@
       }
     });
 
-    // Remember where we were when leaving for the prenup or countdown page
+    // Remember where we were when leaving for the prenup, countdown or pegs page
     document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="prenup"], a[href^="countdown"]');
+      const link = e.target.closest('a[href^="prenup"], a[href^="countdown"], a[href^="pegs"]');
       if (!link) return;
       const card = link.closest('[data-index]');
       const info = { y: window.scrollY };
       const anchor = link.closest('#see-you-heading');
+      const faqItem = link.closest('.faq-item');
       if (anchor) {
         info.anchor = anchor.id;
         info.linkOffset = anchor.getBoundingClientRect().top;  // heading's position on screen
+      } else if (faqItem) {
+        // Pegs link inside an FAQ answer: anchor to that question and re-open it on return
+        const q = faqItem.querySelector('.faq-q');
+        info.anchor = q.id;
+        info.linkOffset = q.getBoundingClientRect().top;       // question's position on screen
+        info.faqOpen = true;
       } else if (card) {
         info.card = card.getAttribute('data-index');
         info.offset = card.getBoundingClientRect().top;      // card's position on screen

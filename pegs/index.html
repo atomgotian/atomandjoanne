@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dress Code Pegs — Atom &amp; Joanne</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:image" content="https://atomandjoanne.com/photos/pegs/pegs.png">
+<link rel="icon" type="image/png" href="../photos/event-details/illustration-dance.png">
+<style>
+  :root{
+    --bg:        #F5F0F2;
+    --cream:     #FDF8F6;
+    --ink-soft:  #9A6580;
+    --ink:       #472E3B;
+    --accent:    #A5CCE6;
+    --accent-deep: #2D74A4;
+  }
+
+  /* Same fonts as the main site. Paths are ../ because this page lives one
+     folder down, in /pegs/. */
+  @font-face{
+    font-family: 'Joanne Hand';
+    src: url('../fonts/Myfont8-Regular.otf') format('opentype');
+    font-weight: 800; font-style: normal; font-display: swap;
+  }
+  @font-face{
+    font-family: 'Joanne Print';
+    src: url('../fonts/Myfont5-Regular.otf') format('opentype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html{ overflow-x: hidden; }
+  body{
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Joanne Print', sans-serif;
+    letter-spacing: 0.1em;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ---------- Back button (stays pinned top-left while scrolling) ---------- */
+  .back-btn{
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem 0.55rem 0.85rem;
+    border-radius: 9999px;
+    background: var(--cream);
+    color: var(--ink-soft);
+    border: 1.5px solid var(--accent);
+    font-family: 'Joanne Print', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(74,54,72,0.12), 0 8px 16px rgba(74,54,72,0.12);
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease;
+  }
+  .back-btn:hover{ background: var(--accent-deep); color: var(--cream); transform: translateY(-2px); }
+  .back-btn:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+  .back-btn svg{ width: 16px; height: 16px; }
+
+  /* ---------- Header ---------- */
+  .page-header{
+    text-align: center;
+    padding: 5.5rem 1.5rem 2rem;
+  }
+  .page-label{
+    margin: 0 0 1rem;
+    font-size: 16px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .page-title{
+    margin: 0;
+    font-family: 'Joanne Hand', cursive;
+    font-weight: 800;
+    font-size: clamp(2.6rem, 7vw, 3.75rem);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  /* ---------- Pegs collage ----------
+     One image (made in Canva) at photos/pegs/pegs.png. Shown at its natural
+     shape, never cropped. To swap it, just replace that file. */
+  .pegs{
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 0 1.5rem 9rem;   /* bottom room so the corner panda/signature don't cover it */
+    text-align: center;
+  }
+  .pegs-note{
+    margin: 0 auto 2.5rem;
+    max-width: 34rem;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+  .pegs img{ display: block; width: 100%; height: auto; margin: 0 auto; }
+  .pegs-empty{ color: var(--ink-soft); padding: 2rem 0; }
+
+  /* ---------- Corner pieces (same as the main site) ----------
+     Panda bottom-right spins as you scroll; "Atom & Joanne" bottom-left.
+     Copied from index.html. Always visible here (no hero to scroll past). */
+  #scroll-panda{
+    position: fixed;
+    right: clamp(0.75rem, 5vw, 1.75rem);
+    bottom: clamp(0.75rem, 5vw, 1.75rem);
+    width: clamp(4rem, 9vw, 6rem);
+    height: auto;
+    z-index: 60;
+    filter: drop-shadow(0 6px 14px rgba(74,54,72,0.28));
+    pointer-events: auto;     /* clickable: tap for fireworks */
+    cursor: pointer;
+    will-change: transform;
+  }
+  @media (max-width: 639px){
+    #scroll-panda{ bottom: 0.5rem; }
+  }
+  #corner-signature{
+    position: fixed;
+    left: clamp(0.75rem, 5vw, 1.75rem);
+    bottom: clamp(1rem, 5vw, 2rem);
+    z-index: 60;
+    font-family: 'Joanne Hand', cursive;
+    font-weight: 800;
+    letter-spacing: normal;
+    color: var(--ink);
+    line-height: 1;
+    text-align: center;
+    filter: drop-shadow(0 4px 10px rgba(74,54,72,0.22));
+    pointer-events: none;
+  }
+  #corner-signature .corner-signature-name{ display: block; font-size: clamp(1rem, 3vw, 2rem); }
+  #corner-signature .corner-signature-and{ display: block; font-size: clamp(0.65rem, 2vw, 1rem); margin: -0.1em 0; }
+</style>
+</head>
+<body>
+  <!-- Corner pieces (same as the main site) -->
+  <img id="scroll-panda" src="../photos/hero/panda.png" alt="" aria-hidden="true" />
+  <div id="corner-signature" aria-hidden="true">
+    <span class="corner-signature-name">Atom</span>
+    <span class="corner-signature-and">&amp;</span>
+    <span class="corner-signature-name">Joanne</span>
+  </div>
+
+  <!-- "../" = the site's home page (one folder up from /pegs/) -->
+  <a href="../" class="back-btn" aria-label="Back to the home page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    Home
+  </a>
+
+  <header class="page-header">
+    <h1 class="page-title">Pegs for the ladies</h1>
+  </header>
+
+  <main class="pegs">
+    <p class="pegs-note">Long gowns in fun, joyful colors. Mix colors, textures and prints! Kindly avoid white, beige and black.</p>
+    <img src="../photos/pegs/pegs.png" alt="A collage of long gowns in pinks, oranges, yellows, greens and lilacs"
+         onerror="this.outerHTML='<p class=&quot;pegs-empty&quot;>Pegs coming soon.</p>'" />
+  </main>
+
+<script>
+  // Panda spins with scroll position (same speed as the main site)
+  (function(){
+    const panda = document.getElementById('scroll-panda');
+    if (!panda || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const spin = () => { panda.style.transform = 'rotate(' + (window.scrollY * 0.5) + 'deg)'; };
+    window.addEventListener('scroll', spin, { passive: true });
+    spin();
+  })();
+</script>
+<script>
+  // ---------- Panda sticker: click easter egg (same as the main site) ----------
+  // Every click: the panda squishes and a small firework pops out of it.
+  // Every 5th click: a big screen-wide fireworks celebration.
+  (function(){
+    const panda = document.getElementById('scroll-panda');
+    if (!panda) return;
+    const FIREWORK_IMG = '../photos/event-details/illustration-fireworks.png';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const BIG_EVERY = 5;
+    let clicks = 0;
+
+    const overlay = document.createElement('div');
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.style.cssText = 'position:fixed; inset:0; z-index:150; pointer-events:none; overflow:hidden;';
+    document.body.appendChild(overlay);
+
+    function burst(x, y, size, duration){
+      const rotation = Math.random() * 360;
+      const img = document.createElement('img');
+      img.src = FIREWORK_IMG;
+      img.alt = '';
+      img.style.cssText = `position:absolute; left:${x}px; top:${y}px; width:${size}px; height:${size}px; opacity:0;`;
+      overlay.appendChild(img);
+      img.animate(
+        [
+          { transform: `translate(-50%, -50%) scale(0.3) rotate(${rotation}deg)`, opacity: 0 },
+          { transform: `translate(-50%, -50%) scale(1) rotate(${rotation}deg)`, opacity: 1, offset: 0.35 },
+          { transform: `translate(-50%, -50%) scale(1.15) rotate(${rotation}deg)`, opacity: 0 },
+        ],
+        { duration, easing: 'ease-out', fill: 'forwards' }
+      ).finished.then(() => img.remove()).catch(() => {});
+    }
+    const small = (x, y) => burst(x, y, 90 + Math.random() * 60, 1100);
+    const big   = (x, y) => burst(x, y, 260 + Math.random() * 160, 1600);
+
+    panda.addEventListener('click', () => {
+      clicks++;
+      if (reduceMotion) return;
+      panda.animate(
+        [
+          { scale: '1 1' },
+          { scale: '1.25 0.75', offset: 0.25 },
+          { scale: '0.9 1.15', offset: 0.55 },
+          { scale: '1.05 0.95', offset: 0.8 },
+          { scale: '1 1' },
+        ],
+        { duration: 500, easing: 'ease-out' }
+      );
+      const r = panda.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      small(cx - 20 - Math.random() * 50, cy - 50 - Math.random() * 40);
+      setTimeout(() => small(cx - 60 - Math.random() * 40, cy - 10 - Math.random() * 40), 140);
+      if (clicks % BIG_EVERY === 0){
+        const w = window.innerWidth, h = window.innerHeight;
+        for (let i = 0; i < 12; i++){
+          setTimeout(() => big(w * (0.1 + Math.random() * 0.8), h * (0.1 + Math.random() * 0.7)), i * 120 + Math.random() * 80);
+        }
+      }
+    });
+  })();
+</script>
+</body>
+</html>
