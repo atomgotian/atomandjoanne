@@ -1274,6 +1274,54 @@
       transition-duration: 0.01ms !important;
     }
   }
+
+  /* ---------- Click-to-zoom for the venue circle drawings ---------- */
+  .venue-circle[data-lightbox]{ cursor: zoom-in; }
+  .drawing-lightbox{
+    position: fixed; inset: 0; z-index: 250; /* below the password gate (300) */
+    display: flex; align-items: center; justify-content: center;
+    padding: 56px 16px 24px;
+    /* translucent so the site still shows behind; lower the 0.55 for more see-through */
+    background: rgba(253, 248, 246, 0.55);
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
+  }
+  .drawing-lightbox:focus{ outline: none; }
+  .drawing-lightbox.is-open{ opacity: 1; visibility: visible; transition: opacity 0.3s ease, visibility 0s; }
+  /* Expanded view stays a circle, matching the venue circles */
+  .drawing-lightbox-stage{
+    width: min(88vw, 80vh, 720px);
+    height: min(88vw, 80vh, 720px);
+    border-radius: 9999px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    background: var(--cream);
+    box-shadow: 0 20px 50px rgba(71, 46, 59, 0.25);
+    transform: scale(0.92);
+    transition: transform 0.3s ease;
+  }
+  .drawing-lightbox-stage::-webkit-scrollbar{ display: none; }
+  .drawing-lightbox.is-open .drawing-lightbox-stage{ transform: scale(1); }
+  .drawing-lightbox-stage img{
+    display: block;
+    width: 100%; height: 100%;
+    max-width: none;
+    object-fit: cover;
+    cursor: zoom-in; user-select: none; -webkit-user-drag: none;
+  }
+  .drawing-lightbox-stage.is-zoomed img{ cursor: grab; }
+  .drawing-lightbox-stage.is-dragging img{ cursor: grabbing; }
+  .drawing-lightbox-close{
+    position: absolute; top: 12px; right: 16px;
+    width: 44px; height: 44px; border-radius: 9999px; border: none;
+    background: transparent; color: var(--ink); font-size: 32px; line-height: 1; cursor: pointer;
+  }
+  .drawing-lightbox-close:hover{ background: rgba(71, 46, 59, 0.08); }
+  .drawing-lightbox-close:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce){ .drawing-lightbox, .drawing-lightbox-stage{ transition: none; } }
 </style>
 </head>
 
@@ -1396,7 +1444,7 @@
         <div class="reveal flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-church" src="photos/event-details/church-4.png" alt="" aria-hidden="true" />
-            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);" tabindex="0" role="button" aria-label="Zoom in on Sacred Heart of Jesus Parish" data-lightbox="photos/event-details/illustration-sacred-heart-fun.png" data-lightbox-alt="Sacred Heart of Jesus Parish">
               <img src="photos/event-details/illustration-sacred-heart-fun.png" alt="Sacred Heart of Jesus Parish" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -1410,7 +1458,7 @@
         <div class="reveal reveal-delay-1 flex flex-col items-center text-center">
           <div class="relative">
             <img class="detail-arch-mobile arch-elan" src="photos/event-details/illustration-elan.png" alt="" aria-hidden="true" />
-            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);">
+            <div class="venue-circle w-52 h-52 md:w-80 md:h-80 rounded-full overflow-hidden shadow-lifted mb-6" style="background:var(--cream);" tabindex="0" role="button" aria-label="Zoom in on Elan by the Bay" data-lightbox="photos/event-details/illustration-elan-fun.png" data-lightbox-alt="Elan by the Bay">
               <img src="photos/event-details/illustration-elan-fun.png" alt="Elan by the Bay" class="w-full h-full object-cover" loading="lazy" />
             </div>
           </div>
@@ -2934,6 +2982,78 @@
       } else {
         heading.innerHTML = 'Thank you for ' + link + 'celebrating with us</a>! 🥳';
       }
+    })();
+  </script>
+  <!-- Click-to-zoom popup for the venue circle drawings -->
+  <div class="drawing-lightbox" id="drawing-lightbox" role="dialog" tabindex="-1" aria-modal="true" aria-label="Drawing" aria-hidden="true">
+    <button type="button" class="drawing-lightbox-close" aria-label="Close">&times;</button>
+    <div class="drawing-lightbox-stage"><img alt="" draggable="false" /></div>
+  </div>
+  <script>
+    (function () {
+      var box = document.getElementById('drawing-lightbox');
+      if (!box) return;
+      var stage = box.querySelector('.drawing-lightbox-stage');
+      var img = stage.querySelector('img');
+      var closeBtn = box.querySelector('.drawing-lightbox-close');
+      var lastFocus = null, savedOverflow = '', drag = null, moved = false;
+
+      function unzoom() { stage.classList.remove('is-zoomed'); img.style.width = ''; img.style.height = ''; }
+      function open(src, alt, trigger) {
+        lastFocus = trigger; unzoom();
+        img.src = src; img.alt = alt || '';
+        savedOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        box.classList.add('is-open'); box.setAttribute('aria-hidden', 'false');
+        box.focus({ preventScroll: true });
+      }
+      function close() {
+        if (!box.classList.contains('is-open')) return;
+        box.classList.remove('is-open'); box.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = savedOverflow; unzoom();
+        if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+      }
+
+      document.querySelectorAll('[data-lightbox]').forEach(function (el) {
+        var go = function () { open(el.getAttribute('data-lightbox'), el.getAttribute('data-lightbox-alt'), el); };
+        el.addEventListener('click', go);
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+      });
+
+      closeBtn.addEventListener('click', close);
+      box.addEventListener('click', function (e) { if (e.target === box || e.target === stage) close(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+      // Click the drawing: toggle fit <-> 2x, centred on the click point
+      img.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (moved) { moved = false; return; }
+        if (stage.classList.contains('is-zoomed')) { unzoom(); return; }
+        var r = img.getBoundingClientRect();
+        var fx = (e.clientX - r.left) / r.width, fy = (e.clientY - r.top) / r.height;
+        img.style.width = (r.width * 2) + 'px';
+        img.style.height = (r.height * 2) + 'px';
+        stage.classList.add('is-zoomed');
+        stage.scrollLeft = fx * img.offsetWidth - stage.clientWidth / 2;
+        stage.scrollTop = fy * img.offsetHeight - stage.clientHeight / 2;
+      });
+
+      // Drag to pan when zoomed (mouse). Phones use normal scroll / pinch.
+      img.addEventListener('mousedown', function (e) {
+        if (!stage.classList.contains('is-zoomed')) return;
+        e.preventDefault(); moved = false;
+        drag = { x: e.clientX, y: e.clientY, left: stage.scrollLeft, top: stage.scrollTop };
+        stage.classList.add('is-dragging');
+      });
+      window.addEventListener('mousemove', function (e) {
+        if (!drag) return;
+        var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+        if (Math.abs(dx) + Math.abs(dy) > 5) moved = true;
+        stage.scrollLeft = drag.left - dx; stage.scrollTop = drag.top - dy;
+      });
+      window.addEventListener('mouseup', function () {
+        if (!drag) return; drag = null; stage.classList.remove('is-dragging');
+      });
     })();
   </script>
 </body>
