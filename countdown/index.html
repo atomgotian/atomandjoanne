@@ -44,15 +44,34 @@
     line-height:1.6;
   }
 
-  .wrap{ max-width:640px; margin:0 auto; padding:24px 16px 140px; }
+  .wrap{ max-width:640px; margin:0 auto; padding:56px 16px 140px; }   /* top room so the pinned Home button doesn't cover the countdown */
 
-  .back{
-    display:inline-block;
-    color:var(--ink-soft);
-    text-decoration:none;
-    font-size:14px;
+  /* ---------- Back button (same as pegs & prenup; stays pinned top-left while scrolling) ---------- */
+  .back-btn{
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 50;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem 0.55rem 0.85rem;
+    border-radius: 9999px;
+    background: var(--cream);
+    color: var(--ink-soft);
+    border: 1.5px solid var(--accent);
+    font-family: 'Joanne Print', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 2px 5px rgba(74,54,72,0.12), 0 8px 16px rgba(74,54,72,0.12);
+    transition: transform 0.25s cubic-bezier(0.34,1.4,0.64,1), background-color 0.25s ease, color 0.25s ease;
   }
-  .back:hover{ color:var(--ink); }
+  .back-btn:hover{ background: var(--accent-deep); color: var(--cream); transform: translateY(-2px); }
+  .back-btn:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 3px; }
+  .back-btn svg{ width: 16px; height: 16px; }
 
   /* ---------- Header countdown ---------- */
   header{ text-align:center; margin:28px 0 32px; }
@@ -127,6 +146,103 @@
   .tile.wedding{ border:2px solid var(--accent-deep); }
   .tile.wedding .date{ color:var(--accent-deep); opacity:1; font-weight:600; }
   .tile img.wedding-sticker{ position:static; display:block; width:clamp(56px, 30vw, 88px); height:auto; margin:-40px auto 0; opacity:1; object-fit:contain; transform:translateY(6px); }
+  /* The sticker's picture box is wider than the two of you (Atom's arm stretches left),
+     so spin around where the bodies are, not the middle of the box. Tweak these two % if needed. */
+  .tile img.wedding-sticker{ transform-origin:68% 64%; }
+  .tile.wedding:not(.loaded){ cursor:pointer; overflow:visible; }
+  .tile.wedding:not(.loaded):hover img.wedding-sticker{ transform:translateY(6px) rotate(-8deg) scale(1.06); transition:transform .25s ease; }
+
+  /* ---------- Wedding tile: "save the date" card ---------- */
+  .sd{
+    position:fixed; inset:0; z-index:100;
+    background:rgba(40,25,33,0.92);
+    display:none; align-items:center; justify-content:center;
+    padding:16px;
+  }
+  .sd.open{ display:flex; }
+
+  /* Scrapbook layers: a blush sheet peeking out behind, the cream card on top,
+     two strips of washi tape, and the sticker overlapping the card's top edge.
+     The whole stack sits slightly tilted, like paper dropped on a table. */
+  .sd-stack{
+    position:relative;
+    width:min(340px, 100%);
+    margin-top:80px;                    /* room for the sticker poking out above */
+    transform:rotate(-2deg);
+  }
+  .sd-back{
+    position:absolute; inset:0;
+    background:var(--month-b-bg);
+    border:1px solid var(--month-b-border);
+    border-radius:6px;
+    transform:rotate(5deg) translate(10px, 6px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.25);
+  }
+  .sd-card{
+    position:relative;
+    background-color:var(--cream);
+    background-image:radial-gradient(rgba(154,101,128,0.13) 1px, transparent 1.3px);   /* faint journal dots */
+    background-size:16px 16px;
+    border-radius:6px;
+    box-shadow:0 2px 4px rgba(0,0,0,0.12), 0 14px 40px rgba(0,0,0,0.35);
+    padding:0 26px 28px;
+    text-align:center;
+    display:flow-root;                  /* lets the sticker's negative top margin poke out above the card */
+  }
+  .sd-tape{
+    position:absolute; z-index:3;
+    width:84px; height:24px;
+    background:rgba(165,204,230,0.7);
+    box-shadow:0 1px 2px rgba(0,0,0,0.08);
+    clip-path:polygon(0 0, 100% 0, 95% 25%, 100% 50%, 95% 75%, 100% 100%, 0 100%, 5% 75%, 0 50%, 5% 25%);   /* torn ends */
+  }
+  .sd-tape.tl{ top:-6px; left:-24px; transform:rotate(-38deg); }
+  .sd-tape.br{ bottom:-4px; right:-24px; transform:rotate(-38deg); background:rgba(154,101,128,0.35); }
+
+  /* The sticker sticks up over the top edge. Nudged left so the two of you (not the arm) sit in the middle. */
+  .sd-sticker{
+    position:relative; z-index:2;
+    display:block; width:clamp(170px, 52vw, 220px); height:auto;
+    margin:-95px auto 8px;
+    transform:translateX(-14%) rotate(-4deg);
+    filter:drop-shadow(0 6px 10px rgba(74,54,72,0.3));
+  }
+  .sd-date .dot{ margin:0 0.06em; }    /* breathing room so the full stops don't vanish in the handwriting font */
+  .sd-panda{ height:1.6em; width:auto; vertical-align:middle; margin-left:4px; display:inline-block; }
+  .sd-eyebrow{ color:var(--ink-soft); font-size:14px; margin:0; }
+  .sd-date{
+    font-family:'Joanne Hand', cursive;
+    font-size:clamp(40px, 12vw, 54px);
+    letter-spacing:-0.02em; line-height:1.1;
+    color:var(--accent-deep);
+    margin:4px 0 6px;
+  }
+  /* Collage behind the card: every photo revealed so far, tiled edge to edge.
+     It grows a little each day; on 20 Feb it holds the whole countdown. */
+  .sd-collage{
+    position:absolute; inset:0; overflow:hidden;
+    display:grid; gap:4px;
+    background:var(--bg);                 /* gaps between photos = the page's blush background */
+  }
+  .sd-collage img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .sd-collage::after{                     /* soft blush wash that fades the photos. 0.45 → higher = more faded, lower = stronger photos */
+    content:''; position:absolute; inset:0;
+    background:rgba(245,240,242,0.18);
+  }
+  .sd-stack{ z-index:1; }
+  .sd-count{ color:var(--ink); font-size:15px; margin:0 0 20px; }
+  .sd-link{
+    display:inline-block;
+    color:var(--ink); text-decoration:none;
+    border:1px solid var(--ink-soft); border-radius:999px;
+    padding:8px 18px; font-size:14px;
+  }
+  .sd-link:hover{ background:var(--ink); color:var(--cream); }
+  .sd-close{
+    position:absolute; top:6px; right:8px; z-index:4;
+    background:none; border:none; cursor:pointer;
+    color:var(--ink-soft); font-size:28px; line-height:1; padding:8px;
+  }
 
   /* ---------- Lightbox (photo shown at its original shape) ---------- */
   .lb{
@@ -206,8 +322,13 @@
     <span class="corner-signature-name">Joanne</span>
   </div>
 
+  <!-- "../" = the site's home page (one folder up from /countdown/) -->
+  <a href="../" class="back-btn" aria-label="Back to the home page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+    Home
+  </a>
+
   <div class="wrap">
-    <a class="back" href="../">&larr; Back to Atom &amp; Joanne</a>
 
     <header>
       <p class="big" id="big">&nbsp;</p>
@@ -227,6 +348,24 @@
     <img id="lb-img" alt="">
     <button class="next" id="lb-next" aria-label="Next photo">&#8250;</button>
     <p class="caption" id="lb-cap"></p>
+  </div>
+
+  <!-- Wedding tile: "save the date" card (opens after the sticker spins) -->
+  <div class="sd" id="sd" role="dialog" aria-modal="true" aria-label="Our wedding day">
+    <div class="sd-collage" id="sd-collage" aria-hidden="true"></div>
+    <div class="sd-stack" id="sd-stack">
+      <div class="sd-back" aria-hidden="true"></div>
+      <div class="sd-card">
+        <span class="sd-tape tl" aria-hidden="true"></span>
+        <span class="sd-tape br" aria-hidden="true"></span>
+        <button class="sd-close" id="sd-close" aria-label="Close">&times;</button>
+        <img class="sd-sticker" id="sd-sticker" src="../photos/hero/sticker-taiwan-outline.png" alt="">
+        <p class="sd-eyebrow">Save the date</p>
+        <p class="sd-date">20<span class="dot">.</span>02<span class="dot">.</span>2027</p>
+        <p class="sd-count"><span id="sd-count"></span><img class="sd-panda" src="../photos/hero/panda.png" alt=""></p>
+        <a class="sd-link" href="../#rsvp">RSVP now &rarr;</a>
+      </div>
+    </div>
   </div>
 
 <script>
@@ -328,8 +467,8 @@
       tile.className = 'tile' + monthClass + (n === 0 ? ' wedding' : '');
       tile.dataset.n = n;
       tile.dataset.label = label;
-      tile.tabIndex = -1;
-      tile.setAttribute('aria-label', label);
+      tile.tabIndex = (n === 0) ? 0 : -1;
+      tile.setAttribute('aria-label', n === 0 ? 'Our wedding day, ' + label : label);
       tile.innerHTML = '<span class="date">' + (n === 0 ? label + '<img class="wedding-sticker" src="../photos/hero/sticker-taiwan-outline.png" alt="">' : label) + '</span>';
       grid.appendChild(tile);
       tiles.push(tile);
@@ -402,9 +541,87 @@
     show();
   }
 
+  // ---------- Wedding tile: spin the sticker, then open the card ----------
+  const sd = document.getElementById('sd');
+  const sdCount = document.getElementById('sd-count');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let spinning = false;
+
+  // When you tap the 20 Feb sticker: it spins, then the card and a collage of
+  // every photo revealed so far fade in together. Nothing else moves.
+  const sdStack   = document.getElementById('sd-stack');
+  const sdCollage = document.getElementById('sd-collage');
+
+  // Fill the screen with the revealed photos. If there are fewer photos than
+  // spaces, they repeat (shuffled) so there are no gaps.
+  function buildCollage(){
+    sdCollage.innerHTML = '';
+    const srcs = tiles
+      .filter(t => t.classList.contains('loaded') && t.dataset.n !== '0')
+      .map(t => t.querySelector('img:not(.wedding-sticker)').src);
+    if (!srcs.length) return;                          // no photos yet → plain dark background
+    const size = window.innerWidth < 640 ? 96 : 140;   // photo square size: phone / computer
+    const cols = Math.ceil(window.innerWidth / size);
+    const rows = Math.ceil(window.innerHeight / size);
+    sdCollage.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+    sdCollage.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    let pool = [];
+    for (let i = 0; i < cols * rows; i++){
+      if (!pool.length) pool = srcs.slice().sort(() => Math.random() - 0.5);
+      const img = document.createElement('img');
+      img.src = pool.pop(); img.alt = ''; img.decoding = 'async';
+      sdCollage.appendChild(img);
+    }
+  }
+
+  function openCard(tile){
+    const s = sleepsLeft();
+    sdCount.textContent = s > 0 ? s + (s === 1 ? ' sleep' : ' sleeps') + ' to go' : 'Today’s the day';
+    buildCollage();
+    lastFocus = tile;
+    sd.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('sd-close').focus({ preventScroll:true });
+    if (reduceMotion) return;
+    sd.animate([ { opacity:0 }, { opacity:1 } ], { duration:450, easing:'ease-out' });
+    sdStack.animate(
+      [ { transform:'rotate(-2deg) scale(0.96)' }, { transform:'rotate(-2deg) scale(1)' } ],
+      { duration:450, easing:'ease-out' }
+    );
+  }
+  function closeCard(){
+    const finish = () => {
+      sd.classList.remove('open');
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus({ preventScroll:true });
+    };
+    if (reduceMotion){ finish(); return; }
+    sd.animate([ { opacity:1 }, { opacity:0 } ], { duration:250, easing:'ease-in' }).finished.then(finish, finish);
+  }
+  function spinThenOpen(tile){
+    if (spinning || sd.classList.contains('open')) return;
+    const sticker = tile.querySelector('.wedding-sticker');
+    if (!sticker || reduceMotion){ openCard(tile); return; }
+    spinning = true;
+    sticker.animate(
+      [
+        { transform:'translateY(6px) rotate(0deg) scale(1)' },
+        { transform:'translateY(6px) rotate(380deg) scale(1.2)', offset:0.75 },
+        { transform:'translateY(6px) rotate(350deg) scale(1.1)', offset:0.88 },
+        { transform:'translateY(6px) rotate(360deg) scale(1)' },
+      ],
+      { duration:650, easing:'cubic-bezier(.3,.7,.4,1)' }
+    ).finished.then(() => { spinning = false; openCard(tile); }).catch(() => { spinning = false; });
+  }
+  document.getElementById('sd-close').addEventListener('click', closeCard);
+  sd.addEventListener('click', e => { if (e.target === sd) closeCard(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && sd.classList.contains('open')) closeCard(); });
+
   grid.addEventListener('click', e => {
     const tile = e.target.closest('.tile.loaded');
-    if (tile) open(tile);
+    if (tile){ open(tile); return; }
+    const wed = e.target.closest('.tile.wedding');
+    if (wed) spinThenOpen(wed);
   });
   document.getElementById('lb-close').addEventListener('click', close);
   document.getElementById('lb-prev').addEventListener('click', e => { e.stopPropagation(); step(-1); });

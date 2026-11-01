@@ -1322,6 +1322,20 @@
   .drawing-lightbox-close:hover{ background: rgba(71, 46, 59, 0.08); }
   .drawing-lightbox-close:focus-visible{ outline: 2px solid var(--accent-deep); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce){ .drawing-lightbox, .drawing-lightbox-stage{ transition: none; } }
+
+  /* RSVP: skipped question - its answer buttons get red borders.
+     (!important beats the inline border colour on each button.) */
+  .needs-answer .toggle-btn{
+    border-color: #B5495B !important;
+  }
+
+  /* RSVP cards: one step at a time, gentle fade/slide in */
+  .rsvp-step:not(.hidden){ animation: rsvpStepIn 0.35s ease both; }
+  @keyframes rsvpStepIn{
+    from{ opacity: 0; transform: translateX(12px); }
+    to{ opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce){ .rsvp-step:not(.hidden){ animation: none; } }
 </style>
 </head>
 
@@ -1787,8 +1801,8 @@
         <h2 class="font-hand text-5xl md:text-5xl" style="color:var(--ink)">RSVP Here</h2>
       </div>
 
-      <form id="rsvp-form" class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
-        <div id="name-step" class="space-y-6">
+      <form id="rsvp-form" novalidate class="reveal reveal-delay-1 rounded-[28px] bg-white shadow-soft p-8 md:p-10 space-y-6">
+        <div id="name-step" class="rsvp-step space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label for="rsvp-first-name" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">First Name</label>
@@ -1809,7 +1823,8 @@
           <p id="rsvp-name-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
-        <div id="email-step" class="hidden space-y-6">
+        <div id="email-step" class="rsvp-step hidden space-y-6">
+          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="name-step">&larr; Back</button>
           <div>
             <label for="rsvp-email" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Email Address</label>
             <input id="rsvp-email" name="EMAIL" type="email" required placeholder="you@example.com"
@@ -1828,11 +1843,12 @@
           <p id="rsvp-email-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
-        <div id="details-step" class="hidden space-y-6">
+        <div id="attend-step" class="rsvp-step hidden space-y-6">
+          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="email-step">&larr; Back</button>
           <div>
             <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be joining us?</p>
-            <!-- One choice only. Dietary + hotel questions open for any option that includes the reception. -->
-            <div class="grid grid-cols-1 gap-3" role="radiogroup" aria-label="Will you be joining us?">
+            <!-- One choice only. Options that include the reception go on to the dietary + hotel card. -->
+            <div id="attend-group" class="grid grid-cols-1 gap-3" role="radiogroup" aria-label="Will you be joining us?">
               <button type="button" role="radio" aria-checked="false" data-attend="Ceremony only" data-reception="false" class="toggle-btn border-1.5 rounded-xl py-3 px-4 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
                 Ceremony only
                 <span class="block text-[12px] font-normal opacity-80">2PM at Sacred Heart</span>
@@ -1851,28 +1867,11 @@
             <input type="hidden" id="rsvp-attending" name="RESPONSE" required />
           </div>
 
-          <div id="attending-fields" class="field-reveal space-y-6">
-            <div>
-              <label for="rsvp-dietary" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Do you have any dietary restrictions?</label>
-              <textarea id="rsvp-dietary" name="DIET" rows="3" placeholder="Allergies, preferences, etc. (optional)"
-                        class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
-            </div>
-            <div>
-              <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Are you interested in hotel accommodations for the night of Feb 20-21?</p>
-              <div class="grid grid-cols-2 gap-3">
-                <button type="button" data-seda="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                  Yes!
-                </button>
-                <button type="button" data-seda="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
-                  No
-                </button>
-              </div>
-              <input type="hidden" id="rsvp-seda" name="SEDA" />
-            </div>
-          </div>
+          <p id="attend-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
 
-          <button type="submit" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
-            Send RSVP
+          <!-- Label switches: "Send RSVP" for ceremony-only / can't make it, "Continue" for reception guests -->
+          <button type="button" id="rsvp-attend-next" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Continue
           </button>
 
           <!-- Remind me later: quiet link that opens a date picker. Dates are capped
@@ -1893,6 +1892,38 @@
             </div>
             <p id="remind-message" class="text-center text-[14px] mt-3 hidden" style="color:var(--ink-soft)"></p>
           </div>
+        </div>
+
+        <!-- Reception guests only: dietary + hotel -->
+        <div id="extras-step" class="rsvp-step hidden space-y-6">
+          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="attend-step">&larr; Back</button>
+          <div id="attending-fields" class="space-y-6">
+            <div>
+              <label for="rsvp-dietary" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Do you have any dietary restrictions?</label>
+              <textarea id="rsvp-dietary" name="DIET" rows="3" placeholder="Allergies, preferences, etc. (optional)"
+                        class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
+            </div>
+            <div>
+              <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Are you interested in hotel accommodations for the night of Feb 20-21?</p>
+              <div id="seda-group" class="grid grid-cols-2 gap-3">
+                <button type="button" data-seda="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                  Yes!
+                </button>
+                <button type="button" data-seda="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                  No
+                </button>
+              </div>
+              <input type="hidden" id="rsvp-seda" name="SEDA" />
+            </div>
+          </div>
+
+          <!-- Validation / send errors: sits right above the button so guests see it -->
+          <p id="rsvp-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
+
+          <button type="button" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Send RSVP
+          </button>
+
         </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
@@ -2493,7 +2524,30 @@
     const continueBtn = document.getElementById('rsvp-continue');
     const nameMessage = document.getElementById('rsvp-name-message');
     const emailStep = document.getElementById('email-step');
-    const detailsStep = document.getElementById('details-step');
+    const attendStep = document.getElementById('attend-step');
+    const extrasStep = document.getElementById('extras-step');
+
+    // ---------- RSVP cards: show one step at a time ----------
+    // Steps: name-step -> email-step -> attend-step -> extras-step (reception guests only).
+    function showRsvpStep(id) {
+      document.querySelectorAll('.rsvp-step').forEach((el) => el.classList.toggle('hidden', el.id !== id));
+      // If the top of the form has scrolled off-screen, bring it back into view
+      const top = rsvpForm.getBoundingClientRect().top;
+      if (top < 0) rsvpForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Put the cursor in the first box on the new card (text steps only)
+      const firstInput = document.querySelector('#' + id + ' input:not([type=hidden])');
+      if (firstInput && (id === 'name-step' || id === 'email-step')) firstInput.focus({ preventScroll: true });
+    }
+    document.querySelectorAll('.rsvp-back').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        clearRsvpError();
+        showRsvpStep(btn.getAttribute('data-back'));
+      });
+    });
+
+    // Enter key moves forward on the text steps instead of submitting the form.
+    // (The form has no submit button, so Enter can never send an RSVP by accident.)
+    rsvpForm.addEventListener('submit', (e) => e.preventDefault());
 
     // ---------- Name check attempt limit ----------
     // After 5 wrong names the Continue button locks. The count is kept in the
@@ -2540,11 +2594,9 @@
         if (data.match) {
           setNameAttempts(0);
           guestNickname = String(data.nickname || '').trim() || firstNameInput.value.trim();
-          // readOnly (not disabled) so the values still submit with the form later
-          firstNameInput.readOnly = true;
-          lastNameInput.readOnly = true;
-          continueBtn.classList.add('hidden');
-          emailStep.classList.remove('hidden');
+          continueBtn.disabled = false;
+          continueBtn.textContent = 'Continue';
+          showRsvpStep('email-step');
         } else {
           const attempts = getNameAttempts() + 1;
           setNameAttempts(attempts);
@@ -2553,7 +2605,7 @@
           } else {
             continueBtn.disabled = false;
             continueBtn.textContent = 'Continue';
-            nameMessage.textContent = "We couldn't find your name on the list. Please check the spelling and try again.";
+            nameMessage.textContent = "We couldn’t find that name on our list. Try the name we usually call you. If you are still stuck, please message Atom or Joanne.";
             nameMessage.classList.remove('hidden');
           }
         }
@@ -2589,15 +2641,20 @@
       }
 
       emailMessage.classList.add('hidden');
-      emailInput.readOnly = true;
-      emailConfirmInput.readOnly = true;
-      emailContinueBtn.classList.add('hidden');
-      detailsStep.classList.remove('hidden');
+      showRsvpStep('attend-step');
     });
+
+    [firstNameInput, lastNameInput].forEach((el) => el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); continueBtn.click(); }
+    }));
+    [emailInput, emailConfirmInput].forEach((el) => el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); emailContinueBtn.click(); }
+    }));
 
     // ---------- RSVP toggle ----------
     const attendingInput = document.getElementById('rsvp-attending');
-    const attendingFields = document.getElementById('attending-fields');
+    const attendNextBtn = document.getElementById('rsvp-attend-next');
+    const attendError = document.getElementById('attend-error');
     document.querySelectorAll('[data-attend]').forEach((btn) => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('[data-attend]').forEach((b) => {
@@ -2607,10 +2664,11 @@
         btn.classList.add('active');
         btn.setAttribute('aria-checked', 'true');
         attendingInput.value = btn.getAttribute('data-attend');
+        clearRsvpError();
         if (btn.getAttribute('data-reception') === 'true') {
-          attendingFields.classList.add('open');
+          attendNextBtn.textContent = 'Continue';
         } else {
-          attendingFields.classList.remove('open');
+          attendNextBtn.textContent = 'Send RSVP';
           // Not at the reception, so clear any dietary/hotel answers they'd entered
           document.getElementById('rsvp-dietary').value = '';
           sedaInput.value = '';
@@ -2626,8 +2684,29 @@
         document.querySelectorAll('[data-seda]').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         sedaInput.value = btn.getAttribute('data-seda');
+        clearRsvpError();
       });
     });
+
+    // ---------- RSVP error display ----------
+    // Shows the message right above "Send RSVP", outlines the skipped question
+    // in red, and scrolls it into view. Cleared as soon as the guest answers.
+    const rsvpError = document.getElementById('rsvp-error');
+    function showRsvpError(text, groupEl, errorEl) {
+      clearRsvpError();
+      const target = errorEl || rsvpError;
+      target.textContent = text;
+      target.classList.remove('hidden');
+      document.querySelectorAll('.needs-answer').forEach((el) => el.classList.remove('needs-answer'));
+      if (groupEl) {
+        groupEl.classList.add('needs-answer');
+        groupEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+    function clearRsvpError() {
+      [rsvpError, attendError].forEach((el) => { el.classList.add('hidden'); el.textContent = ''; });
+      document.querySelectorAll('.needs-answer').forEach((el) => el.classList.remove('needs-answer'));
+    }
 
     // ---------- RSVP celebration: fireworks around the RSVP box ----------
     // Fires once, when a guest who "Joyfully Accept"s successfully submits
@@ -2864,25 +2943,39 @@
     // ---------- RSVP submit ----------
     const rsvpSubmit = document.getElementById('rsvp-submit');
 
-    rsvpForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Attendance card button: "Continue" to the dietary/hotel card for reception
+    // guests, or sends straight away for ceremony-only / can't make it.
+    attendNextBtn.addEventListener('click', () => {
       if (!attendingInput.value) {
-        rsvpMessage.textContent = 'Please let us know if you can make it.';
-        rsvpMessage.classList.remove('hidden');
+        showRsvpError('Please let us know if you can make it.', document.getElementById('attend-group'), attendError);
         return;
       }
-
-      const isJoyfullyAccepting = attendingInput.value !== 'No';
       const isAtReception = attendingInput.value === 'Reception only' || attendingInput.value === 'Both';
-      if (isAtReception && !sedaInput.value) {
-        rsvpMessage.textContent = "Please let us know if you're interested in staying at Seda.";
-        rsvpMessage.classList.remove('hidden');
+      if (isAtReception) {
+        clearRsvpError();
+        showRsvpStep('extras-step');
+      } else {
+        sendRsvp(attendNextBtn, attendError);
+      }
+    });
+
+    // Dietary/hotel card button
+    rsvpSubmit.addEventListener('click', () => {
+      if (!sedaInput.value) {
+        showRsvpError("Please let us know if you're interested in staying at Seda.", document.getElementById('seda-group'), rsvpError);
         return;
       }
+      sendRsvp(rsvpSubmit, rsvpError);
+    });
+
+    async function sendRsvp(btn, errorEl) {
+      const isJoyfullyAccepting = attendingInput.value !== 'No';
+      const btnLabel = btn.textContent.trim();
       const formData = new FormData(rsvpForm);
-      rsvpSubmit.disabled = true;
-      rsvpSubmit.textContent = 'Submitting...';
+      btn.disabled = true;
+      btn.textContent = 'Submitting...';
       rsvpMessage.classList.add('hidden');
+      clearRsvpError();
 
       try {
         await fetch(RSVP_ENDPOINT, {
@@ -2891,14 +2984,10 @@
           body: formData,
         });
         rsvpForm.reset();
-        attendingFields.classList.remove('open');
         document.querySelectorAll('[data-attend]').forEach((b) => b.classList.remove('active'));
         rsvpForm.querySelectorAll('input, textarea, button[type=button]').forEach(el => el.style.display = 'none');
-        rsvpSubmit.style.display = 'none';
         document.querySelectorAll('#rsvp-form label, #rsvp-form p.block').forEach(el => el.style.display = 'none');
-        document.getElementById('name-step').style.display = 'none';
-        document.getElementById('email-step').style.display = 'none';
-        document.getElementById('details-step').style.display = 'none';
+        document.querySelectorAll('.rsvp-step').forEach((el) => el.style.display = 'none');
         rsvpMessage.textContent = isJoyfullyAccepting
           ? `YAY see you there ${guestNickname || firstNameInput.value.trim()}!! We can't wait to celebrate with you!`
           : "Thank you for letting us know. We'll miss having you there!";
@@ -2908,12 +2997,11 @@
         rsvpAnotherBtn.classList.remove('hidden');
         if (isJoyfullyAccepting) celebrateRSVP();
       } catch (err) {
-        rsvpSubmit.disabled = false;
-        rsvpSubmit.textContent = 'Send RSVP';
-        rsvpMessage.textContent = 'Something went wrong sending your RSVP. Please try again.';
-        rsvpMessage.classList.remove('hidden');
+        btn.disabled = false;
+        btn.textContent = btnLabel;
+        showRsvpError('Something went wrong sending your RSVP. Please try again.', null, errorEl);
       }
-    });
+    }
 
     // ---------- RSVP for someone else ----------
     // Puts the form back to its starting state (name step) so the same device
@@ -2924,13 +3012,7 @@
     rsvpAnotherBtn.addEventListener('click', () => {
       // Undo the inline display:none applied on successful submit
       rsvpForm.querySelectorAll('input, textarea, button, label, p.block').forEach(el => el.style.display = '');
-      document.getElementById('name-step').style.display = '';
-      document.getElementById('email-step').style.display = '';
-      document.getElementById('details-step').style.display = '';
-
-      // Back to step one only
-      emailStep.classList.add('hidden');
-      detailsStep.classList.add('hidden');
+      document.querySelectorAll('.rsvp-step').forEach((el) => el.style.display = '');
 
       // Clear values (form.reset() doesn't clear hidden inputs set via JS)
       rsvpForm.reset();
@@ -2939,7 +3021,8 @@
       guestNickname = '';
       document.querySelectorAll('[data-attend], [data-seda]').forEach((b) => b.classList.remove('active'));
       document.querySelectorAll('[data-attend]').forEach((b) => b.setAttribute('aria-checked', 'false'));
-      attendingFields.classList.remove('open');
+      attendNextBtn.disabled = false;
+      attendNextBtn.textContent = 'Continue';
 
       // Unlock fields and restore buttons
       [firstNameInput, lastNameInput, emailInput, emailConfirmInput].forEach(el => el.readOnly = false);
@@ -2953,8 +3036,10 @@
       // Hide messages and this button
       [nameMessage, emailMessage, rsvpMessage].forEach(el => el.classList.add('hidden'));
       rsvpMessage.style.color = 'var(--ink-soft)';
+      clearRsvpError();
       rsvpAnotherBtn.classList.add('hidden');
       resetReminder();
+      showRsvpStep('name-step');
 
       if (getNameAttempts() >= MAX_NAME_ATTEMPTS) lockNameCheck();
 
