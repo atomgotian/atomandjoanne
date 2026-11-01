@@ -100,7 +100,7 @@
   /* ---------- Grid: 7 columns (Sun → Sat) × 20 rows ---------- */
   .weekdays, .grid{
     display:grid;
-    grid-template-columns:repeat(7, 1fr);
+    grid-template-columns:repeat(7, minmax(0, 1fr));   /* minmax(0,…) = all 7 columns stay equal, even with the big sticker in Saturday */
     gap:6px;
   }
   .weekdays{ margin-bottom:6px; }
@@ -145,12 +145,14 @@
   .tile.today{ box-shadow:0 0 0 2px var(--accent); }
   .tile.wedding{ border:2px solid var(--accent-deep); }
   .tile.wedding .date{ color:var(--accent-deep); opacity:1; font-weight:600; }
-  .tile img.wedding-sticker{ position:static; display:block; width:clamp(56px, 30vw, 88px); height:auto; margin:-40px auto 0; opacity:1; object-fit:contain; transform:translateY(6px); }
+  /* Date label on top, sticker underneath — both kept inside the tile, sized to it */
+  .tile.wedding:not(.loaded) .date{ width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; }
+  .tile img.wedding-sticker{ position:static; display:block; width:100%; height:auto; margin:-40% auto 0; opacity:1; object-fit:contain; transform:translateY(0); }
   /* The sticker's picture box is wider than the two of you (Atom's arm stretches left),
      so spin around where the bodies are, not the middle of the box. Tweak these two % if needed. */
   .tile img.wedding-sticker{ transform-origin:68% 64%; }
   .tile.wedding:not(.loaded){ cursor:pointer; overflow:visible; }
-  .tile.wedding:not(.loaded):hover img.wedding-sticker{ transform:translateY(6px) rotate(-8deg) scale(1.06); transition:transform .25s ease; }
+  .tile.wedding:not(.loaded):hover img.wedding-sticker{ transform:translateY(0) rotate(-8deg) scale(1.06); transition:transform .25s ease; }
 
   /* ---------- Wedding tile: "save the date" card ---------- */
   .sd{
@@ -224,10 +226,10 @@
     display:grid; gap:4px;
     background:var(--bg);                 /* gaps between photos = the page's blush background */
   }
-  .sd-collage img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .sd-collage img{ width:100%; height:100%; min-width:0; min-height:0; object-fit:cover; display:block; }
   .sd-collage::after{                     /* soft blush wash that fades the photos. 0.45 → higher = more faded, lower = stronger photos */
     content:''; position:absolute; inset:0;
-    background:rgba(245,240,242,0.18);
+    background:rgba(245,240,242,0.2);
   }
   .sd-stack{ z-index:1; }
   .sd-count{ color:var(--ink); font-size:15px; margin:0 0 20px; }
@@ -563,8 +565,8 @@
     const size = window.innerWidth < 640 ? 96 : 140;   // photo square size: phone / computer
     const cols = Math.ceil(window.innerWidth / size);
     const rows = Math.ceil(window.innerHeight / size);
-    sdCollage.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-    sdCollage.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+    sdCollage.style.gridTemplateColumns = `repeat(${cols}, minmax(0, 1fr))`;
+    sdCollage.style.gridTemplateRows = `repeat(${rows}, minmax(0, 1fr))`;
     let pool = [];
     for (let i = 0; i < cols * rows; i++){
       if (!pool.length) pool = srcs.slice().sort(() => Math.random() - 0.5);
@@ -605,10 +607,10 @@
     spinning = true;
     sticker.animate(
       [
-        { transform:'translateY(6px) rotate(0deg) scale(1)' },
-        { transform:'translateY(6px) rotate(380deg) scale(1.2)', offset:0.75 },
-        { transform:'translateY(6px) rotate(350deg) scale(1.1)', offset:0.88 },
-        { transform:'translateY(6px) rotate(360deg) scale(1)' },
+        { transform:'translateY(0) rotate(0deg) scale(1)' },
+        { transform:'translateY(0) rotate(380deg) scale(1.2)', offset:0.75 },
+        { transform:'translateY(0) rotate(350deg) scale(1.1)', offset:0.88 },
+        { transform:'translateY(0) rotate(360deg) scale(1)' },
       ],
       { duration:650, easing:'cubic-bezier(.3,.7,.4,1)' }
     ).finished.then(() => { spinning = false; openCard(tile); }).catch(() => { spinning = false; });
