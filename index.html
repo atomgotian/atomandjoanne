@@ -1586,7 +1586,7 @@
       </div>
 
       <div class="reveal flex justify-center mb-16">
-        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Atom+%26+Joanne%27s+Wedding&dates=20270220T060000Z%2F20270220T160000Z&details=Ceremony+at+2%3A00+PM+%E2%80%94+Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa.%0A%0AReception+at+4%3A30+PM+%E2%80%94+Elan+by+the+Bay%2C+88+Clinton+Avenue%2C+Paranaque%2C+Metro+Manila.&location=Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa%2C+Metro+Manila%2C+Philippines"
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Atom+%26+Joanne%27s+Wedding&dates=20270220T053000Z%2F20270220T160000Z&details=Ceremony+at+1%3A30+PM+%E2%80%94+Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa.%0A%0AReception+at+4%3A30+PM+%E2%80%94+Elan+by+the+Bay%2C+88+Clinton+Avenue%2C+Paranaque%2C+Metro+Manila.&location=Sacred+Heart+of+Jesus+Parish%2C+Don+Jesus+Blvd%2C+Cupang%2C+Muntinlupa%2C+Metro+Manila%2C+Philippines"
           target="_blank" rel="noopener"
           class="btn-outline inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full font-semibold shadow-soft-sm min-w-[220px]">
           Save to Calendar
@@ -1971,7 +1971,7 @@
 
           <p id="attend-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
 
-          <!-- Label switches: "Send RSVP" for ceremony-only / can't make it, "Continue" for reception guests -->
+          <!-- Always "Continue": reception guests go to dietary/hotel, everyone else straight to the final card -->
           <button type="button" id="rsvp-attend-next" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
             Continue
           </button>
@@ -2023,9 +2023,37 @@
           <p id="rsvp-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
 
           <button type="button" id="rsvp-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
-            Send RSVP
+            Continue
           </button>
 
+        </div>
+
+        <!-- Final card for every guest: recipe + message for Atom & Joanne (both optional) -->
+        <div id="notes-step" class="rsvp-step hidden space-y-6">
+          <button type="button" id="notes-back" class="rsvp-back remind-link text-[14px]" data-back="attend-step">&larr; Back</button>
+          <div>
+            <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Do you have a recipe you want to share with us? We will reach out to you later on for a copy of it!</p>
+            <div id="recipe-group" class="grid grid-cols-2 gap-3">
+              <button type="button" data-recipe="Yes" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                Yes
+              </button>
+              <button type="button" data-recipe="No" class="toggle-btn border-1.5 rounded-xl py-3 font-semibold text-[15px]" style="border:1.5px solid var(--accent); color:var(--ink-soft)">
+                No
+              </button>
+            </div>
+            <input type="hidden" id="rsvp-recipe" name="RECIPE" />
+          </div>
+          <div>
+            <label for="rsvp-message-note" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Is there anything you want to tell Atom and Joanne for their big day?</label>
+            <textarea id="rsvp-message-note" name="MESSAGE" rows="4" placeholder="Your message (optional)"
+                      class="w-full rounded-xl px-4 py-3 text-[15px] resize-none"></textarea>
+          </div>
+
+          <p id="notes-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
+
+          <button type="button" id="rsvp-final-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Send RSVP
+          </button>
         </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
@@ -2496,7 +2524,7 @@
       { file: 'iec-app.jpg', w: 2000, h: 1304, date: 'Sep 2017', header: "Our first photo together",
         text: "We were both shiftees into Industrial Engineering. Joanne shifted from Architecture while Atom shifted from Sociology. When Atom was applying for IE club, he took this photo to complete a task with Joanne, who was already a member, not knowing that this would be our first photo together!" },
       { file: 'agsip.jpg', w: 2000, h: 1125, date: 'June 2019', header: "Our internship",
-        text: "We both interned at Globe in the summer before our senior year. We were assigned to different teams in different floors but we always met up for lunch. This photo was taken in the culminating case competition of the internship. We both have medals because our respective teams placed in the top 3 of the entire competition!" },
+        text: "We both interned at Globe in the summer before our senior year. We were assigned to different teams in different floors but we always met up for lunch. This photo was taken in the culminating case competition of the internship, where both our teams were finalists!" },
       { file: 'pandemic.jpg', w: 2000, h: 1666, date: 'Feb 2021', header: "Our pandemic",
         text: "During the pandemic, we celebrated special moments with \"online dates.\" This was our Valentine's Day Date of 2021, where we decided to both have Koomi!" },
       { file: 'siquijor.jpg', w: 1500, h: 2000, date: 'May 2022', header: "Our first trip together",
@@ -2515,8 +2543,8 @@
         text: "The Coogee to Bondi walk is the walk that made Atom choose to stay in Sydney over Melbourne. It was something Joanne was able to do on her second visit to Sydney. We highly recommend doing it when visiting Sydney!!" },
       { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Our engagement",
         text: "Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
-      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Our prenup",
-        text: "Here's a little <a href=\"prenup/\" class=\"story-link\">preview</a> of our prenup photoshoot in Sydney!" },
+      { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Our pre-wedding photoshoot",
+        text: "Here's a little <a href=\"prenup/\" class=\"story-link\">preview</a> of our photoshoot in Sydney!" },
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
@@ -2873,10 +2901,7 @@
         btn.setAttribute('aria-checked', 'true');
         attendingInput.value = btn.getAttribute('data-attend');
         clearRsvpError();
-        if (btn.getAttribute('data-reception') === 'true') {
-          attendNextBtn.textContent = 'Continue';
-        } else {
-          attendNextBtn.textContent = 'Send RSVP';
+        if (btn.getAttribute('data-reception') !== 'true') {
           // Not at the reception, so clear any dietary/hotel answers they'd entered
           document.getElementById('rsvp-dietary').value = '';
           sedaInput.value = '';
@@ -2892,6 +2917,17 @@
         document.querySelectorAll('[data-seda]').forEach((b) => b.classList.remove('active'));
         btn.classList.add('active');
         sedaInput.value = btn.getAttribute('data-seda');
+        clearRsvpError();
+      });
+    });
+
+    // ---------- Recipe toggle (final card, optional) ----------
+    const recipeInput = document.getElementById('rsvp-recipe');
+    document.querySelectorAll('[data-recipe]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-recipe]').forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+        recipeInput.value = btn.getAttribute('data-recipe');
         clearRsvpError();
       });
     });
@@ -2912,7 +2948,7 @@
       }
     }
     function clearRsvpError() {
-      [rsvpError, attendError].forEach((el) => { el.classList.add('hidden'); el.textContent = ''; });
+      [rsvpError, attendError, document.getElementById('notes-error')].forEach((el) => { el.classList.add('hidden'); el.textContent = ''; });
       document.querySelectorAll('.needs-answer').forEach((el) => el.classList.remove('needs-answer'));
     }
 
@@ -3159,21 +3195,32 @@
         return;
       }
       const isAtReception = attendingInput.value === 'Reception only' || attendingInput.value === 'Both';
+      clearRsvpError();
       if (isAtReception) {
-        clearRsvpError();
         showRsvpStep('extras-step');
       } else {
-        sendRsvp(attendNextBtn, attendError);
+        // Skip dietary/hotel; Back on the final card returns to attendance
+        notesBack.setAttribute('data-back', 'attend-step');
+        showRsvpStep('notes-step');
       }
     });
 
-    // Dietary/hotel card button
+    // Dietary/hotel card button: on to the final card
     rsvpSubmit.addEventListener('click', () => {
       if (!sedaInput.value) {
         showRsvpError("Please let us know if you're interested in staying at Seda.", document.getElementById('seda-group'), rsvpError);
         return;
       }
-      sendRsvp(rsvpSubmit, rsvpError);
+      clearRsvpError();
+      notesBack.setAttribute('data-back', 'extras-step');
+      showRsvpStep('notes-step');
+    });
+
+    // Final card button: recipe + message are optional, so this always sends
+    const rsvpFinalSubmit = document.getElementById('rsvp-final-submit');
+    const notesBack = document.getElementById('notes-back');
+    rsvpFinalSubmit.addEventListener('click', () => {
+      sendRsvp(rsvpFinalSubmit, document.getElementById('notes-error'));
     });
 
     async function sendRsvp(btn, errorEl) {
@@ -3226,8 +3273,9 @@
       rsvpForm.reset();
       attendingInput.value = '';
       sedaInput.value = '';
+      recipeInput.value = '';
       guestNickname = '';
-      document.querySelectorAll('[data-attend], [data-seda]').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('[data-attend], [data-seda], [data-recipe]').forEach((b) => b.classList.remove('active'));
       document.querySelectorAll('[data-attend]').forEach((b) => b.setAttribute('aria-checked', 'false'));
       attendNextBtn.disabled = false;
       attendNextBtn.textContent = 'Continue';
@@ -3239,7 +3287,9 @@
       continueBtn.textContent = 'Continue';
       emailContinueBtn.classList.remove('hidden');
       rsvpSubmit.disabled = false;
-      rsvpSubmit.textContent = 'Send RSVP';
+      rsvpSubmit.textContent = 'Continue';
+      rsvpFinalSubmit.disabled = false;
+      rsvpFinalSubmit.textContent = 'Send RSVP';
 
       // Hide messages and this button
       [nameMessage, emailMessage, rsvpMessage].forEach(el => el.classList.add('hidden'));
