@@ -2306,7 +2306,7 @@
 
     // Remember where we were when leaving for the prenup, countdown or pegs page
     document.addEventListener('click', (e) => {
-      const link = e.target.closest('a[href^="prenup"], a[href^="countdown"], a[href^="pegs"]');
+      const link = e.target.closest('a[href^="photoshoot"], a[href^="countdown"], a[href^="pegs"]');
       if (!link) return;
       const card = link.closest('[data-index]');
       const info = { y: window.scrollY };
@@ -2544,7 +2544,7 @@
       { file: 'proposal.JPG', w: 1500, h: 2000, date: 'Jun 2025', header: "Our engagement",
         text: "Atom surprised Joanne on her 28th birthday with a weekend trip to Siquijor. Disguised as a \"birthday trip\" Atom brought Joanne back to her favorite spots on the island eventually proposing in the same resort where the earlier photo was taken." },
       { file: 'our-story-hero.jpeg', w: 1333, h: 2000, date: 'May 2026', header: "Our pre-wedding photoshoot",
-        text: "Here's a little <a href=\"prenup/\" class=\"story-link\">preview</a> of our photoshoot in Sydney!" },
+        text: "Here's a little <a href=\"photoshoot/\" class=\"story-link\">preview</a> of our photoshoot in Sydney!" },
     ];
 
     const storyGrid = document.getElementById('our-story-grid');
