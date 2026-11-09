@@ -945,7 +945,7 @@
     margin:0.75rem 0 0;
     display:none;
   }
-  /* "See all our prenup photos" link inside the story text (desktop + mobile) */
+  /* "See all our photoshoot photos" link inside the story text (desktop + mobile) */
   .story-link{
     color:var(--accent-deep);
     font-weight:600;
@@ -2104,7 +2104,7 @@
   </footer>
 
   <script>
-    // Coming back from the prenup or countdown page? (flag is set when either link is clicked)
+    // Coming back from the photoshoot or countdown page? (flag is set when either link is clicked)
     let returnScrollY = null;
     try {
       returnScrollY = sessionStorage.getItem('returnScrollY');
@@ -2216,7 +2216,7 @@
       });
     }
 
-    // Returning from the prenup page: skip the panda and jump back to the same
+    // Returning from the photoshoot page: skip the panda and jump back to the same
     // story card, at the same spot on screen. Anchoring to the card (not a raw
     // pixel position) keeps it accurate even while photos above are loading.
     //
@@ -2273,7 +2273,7 @@
           }
           reopened = true;
         }
-        const link = card ? card.querySelector('a[href^="prenup"]') : null;
+        const link = card ? card.querySelector('a[href^="photoshoot"]') : null;
         const linkVisible = link && link.getClientRects().length > 0;
         let top;
         if (anchorEl && saved.linkOffset != null) {
@@ -2304,7 +2304,7 @@
       }
     });
 
-    // Remember where we were when leaving for the prenup, countdown or pegs page
+    // Remember where we were when leaving for the photoshoot, countdown or pegs page
     document.addEventListener('click', (e) => {
       const link = e.target.closest('a[href^="photoshoot"], a[href^="countdown"], a[href^="pegs"]');
       if (!link) return;
@@ -2605,7 +2605,7 @@
     // (devices with a real pointer keep relying purely on the CSS :hover
     // rule instead).
     storyGrid.addEventListener('click', (e) => {
-      if (e.target.closest('a')) return; // let links (e.g. prenup gallery) open without flipping the tile
+      if (e.target.closest('a')) return; // let links (e.g. photoshoot gallery) open without flipping the tile
       const toggleBtn = e.target.closest('.card-toggle');
       if (toggleBtn) {
         const text = toggleBtn.previousElementSibling;
