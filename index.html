@@ -1925,28 +1925,8 @@
           <p id="rsvp-name-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
-        <div id="email-step" class="rsvp-step hidden space-y-6">
-          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="name-step">&larr; Back</button>
-          <div>
-            <label for="rsvp-email" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Email Address</label>
-            <input id="rsvp-email" name="EMAIL" type="email" required placeholder="you@example.com"
-                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
-          </div>
-          <div>
-            <label for="rsvp-email-confirm" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Confirm Email Address</label>
-            <input id="rsvp-email-confirm" type="email" required placeholder="you@example.com"
-                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
-          </div>
-
-          <button type="button" id="rsvp-email-continue" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
-            Continue
-          </button>
-
-          <p id="rsvp-email-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
-        </div>
-
         <div id="attend-step" class="rsvp-step hidden space-y-6">
-          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="email-step">&larr; Back</button>
+          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="name-step">&larr; Back</button>
           <div>
             <p class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Will you be joining us?</p>
             <!-- One choice only. Options that include the reception go on to the dietary + hotel card. -->
@@ -1976,7 +1956,8 @@
             Continue
           </button>
 
-          <!-- Remind me later: quiet link that opens a date picker. Dates are capped
+          <!-- Remind me later: quiet link that opens a date picker. Asks for its own email
+               (the main email card is now last). Dates are capped
                before RSVP_DEADLINE (see script). Hidden entirely once that's passed. -->
           <div id="remind-wrap" class="text-center">
             <button type="button" id="remind-toggle" class="remind-link text-[14px]" aria-expanded="false" aria-controls="remind-panel">
@@ -1987,6 +1968,8 @@
                 <label for="remind-date" class="block text-[13px] font-semibold" style="color:var(--ink)">Remind me on</label>
                 <input id="remind-date" type="date" class="w-full rounded-xl px-4 py-3 text-[15px]" />
                 <p id="remind-hint" class="text-[12px]" style="color:var(--ink-soft)"></p>
+                <label for="remind-email" class="block text-[13px] font-semibold pt-1" style="color:var(--ink)">Where should we send your reminder?</label>
+                <input id="remind-email" type="email" placeholder="you@example.com" autocomplete="email" class="w-full rounded-xl px-4 py-3 text-[15px]" />
                 <button type="button" id="remind-submit" class="btn-outline w-full py-3 rounded-xl font-semibold text-[15px]">
                   Remind me
                 </button>
@@ -2028,7 +2011,7 @@
 
         </div>
 
-        <!-- Final card for every guest: recipe + message for Atom & Joanne (both optional) -->
+        <!-- Recipe + message for Atom & Joanne (both optional), then on to the email card -->
         <div id="notes-step" class="rsvp-step hidden space-y-6">
           <button type="button" id="notes-back" class="rsvp-back remind-link text-[14px]" data-back="attend-step">&larr; Back</button>
           <div>
@@ -2052,8 +2035,30 @@
           <p id="notes-error" class="text-center text-[15px] hidden" style="color:#B5495B" role="alert"></p>
 
           <button type="button" id="rsvp-final-submit" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
+            Continue
+          </button>
+        </div>
+
+        <!-- Final card for every guest: email is asked last, right before sending -->
+        <div id="email-step" class="rsvp-step hidden space-y-6">
+          <button type="button" class="rsvp-back remind-link text-[14px]" data-back="notes-step">&larr; Back</button>
+          <p class="text-[15px]" style="color:var(--ink)">Last step! Where should we send your RSVP confirmation?</p>
+          <div>
+            <label for="rsvp-email" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Email Address</label>
+            <input id="rsvp-email" name="EMAIL" type="email" required placeholder="you@example.com"
+                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
+          </div>
+          <div>
+            <label for="rsvp-email-confirm" class="block text-[13px] font-semibold mb-2" style="color:var(--ink)">Confirm Email Address</label>
+            <input id="rsvp-email-confirm" type="email" required placeholder="you@example.com"
+                   class="w-full rounded-xl px-4 py-3 text-[15px]" />
+          </div>
+
+          <button type="button" id="rsvp-email-continue" class="btn-accent w-full py-4 rounded-xl font-semibold text-[15px] shadow-soft-sm">
             Send RSVP
           </button>
+
+          <p id="rsvp-email-message" class="text-center text-[15px] hidden" style="color:#B5495B"></p>
         </div>
 
         <p id="rsvp-message" class="text-center text-[15px] hidden" style="color:var(--ink-soft)"></p>
@@ -2764,7 +2769,7 @@
     const extrasStep = document.getElementById('extras-step');
 
     // ---------- RSVP cards: show one step at a time ----------
-    // Steps: name-step -> email-step -> attend-step -> extras-step (reception guests only).
+    // Steps: name-step -> attend-step -> extras-step (reception guests only) -> notes-step -> email-step (sends).
     function showRsvpStep(id) {
       document.querySelectorAll('.rsvp-step').forEach((el) => el.classList.toggle('hidden', el.id !== id));
       // If the top of the form has scrolled off-screen, bring it back into view
@@ -2832,7 +2837,7 @@
           guestNickname = String(data.nickname || '').trim() || firstNameInput.value.trim();
           continueBtn.disabled = false;
           continueBtn.textContent = 'Continue';
-          showRsvpStep('email-step');
+          showRsvpStep('attend-step');
         } else {
           const attempts = getNameAttempts() + 1;
           setNameAttempts(attempts);
@@ -2855,8 +2860,8 @@
     });
 
     // ---------- RSVP email step ----------
-    // Guests enter their email twice; both copies must match (case-insensitive)
-    // before the attendance/dietary fields are revealed. The confirmation input
+    // Final card. Guests enter their email twice; both copies must match
+    // (case-insensitive), then the RSVP is sent. The confirmation input
     // has no `name` attribute, so it's never included in the submitted FormData —
     // only the first `rsvp-email` field (name="EMAIL") is sent.
     const emailInput = document.getElementById('rsvp-email');
@@ -2877,7 +2882,7 @@
       }
 
       emailMessage.classList.add('hidden');
-      showRsvpStep('attend-step');
+      sendRsvp(emailContinueBtn, emailMessage);
     });
 
     [firstNameInput, lastNameInput].forEach((el) => el.addEventListener('keydown', (e) => {
@@ -2948,7 +2953,7 @@
       }
     }
     function clearRsvpError() {
-      [rsvpError, attendError, document.getElementById('notes-error')].forEach((el) => { el.classList.add('hidden'); el.textContent = ''; });
+      [rsvpError, attendError, document.getElementById('notes-error'), document.getElementById('rsvp-email-message')].forEach((el) => { el.classList.add('hidden'); el.textContent = ''; });
       document.querySelectorAll('.needs-answer').forEach((el) => el.classList.remove('needs-answer'));
     }
 
@@ -3094,8 +3099,8 @@
     }
 
     // ---------- RSVP "remind me later" ----------
-    // Guests who've passed the name + email steps can pick a date to get an
-    // email nudge. The Apps Script (action=remind) saves it to the Reminders
+    // Guests who've passed the name step can pick a date + give an email
+    // to get a nudge (the main email card is now the last step). The Apps Script (action=remind) saves it to the Reminders
     // tab and a daily trigger sends the emails. Latest pickable date is the
     // day before RSVP_DEADLINE; the script enforces the same cap.
     const RSVP_DEADLINE = '2026-12-01'; // TENTATIVE, change here + in Apps Script
@@ -3106,6 +3111,7 @@
     const remindHint = document.getElementById('remind-hint');
     const remindSubmit = document.getElementById('remind-submit');
     const remindMessage = document.getElementById('remind-message');
+    const remindEmail = document.getElementById('remind-email');
 
     const toISODate = (d) => {
       const pad = (n) => String(n).padStart(2, '0');
@@ -3131,6 +3137,7 @@
       remindToggle.setAttribute('aria-expanded', 'false');
       remindToggle.classList.remove('hidden');
       remindDate.value = '';
+      remindEmail.value = '';
       remindSubmit.disabled = false;
       remindSubmit.textContent = 'Remind me';
       remindMessage.classList.add('hidden');
@@ -3153,6 +3160,10 @@
       if (date < remindDate.min || date > remindDate.max) {
         return showError(`Please pick a date between ${prettyDate(remindDate.min)} and ${prettyDate(remindDate.max)}.`);
       }
+      const reminderEmail = remindEmail.value.trim();
+      if (!reminderEmail || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(reminderEmail)) {
+        return showError('Please add the email we should send your reminder to.');
+      }
 
       remindSubmit.disabled = true;
       remindSubmit.textContent = 'Saving...';
@@ -3164,7 +3175,7 @@
           firstName: firstNameInput.value.trim(),
           lastName: lastNameInput.value.trim(),
           nickname: guestNickname || firstNameInput.value.trim(),
-          email: emailInput.value.trim(),
+          email: reminderEmail,
           date,
         });
         const res = await fetch(RSVP_ENDPOINT + '?' + params.toString());
@@ -3173,6 +3184,8 @@
 
         remindPanel.classList.remove('open');
         remindToggle.classList.add('hidden');
+        // Save them typing it again on the final email card
+        if (!emailInput.value.trim()) emailInput.value = reminderEmail;
         remindMessage.textContent = `Done! We'll email you a reminder on ${prettyDate(date)}. You can still RSVP above any time.`;
         remindMessage.style.color = 'var(--ink)';
         remindMessage.classList.remove('hidden');
@@ -3216,11 +3229,12 @@
       showRsvpStep('notes-step');
     });
 
-    // Final card button: recipe + message are optional, so this always sends
+    // Recipe/message card button: both optional, so this always moves on to the email card
     const rsvpFinalSubmit = document.getElementById('rsvp-final-submit');
     const notesBack = document.getElementById('notes-back');
     rsvpFinalSubmit.addEventListener('click', () => {
-      sendRsvp(rsvpFinalSubmit, document.getElementById('notes-error'));
+      clearRsvpError();
+      showRsvpStep('email-step');
     });
 
     async function sendRsvp(btn, errorEl) {
@@ -3286,10 +3300,12 @@
       continueBtn.disabled = false;
       continueBtn.textContent = 'Continue';
       emailContinueBtn.classList.remove('hidden');
+      emailContinueBtn.disabled = false;
+      emailContinueBtn.textContent = 'Send RSVP';
       rsvpSubmit.disabled = false;
       rsvpSubmit.textContent = 'Continue';
       rsvpFinalSubmit.disabled = false;
-      rsvpFinalSubmit.textContent = 'Send RSVP';
+      rsvpFinalSubmit.textContent = 'Continue';
 
       // Hide messages and this button
       [nameMessage, emailMessage, rsvpMessage].forEach(el => el.classList.add('hidden'));
